@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="Hospital.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Hospital"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Hospital">
+
+    <StackPanel Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Button x:Name="Patient1" Click="Patient1_Click">Create Appointment</Button>
+        <Button x:Name="PatientScheduleButton" Click="PatientScheduleButton_Click">View Patient Schedule</Button>
+        <Button x:Name="Patient3" Click="Patient3_Click">View Past Medical Records</Button>
+        <Button x:Name="Doctor1" Click="DoctorScheduleButton">View Doctor Schedule</Button>
+        <Button x:Name="Doctor2" Click="Doctor2_Click">Create Medical Record</Button>
+        
+
+    </StackPanel>
+</Window>
