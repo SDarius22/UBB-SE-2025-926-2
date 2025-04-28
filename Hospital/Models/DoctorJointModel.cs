@@ -26,5 +26,14 @@ namespace Hospital.Models
             DoctorName = doctorName;
         }
 
+        public DoctorJointModel(int doctorId, int userId, int departmentId, double rating, string licenseNumber)
+        {
+            DoctorId = doctorId;
+            UserId = userId;
+            DepartmentId = departmentId;
+            DoctorRating = rating;
+            LicenseNumber = licenseNumber;
+        }
+
     }
 }

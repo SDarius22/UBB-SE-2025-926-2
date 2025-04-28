@@ -19,7 +19,7 @@ namespace Hospital.DatabaseServices
 
         public async Task<List<ShiftModel>> GetShifts()
         {
-            const string selectShiftsQuery = "SELECT ShiftId, Date, StartTime, EndTime FROM Shifts";
+            const string selectShiftsQuery = "SELECT ShiftId, DateTime, StartTime, EndTime FROM Shifts";
             List<ShiftModel> shifts = new List<ShiftModel>();
 
             try
@@ -54,7 +54,7 @@ namespace Hospital.DatabaseServices
 
         public async Task<List<ScheduleModel>> GetSchedules()
         {
-            const string selectSchedulesQuery = "SELECT DoctorId, ShiftId FROM Schedules";
+            const string selectSchedulesQuery = "SELECT DoctorId, ShiftId, ScheduleId FROM Schedules";
             List<ScheduleModel> schedules = new List<ScheduleModel>();
 
             try
@@ -67,7 +67,7 @@ namespace Hospital.DatabaseServices
                 using SqlDataReader reader = await selectSchedulesCommand.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                 {
-                    schedules.Add(new ScheduleModel(reader.GetInt32(0), reader.GetInt32(1)));
+                    schedules.Add(new ScheduleModel(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2)));
                 }
             }
             catch (SqlException sqlException)
@@ -89,7 +89,7 @@ namespace Hospital.DatabaseServices
                 throw new ShiftNotFoundException("Error loading shifts for doctor.");
             }
             const string selectShiftsByDoctorIdQuery = @"
-            SELECT s.ShiftId, s.Date, s.StartTime, s.EndTime
+            SELECT s.ShiftId, s.DateTime, s.StartTime, s.EndTime
             FROM Shifts s
             JOIN Schedules sch ON s.ShiftId = sch.ShiftId
             WHERE sch.DoctorId = @DoctorId";
@@ -134,11 +134,11 @@ namespace Hospital.DatabaseServices
                 throw new ShiftNotFoundException("Error loading upcoming shifts for doctor.");
             }
             const string selectDaytimeShiftByDoctorIdQuery = @"
-            SELECT s.ShiftId, s.Date, s.StartTime, s.EndTime
+            SELECT s.ShiftId, s.DateTime, s.StartTime, s.EndTime
             FROM Shifts s
             JOIN Schedules sch ON s.ShiftId = sch.ShiftId
             WHERE sch.DoctorId = @DoctorId AND s.StartTime < '20:00:00'
-            AND CAST(s.Date AS DATE) >= CAST(GETDATE() AS DATE)";
+            AND CAST(s.DateTime AS DATE) >= CAST(GETDATE() AS DATE)";
 
             List<ShiftModel> shifts = new List<ShiftModel>();
 
@@ -171,6 +171,80 @@ namespace Hospital.DatabaseServices
             }
 
             return shifts;
+        }
+
+        public bool AddShift(ShiftModel shift)
+        {
+            using SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection);
+            string query = "INSERT INTO Shifts (DateTime, StartTime, EndTime) VALUES (@DateTime, @StartTime, @EndTime)";
+            SqlCommand command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@DateTime", shift.DateTime);
+            command.Parameters.AddWithValue("@StartTime", shift.StartTime);
+            command.Parameters.AddWithValue("@EndTime", shift.EndTime);
+
+            connection.Open();
+            int rowsAffected = command.ExecuteNonQuery();
+            return rowsAffected > 0;
+        }
+
+        public bool UpdateShift(ShiftModel shift)
+        {
+            try
+            {
+                using SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection);
+                string query = "UPDATE Shifts SET DateTime = @DateTime, StartTime = @StartTime, EndTime = @EndTime WHERE ShiftId = @ShiftId";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@DateTime", shift.DateTime);
+                command.Parameters.AddWithValue("@StartTime", shift.StartTime);
+                command.Parameters.AddWithValue("@EndTime", shift.EndTime);
+                command.Parameters.AddWithValue("@ShiftId", shift.ShiftId);
+
+                connection.Open();
+                int rowsAffected = command.ExecuteNonQuery();
+                return rowsAffected > 0;
+            }
+            catch (SqlException exception)
+            {
+                Console.WriteLine($"SQL Error: {exception.Message}");
+                return false;
+            }
+            catch (InvalidOperationException exception)
+            {
+                Console.WriteLine($"Invalid Operation: {exception.Message}");
+                return false;
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine($"Unexpected Error: {exception.Message}");
+                return false;
+            }
+        }
+
+        public bool DoesShiftExist(int shiftID)
+        {
+            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            {
+                string query = "SELECT COUNT(*) FROM Shifts WHERE ShiftId = @ShiftId";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@ShiftId", shiftID);
+                connection.Open();
+                int count = (int)command.ExecuteScalar();
+                return count > 0;
+            }
+        }
+
+        public bool DeleteShift(int shiftID)
+        {
+            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            {
+                string query = "DELETE FROM Shifts WHERE ShiftId = @ShiftID";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@ShiftId", shiftID);
+
+                connection.Open();
+                int rowsAffected = command.ExecuteNonQuery();
+                return rowsAffected > 0;
+            }
         }
     }
 
