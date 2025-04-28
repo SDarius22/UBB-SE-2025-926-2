@@ -143,5 +143,9 @@ namespace Hospital.Models
             this.DepartmentID = departmentID;
             this.DepartmentName = departmentName;
         }
+
+        public DoctorInformationModel()
+        {
+        }
     }
 }
