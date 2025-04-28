@@ -13,9 +13,9 @@ namespace Project.ViewModels.AddViewModels
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Windows.Input;
-    using Project.ClassModels;
-    using Project.Models;
-    using Project.Utils;
+    using Hospital.DatabaseServices;
+    using Hospital.Models;
+    using Hospital.Utils;
 
     /// <summary>
     /// ViewModel for adding schedules.
@@ -25,12 +25,12 @@ namespace Project.ViewModels.AddViewModels
         /// <summary>
         /// The model for managing schedules.
         /// </summary>
-        private readonly ScheduleModel scheduleModel = new ();
+        private readonly ScheduleDatabaseService scheduleModel = new ScheduleDatabaseService();
 
         /// <summary>
         /// The collection of schedules displayed in the view.
         /// </summary>
-        public ObservableCollection<Schedule> Schedules { get; set; } = new ObservableCollection<Schedule>();
+        public ObservableCollection<ScheduleModel> Schedules { get; set; } = new ObservableCollection<ScheduleModel>();
 
         /// <summary>
         /// The command to save a schedule.
@@ -120,7 +120,7 @@ namespace Project.ViewModels.AddViewModels
         private void LoadSchedules()
         {
             this.Schedules.Clear();
-            foreach (Schedule schedule in this.scheduleModel.GetSchedules())
+            foreach (ScheduleModel schedule in this.scheduleModel.GetSchedules())
             {
                 this.Schedules.Add(schedule);
             }
@@ -131,12 +131,10 @@ namespace Project.ViewModels.AddViewModels
         /// </summary>
         private void SaveSchedule()
         {
-            var schedule = new Schedule
-            {
-                ScheduleID = 0,
-                DoctorID = this.DoctorID,
-                ShiftID = this.ShiftID,
-            };
+            var schedule = new ScheduleModel(
+                this.DoctorID,
+                this.ShiftID,
+                0);
 
             if (this.ValidateSchedule(schedule))
             {
@@ -154,15 +152,15 @@ namespace Project.ViewModels.AddViewModels
         /// </summary>
         /// <param name="schedule">Schedule to be validated.</param>
         /// <returns>True if the schedule is valid, false otherwise.</returns>
-        private bool ValidateSchedule(Schedule schedule)
+        private bool ValidateSchedule(ScheduleModel schedule)
         {
-            if (schedule.DoctorID == 0 || !this.scheduleModel.DoesDoctorExist(schedule.DoctorID))
+            if (schedule.DoctorId == 0 || !this.scheduleModel.DoesDoctorExist(schedule.DoctorId))
             {
                 this.ErrorMessage = "DoctorID doesn’t exist in the Doctors Records.";
                 return false;
             }
 
-            if (schedule.ShiftID == 0 || !this.scheduleModel.DoesShiftExist(schedule.ShiftID))
+            if (schedule.ShiftId == 0 || !this.scheduleModel.DoesShiftExist(schedule.ShiftId))
             {
                 this.ErrorMessage = "ShiftID doesn’t exist in the Shifts Records.";
                 return false;
