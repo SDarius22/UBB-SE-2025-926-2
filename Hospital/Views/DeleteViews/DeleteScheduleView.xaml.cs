@@ -1,7 +1,7 @@
 namespace Hospital.Views.DeleteViews
 {
     using Microsoft.UI.Xaml.Controls;
-    using Hospital.Views.ViewModels.DeleteViewModels;
+    using Hospital.ViewModels.DeleteViewModels;
     
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
