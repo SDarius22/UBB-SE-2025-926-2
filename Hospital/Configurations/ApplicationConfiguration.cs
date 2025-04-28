@@ -21,7 +21,7 @@ namespace Hospital.Configs
 
         private static ApplicationConfiguration? _instance;
 
-        private string _databaseConnection = "Data Source=DESKTOP-H700VKM\\MSSQLSERVER02;Initial Catalog=HospitalDB;Integrated Security=True;TrustServerCertificate=True";
+        private string _databaseConnection = "Data Source=SALA-S-TUF-A15;Initial Catalog=HospitalManagement; Integrated Security=True; TrustServerCertificate=True;";
 
         public int patientId = 1;
         public int doctorId = 1;
