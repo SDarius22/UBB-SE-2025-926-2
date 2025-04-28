@@ -8,7 +8,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Project.ViewModels.AddViewModels
+namespace Hospital.ViewModels.AddViewModels
 {
     using System.Collections.ObjectModel;
     using System.ComponentModel;
@@ -95,7 +95,7 @@ namespace Project.ViewModels.AddViewModels
         /// The color of the message displayed in the view.
         /// </summary>
         private string errorMessage = string.Empty;
-        
+       
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleAddViewModel"/> class.
         /// </summary>

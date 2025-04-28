@@ -1,20 +1,20 @@
-namespace Project.ViewModels.DeleteViewModels
+namespace Hospital.ViewModels.DeleteViewModels
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Windows.Input;
-    using Project.ClassModels;
-    using Project.Models;
-    using Project.Utils;
+    using Hospital.DatabaseServices;
+    using Hospital.Models;
+    using Hospital.Utils;
 
     /// <summary>
     /// ViewModel for deleting equipment.
     /// </summary>
     public class EquipmentDeleteViewModel : INotifyPropertyChanged
     {
-        private readonly EquipmentModel equipmentModel = new EquipmentModel();
-        private ObservableCollection<Equipment> equipments = new ObservableCollection<Equipment>();
+        private readonly EquipmentDatabaseService equipmentModel = new EquipmentDatabaseService();
+        private ObservableCollection<EquipmentModel> equipments = new ObservableCollection<EquipmentModel>();
         private int equipmentID;
         private string errorMessage = string.Empty;
         private string messageColor = "Red";
@@ -25,7 +25,7 @@ namespace Project.ViewModels.DeleteViewModels
         public EquipmentDeleteViewModel()
         {
             // Load equipment for the DataGrid
-            this.Equipments = new ObservableCollection<Equipment>(this.equipmentModel.GetEquipments());
+            this.Equipments = new ObservableCollection<EquipmentModel>(this.equipmentModel.GetEquipments());
             this.DeleteEquipmentCommand = new RelayCommand(this.RemoveEquipment);
         }
 
@@ -37,7 +37,7 @@ namespace Project.ViewModels.DeleteViewModels
         /// <summary>
         /// Gets or sets the collection of equipment.
         /// </summary>
-        public ObservableCollection<Equipment> Equipments
+        public ObservableCollection<EquipmentModel> Equipments
         {
             get => this.equipments;
             set => this.SetProperty(ref this.equipments, value);
@@ -126,7 +126,7 @@ namespace Project.ViewModels.DeleteViewModels
 
             if (success)
             {
-                this.Equipments = new ObservableCollection<Equipment>(this.equipmentModel.GetEquipments());
+                this.Equipments = new ObservableCollection<EquipmentModel>(this.equipmentModel.GetEquipments());
             }
         }
 

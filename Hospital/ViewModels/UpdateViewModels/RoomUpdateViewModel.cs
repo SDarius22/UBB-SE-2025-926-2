@@ -1,4 +1,4 @@
-﻿namespace Project.ViewModels.UpdateViewModels
+﻿namespace Hospital.ViewModels.UpdateViewModels
 {
     using System;
     using System.Collections.Generic;
@@ -8,17 +8,17 @@
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Project.ClassModels;
-    using Project.Models;
-    using Project.Utils;
-    using Project.ViewModel;
+    using Hospital.DatabaseServices;
+    using Hospital.Models;
+    using Hospital.Utils;
+    using Hospital.ViewModel;
 
     /// <summary>
     /// ViewModel for updating room information. Handles validation, updating rooms, and error message management.
     /// </summary>
     public class RoomUpdateViewModel : INotifyPropertyChanged
     {
-        private readonly RoomModel roomModel = new RoomModel();
+        private readonly RoomDatabaseService roomModel = new RoomDatabaseService();
         private string errorMessage;
 
         /// <summary>
@@ -39,7 +39,7 @@
         /// <summary>
         /// Gets or sets the collection of rooms to update.
         /// </summary>
-        public ObservableCollection<Room> Rooms { get; set; } = new ObservableCollection<Room>();
+        public ObservableCollection<RoomModel> Rooms { get; set; } = new ObservableCollection<RoomModel>();
 
         /// <summary>
         /// Gets or sets the error message displayed to the user.
@@ -74,7 +74,7 @@
         private void LoadRooms()
         {
             this.Rooms.Clear();
-            foreach (Room room in this.roomModel.GetRooms() ?? Enumerable.Empty<Room>())
+            foreach (RoomModel room in this.roomModel.GetRooms() ?? Enumerable.Empty<RoomModel>())
             {
                 this.Rooms.Add(room);
             }
@@ -88,7 +88,7 @@
             bool hasErrors = false;
             StringBuilder errorMessages = new StringBuilder();
 
-            foreach (Room room in this.Rooms)
+            foreach (RoomModel room in this.Rooms)
             {
                 if (!this.ValidateRoom(room))
                 {
@@ -121,7 +121,7 @@
         /// </summary>
         /// <param name="room">The room to validate.</param>
         /// <returns>True if the room is valid, otherwise false.</returns>
-        private bool ValidateRoom(Room room)
+        private bool ValidateRoom(RoomModel room)
         {
             if (room.Capacity <= 0)
             {

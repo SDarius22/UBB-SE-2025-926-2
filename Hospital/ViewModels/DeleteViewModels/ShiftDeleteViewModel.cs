@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Project.ViewModels.DeleteViewModels
+namespace Hospital.ViewModels.DeleteViewModels
 {
     using System;
     using System.Collections.Generic;
@@ -17,9 +17,9 @@ namespace Project.ViewModels.DeleteViewModels
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Project.ClassModels;
-    using Project.Models;
-    using Project.Utils;
+    using Hospital.DatabaseServices;
+    using Hospital.Models;
+    using Hospital.Utils;
 
     /// <summary>
     /// ViewModel for deleting shifts.
@@ -29,12 +29,12 @@ namespace Project.ViewModels.DeleteViewModels
         /// <summary>
         /// The model for managing shifts.
         /// </summary>
-        private readonly ShiftModel shiftModel = new ShiftModel();
+        private readonly ShiftsDatabaseService shiftModel = new ShiftsDatabaseService();
         
         /// <summary>
         /// The collection of shifts displayed in the view.
         /// </summary>
-        private ObservableCollection<Shift> shifts;
+        private ObservableCollection<ShiftModel> shifts = new ();
         
         /// <summary>
         /// The ID of the shift to be deleted.
@@ -56,14 +56,14 @@ namespace Project.ViewModels.DeleteViewModels
         /// </summary>
         public ShiftDeleteViewModel()
         {
-            this.Shifts = new ObservableCollection<Shift>(this.shiftModel.GetShifts());
+            this.Shifts = new ObservableCollection<ShiftModel>(this.shiftModel.GetShifts().Result);
             this.DeleteShiftCommand = new RelayCommand(this.RemoveShift);
         }
 
         /// <summary>
         /// Gets or sets the collection of shifts displayed in the view.
         /// </summary>
-        public ObservableCollection<Shift> Shifts
+        public ObservableCollection<ShiftModel> Shifts
         {
             get => this.shifts;
             set => this.SetProperty(ref this.shifts, value);
@@ -142,7 +142,7 @@ namespace Project.ViewModels.DeleteViewModels
             this.ErrorMessage = succes ? "Shift was successfully deleted" : "Shift was not deleted";
             if (succes)
             {
-                this.Shifts = new ObservableCollection<Shift>(this.shiftModel.GetShifts());
+                this.Shifts = new ObservableCollection<ShiftModel>(this.shiftModel.GetShifts().Result);
             }
         }
 

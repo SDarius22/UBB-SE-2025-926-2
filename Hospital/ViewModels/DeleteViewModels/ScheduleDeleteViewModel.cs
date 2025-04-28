@@ -7,15 +7,15 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Project.ViewModels.DeleteViewModels
+namespace Hospital.ViewModels.DeleteViewModels
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Windows.Input;
-    using Project.ClassModels;
-    using Project.Models;
-    using Project.Utils;
+    using Hospital.DatabaseServices;
+    using Hospital.Models;
+    using Hospital.Utils;
 
     /// <summary>
     /// ViewModel for deleting schedules.
@@ -25,12 +25,12 @@ namespace Project.ViewModels.DeleteViewModels
         /// <summary>
         /// The model for managing schedules.
         /// </summary>
-        private readonly ScheduleModel scheduleModel = new ();
+        private readonly ScheduleDatabaseService scheduleModel = new ScheduleDatabaseService();
         
         /// <summary>
         /// The collection of schedules displayed in the view.
         /// </summary>
-        private ObservableCollection<Schedule> schedules;
+        private ObservableCollection<ScheduleModel> schedules;
         
         /// <summary>
         /// The ID of the schedule to be deleted.
@@ -53,7 +53,7 @@ namespace Project.ViewModels.DeleteViewModels
         public ScheduleDeleteViewModel()
         {
             // Load schedules for the DataGrid
-            this.Schedules = new ObservableCollection<Schedule>(this.scheduleModel.GetSchedules());
+            this.Schedules = new ObservableCollection<ScheduleModel>(this.scheduleModel.GetSchedules());
 
             this.DeleteScheduleCommand = new RelayCommand(this.RemoveSchedule);
         }
@@ -61,7 +61,7 @@ namespace Project.ViewModels.DeleteViewModels
         /// <summary>
         /// Gets or sets the collection of schedules displayed in the view.
         /// </summary>
-        public ObservableCollection<Schedule> Schedules
+        public ObservableCollection<ScheduleModel> Schedules
         {
             get => this.schedules;
             set => this.SetProperty(ref this.schedules, value);
@@ -143,7 +143,7 @@ namespace Project.ViewModels.DeleteViewModels
 
             if (success)
             {
-                this.Schedules = new ObservableCollection<Schedule>(this.scheduleModel.GetSchedules());
+                this.Schedules = new ObservableCollection<ScheduleModel>(this.scheduleModel.GetSchedules());
             }
         }
 

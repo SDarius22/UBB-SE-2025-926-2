@@ -54,7 +54,7 @@ namespace Hospital.DatabaseServices
 
         public async Task<List<ScheduleModel>> GetSchedules()
         {
-            const string selectSchedulesQuery = "SELECT DoctorId, ShiftId FROM Schedules";
+            const string selectSchedulesQuery = "SELECT DoctorId, ShiftId, ScheduleId FROM Schedules";
             List<ScheduleModel> schedules = new List<ScheduleModel>();
 
             try
@@ -67,7 +67,7 @@ namespace Hospital.DatabaseServices
                 using SqlDataReader reader = await selectSchedulesCommand.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                 {
-                    schedules.Add(new ScheduleModel(reader.GetInt32(0), reader.GetInt32(1)));
+                    schedules.Add(new ScheduleModel(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2)));
                 }
             }
             catch (SqlException sqlException)

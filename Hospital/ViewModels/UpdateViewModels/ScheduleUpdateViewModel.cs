@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Project.ViewModels.UpdateViewModels
+namespace Hospital.ViewModels.UpdateViewModels
 {
     using System;
     using System.Collections.Generic;
@@ -17,10 +17,10 @@ namespace Project.ViewModels.UpdateViewModels
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Project.ClassModels;
-    using Project.Models;
-    using Project.Utils;
-    using Project.ViewModel;
+    using Hospital.DatabaseServices;
+    using Hospital.Models;
+    using Hospital.Utils;
+    using Hospital.ViewModel;
 
     /// <summary>
     /// ViewModel for updating schedules.
@@ -30,7 +30,7 @@ namespace Project.ViewModels.UpdateViewModels
         /// <summary>
         /// The model for managing schedules.
         /// </summary>
-        private readonly ScheduleModel scheduleModel = new ();
+        private readonly ScheduleDatabaseService scheduleModel = new ScheduleDatabaseService();
 
         /// <summary>
         /// The collection of schedules displayed in the view.
@@ -70,7 +70,7 @@ namespace Project.ViewModels.UpdateViewModels
         /// <summary>
         /// Gets or sets the collection of schedules displayed in the view.
         /// </summary>
-        public ObservableCollection<Schedule> Schedules { get; set; } = new ();
+        public ObservableCollection<ScheduleModel> Schedules { get; set; } = new ();
         
         protected void OnPropertyChanged(string propertyName)
         {
@@ -83,7 +83,7 @@ namespace Project.ViewModels.UpdateViewModels
         private void LoadSchedules()
         {
             this.Schedules.Clear();
-            foreach (Schedule schedule in this.scheduleModel.GetSchedules())
+            foreach (ScheduleModel schedule in this.scheduleModel.GetSchedules())
             {
                 this.Schedules.Add(schedule);
             }
@@ -97,12 +97,12 @@ namespace Project.ViewModels.UpdateViewModels
             bool hasErrors = false;
             StringBuilder errorMessages = new StringBuilder();
 
-            foreach (Schedule schedule in this.Schedules)
+            foreach (ScheduleModel schedule in this.Schedules)
             {
                 if (!this.ValidateSchedule(schedule))
                 {
                     hasErrors = true;
-                    errorMessages.AppendLine("Schedule " + schedule.ScheduleID + ": " + this.ErrorMessage);
+                    errorMessages.AppendLine("Schedule " + schedule.ScheduleId + ": " + this.ErrorMessage);
                 }
                 else
                 {
@@ -110,7 +110,7 @@ namespace Project.ViewModels.UpdateViewModels
 
                     if (!success)
                     {
-                        errorMessages.AppendLine("Failed to save changes for schedule: " + schedule.DoctorID);
+                        errorMessages.AppendLine("Failed to save changes for schedule: " + schedule.DoctorId);
                         hasErrors = true;
                     }
                 }
@@ -131,9 +131,9 @@ namespace Project.ViewModels.UpdateViewModels
         /// </summary>
         /// <param name="schedule">Schedule to be validated.</param>
         /// <returns>True if the schedule is valid, false otherwise.</returns>
-        private bool ValidateSchedule(Schedule schedule)
+        private bool ValidateSchedule(ScheduleModel schedule)
         {
-            bool doctorExists = this.scheduleModel.DoesDoctorExist(schedule.DoctorID);
+            bool doctorExists = this.scheduleModel.DoesDoctorExist(schedule.DoctorId);
 
             if (!doctorExists)
             {
@@ -141,7 +141,7 @@ namespace Project.ViewModels.UpdateViewModels
                 return false;
             }
 
-            bool shiftExists = this.scheduleModel.DoesShiftExist(schedule.ShiftID);
+            bool shiftExists = this.scheduleModel.DoesShiftExist(schedule.ShiftId);
 
             if (!shiftExists)
             {

@@ -1,4 +1,4 @@
-namespace Project.ViewModels.DeleteViewModels
+namespace Hospital.ViewModels.DeleteViewModels
 {
     using System;
     using System.Collections.Generic;
@@ -6,17 +6,17 @@ namespace Project.ViewModels.DeleteViewModels
     using System.ComponentModel;
     using System.Linq;
     using System.Windows.Input;
-    using Project.ClassModels;
-    using Project.Models;
-    using Project.Utils;
+    using Hospital.DatabaseServices;
+    using Hospital.Models;
+    using Hospital.Utils;
 
     /// <summary>
     /// ViewModel for deleting rooms. Handles room selection, validation, deletion, and feedback messages.
     /// </summary>
     public class RoomDeleteViewModel : INotifyPropertyChanged
     {
-        private readonly RoomModel roomModel = new RoomModel();
-        private ObservableCollection<Room> rooms = new ();
+        private readonly RoomDatabaseService roomModel = new RoomDatabaseService();
+        private ObservableCollection<RoomModel> rooms = new ();
         private int roomID;
         private string errorMessage = string.Empty;
         private string messageColor = "Red";
@@ -27,7 +27,7 @@ namespace Project.ViewModels.DeleteViewModels
         public RoomDeleteViewModel()
         {
             var rooms = this.roomModel.GetRooms();
-            this.Rooms = rooms != null ? new ObservableCollection<Room>(rooms) : new ObservableCollection<Room>();
+            this.Rooms = rooms != null ? new ObservableCollection<RoomModel>(rooms) : new ObservableCollection<RoomModel>();
 
             this.DeleteRoomCommand = new RelayCommand(this.RemoveRoom);
         }
@@ -40,7 +40,7 @@ namespace Project.ViewModels.DeleteViewModels
         /// <summary>
         /// Gets or sets the collection of rooms.
         /// </summary>
-        public ObservableCollection<Room> Rooms
+        public ObservableCollection<RoomModel> Rooms
         {
             get { return this.rooms; }
             set { this.SetProperty(ref this.rooms, value); }
@@ -137,7 +137,7 @@ namespace Project.ViewModels.DeleteViewModels
 
             if (success)
             {
-                this.Rooms = new ObservableCollection<Room>(this.roomModel.GetRooms() ?? Enumerable.Empty<Room>());
+                this.Rooms = new ObservableCollection<RoomModel>(this.roomModel.GetRooms() ?? Enumerable.Empty<RoomModel>());
             }
         }
 

@@ -1,19 +1,19 @@
-﻿namespace Project.ViewModels.UpdateViewModels
+﻿namespace Hospital.ViewModels.UpdateViewModels
 {
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Text;
     using System.Windows.Input;
-    using Project.ClassModels;
-    using Project.Models;
-    using Project.Utils;
+    using Hospital.DatabaseServices;
+    using Hospital.Models;
+    using Hospital.Utils;
 
     /// <summary>
     /// ViewModel for updating equipment.
     /// </summary>
     public class EquipmentUpdateViewModel : INotifyPropertyChanged
     {
-        private readonly EquipmentModel equipmentModel = new EquipmentModel();
+        private readonly EquipmentDatabaseService equipmentModel = new EquipmentDatabaseService();
         private string errorMessage = string.Empty;
 
         /// <summary>
@@ -33,7 +33,7 @@
         /// <summary>
         /// Gets or sets the collection of equipment.
         /// </summary>
-        public ObservableCollection<Equipment> Equipments { get; set; } = new ObservableCollection<Equipment>();
+        public ObservableCollection<EquipmentModel> Equipments { get; set; } = new ObservableCollection<EquipmentModel>();
 
         /// <summary>
         /// Gets or sets the error message.
@@ -59,7 +59,7 @@
         private void LoadEquipments()
         {
             this.Equipments.Clear();
-            foreach (Equipment equipment in this.equipmentModel.GetEquipments())
+            foreach (EquipmentModel equipment in this.equipmentModel.GetEquipments())
             {
                 this.Equipments.Add(equipment);
             }
@@ -73,7 +73,7 @@
             bool hasErrors = false;
             StringBuilder errorMessages = new StringBuilder();
 
-            foreach (Equipment equipment in this.Equipments)
+            foreach (EquipmentModel equipment in this.Equipments)
             {
                 if (!this.ValidateEquipment(equipment))
                 {
@@ -99,7 +99,7 @@
         /// </summary>
         /// <param name="equipment">The equipment to validate.</param>
         /// <returns>True if the equipment is valid, otherwise false.</returns>
-        private bool ValidateEquipment(Equipment equipment)
+        private bool ValidateEquipment(EquipmentModel equipment)
         {
             if (!System.Text.RegularExpressions.Regex.IsMatch(equipment.Name, @"^[a-zA-Z0-9 ]*$"))
             {

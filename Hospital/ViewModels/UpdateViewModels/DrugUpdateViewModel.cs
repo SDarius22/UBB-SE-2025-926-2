@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Project.ViewModels.UpdateViewModels
+namespace Hospital.ViewModels.UpdateViewModels
 {
     using System;
     using System.Collections.Generic;
@@ -18,16 +18,16 @@ namespace Project.ViewModels.UpdateViewModels
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Project.ClassModels;
-    using Project.Models;
-    using Project.Utils;
+    using Hospital.DatabaseServices;
+    using Hospital.Models;
+    using Hospital.Utils;
 
     /// <summary>
     /// ViewModel used for managing updates to drug records.
     /// </summary>
     public class DrugUpdateViewModel : INotifyPropertyChanged
     {
-        private readonly DrugModel drugModel = new DrugModel();
+        private readonly DrugsDatabaseService drugModel = new DrugsDatabaseService();
 
         private string errorMessage = string.Empty;
 
@@ -61,7 +61,7 @@ namespace Project.ViewModels.UpdateViewModels
         /// <summary>
         /// Gets or sets the collection of drugs to display.
         /// </summary>
-        public ObservableCollection<Drug> Drugs { get; set; } = new ObservableCollection<Drug>();
+        public ObservableCollection<DrugModel> Drugs { get; set; } = new ObservableCollection<DrugModel>();
 
         /// <summary>
         /// Loads the current list of drugs from the data model.
@@ -70,7 +70,7 @@ namespace Project.ViewModels.UpdateViewModels
         {
             this.Drugs.Clear();
 
-            foreach (Drug drug in this.drugModel.GetDrugs())
+            foreach (DrugModel drug in this.drugModel.GetDrugs())
             {
                 this.Drugs.Add(drug);
             }
@@ -84,7 +84,7 @@ namespace Project.ViewModels.UpdateViewModels
             bool hasErrors = false;
             StringBuilder errorMessages = new StringBuilder();
 
-            foreach (Drug drug in this.Drugs)
+            foreach (DrugModel drug in this.Drugs)
             {
                 if (!this.ValidateDrug(drug))
                 {
@@ -111,7 +111,7 @@ namespace Project.ViewModels.UpdateViewModels
         /// </summary>
         /// <param name="drug">The drug to validate.</param>
         /// <returns>True if valid; otherwise, false.</returns>
-        private bool ValidateDrug(Drug drug)
+        private bool ValidateDrug(DrugModel drug)
         {
             if (!System.Text.RegularExpressions.Regex.IsMatch(drug.Name, @"^[a-zA-Z0-9 ]*$"))
             {

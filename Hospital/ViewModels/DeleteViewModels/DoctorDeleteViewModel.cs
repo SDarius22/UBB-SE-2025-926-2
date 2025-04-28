@@ -6,23 +6,23 @@
 //   ViewModel for deleting doctors.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-namespace Project.ViewModels.DeleteViewModels
+namespace Hospital.ViewModels.DeleteViewModels
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Windows.Input;
-    using Project.ClassModels;
-    using Project.Models;
-    using Project.Utils;
+    using Hospital.DatabaseServices;
+    using Hospital.Models;
+    using Hospital.Utils;
 
     /// <summary>
     /// ViewModel for deleting doctors.
     /// </summary>
     public class DoctorDeleteViewModel : INotifyPropertyChanged
     {
-        private readonly DoctorModel doctorModel = new DoctorModel();
-        private ObservableCollection<Doctor> doctors;
+        private readonly DoctorsDatabaseService doctorModel = new DoctorsDatabaseService();
+        private ObservableCollection<DoctorJointModel> doctors;
         private int doctorID;
         private string errorMessage;
         private string messageColor = "Red";
@@ -33,11 +33,11 @@ namespace Project.ViewModels.DeleteViewModels
         public DoctorDeleteViewModel()
         {
             // Initialize non-nullable fields
-            this.doctors = new ObservableCollection<Doctor>();
+            this.doctors = new ObservableCollection<DoctorJointModel>();
             this.errorMessage = string.Empty;
 
             // Load doctors for the DataGrid
-            this.Doctors = new ObservableCollection<Doctor>(this.doctorModel.GetDoctors());
+            this.Doctors = new ObservableCollection<DoctorJointModel>(this.doctorModel.GetDoctors());
 
             this.DeleteDoctorCommand = new RelayCommand(this.RemoveDoctor);
 
@@ -48,7 +48,7 @@ namespace Project.ViewModels.DeleteViewModels
         /// <summary>
         /// Gets or sets the collection of doctors displayed in the view.
         /// </summary>
-        public ObservableCollection<Doctor> Doctors
+        public ObservableCollection<DoctorJointModel> Doctors
         {
             get { return this.doctors; }
             set { this.SetProperty(ref this.doctors, value); }
@@ -168,7 +168,7 @@ namespace Project.ViewModels.DeleteViewModels
 
             if (success)
             {
-                this.Doctors = new ObservableCollection<Doctor>(this.doctorModel.GetDoctors());
+                this.Doctors = new ObservableCollection<DoctorJointModel>(this.doctorModel.GetDoctors());
             }
         }
     }

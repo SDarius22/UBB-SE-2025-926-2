@@ -1,4 +1,4 @@
-namespace Project.ViewModels.AddViewModels
+namespace Hospital.ViewModels.AddViewModels
 {
     using System;
     using System.Collections.ObjectModel;

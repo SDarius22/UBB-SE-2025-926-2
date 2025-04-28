@@ -1,19 +1,19 @@
-﻿namespace Project.ViewModels.UpdateViewModels
+﻿namespace Hospital.ViewModels.UpdateViewModels
 {
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Text;
     using System.Windows.Input;
-    using Project.ClassModels;
-    using Project.Models;
-    using Project.Utils;
+    using Hospital.DatabaseServices;
+    using Hospital.Models;
+    using Hospital.Utils;
 
     /// <summary>
     /// ViewModel for updating departments.
     /// </summary>
     public class DepartmentUpdateViewModel : INotifyPropertyChanged
     {
-        private readonly DepartmentModel departmentModel = new DepartmentModel();
+        private readonly DepartmentsDatabaseService departmentModel = new DepartmentsDatabaseService();
         private string errorMessage = string.Empty;
 
         /// <summary>
@@ -33,7 +33,7 @@
         /// <summary>
         /// Gets or sets the collection of departments.
         /// </summary>
-        public ObservableCollection<Department> Departments { get; set; } = new ObservableCollection<Department>();
+        public ObservableCollection<DepartmentModel> Departments { get; set; } = new ObservableCollection<DepartmentModel>();
 
         /// <summary>
         /// Gets or sets the error message.
@@ -59,7 +59,7 @@
         private void LoadDepartments()
         {
             this.Departments.Clear();
-            foreach (Department department in this.departmentModel.GetDepartments())
+            foreach (DepartmentModel department in this.departmentModel.GetDepartments())
             {
                 this.Departments.Add(department);
             }
@@ -73,19 +73,19 @@
             bool hasErrors = false;
             StringBuilder errorMessages = new StringBuilder();
 
-            foreach (Department department in this.Departments)
+            foreach (DepartmentModel department in this.Departments)
             {
                 if (!this.ValidateDepartment(department))
                 {
                     hasErrors = true;
-                    errorMessages.AppendLine("Department " + department.DepartmentID + ": " + this.ErrorMessage);
+                    errorMessages.AppendLine("Department " + department.DepartmentId + ": " + this.ErrorMessage);
                 }
                 else
                 {
                     bool success = this.departmentModel.UpdateDepartment(department);
                     if (!success)
                     {
-                        errorMessages.AppendLine("Failed to save changes for department: " + department.DepartmentID);
+                        errorMessages.AppendLine("Failed to save changes for department: " + department.DepartmentId);
                         hasErrors = true;
                     }
                 }
@@ -99,9 +99,9 @@
         /// </summary>
         /// <param name="department">The department to validate.</param>
         /// <returns>True if the department is valid, otherwise false.</returns>
-        private bool ValidateDepartment(Department department)
+        private bool ValidateDepartment(DepartmentModel department)
         {
-            if (!System.Text.RegularExpressions.Regex.IsMatch(department.Name, @"^[a-zA-Z0-9 ]*$"))
+            if (!System.Text.RegularExpressions.Regex.IsMatch(department.DepartmentName, @"^[a-zA-Z0-9 ]*$"))
             {
                 this.ErrorMessage = "Department Name should contain only alphanumeric characters";
                 return false;

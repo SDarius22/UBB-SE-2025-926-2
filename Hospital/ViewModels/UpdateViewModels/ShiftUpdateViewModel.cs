@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Project.ViewModels.UpdateViewModels
+namespace Hospital.ViewModels.UpdateViewModels
 {
     using System;
     using System.Collections.Generic;
@@ -17,9 +17,9 @@ namespace Project.ViewModels.UpdateViewModels
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Project.ClassModels;
-    using Project.Models;
-    using Project.Utils;
+    using Hospital.DatabaseServices;
+    using Hospital.Models;
+    using Hospital.Utils;
 
     /// <summary>
     /// ViewModel for updating shifts.
@@ -29,7 +29,7 @@ namespace Project.ViewModels.UpdateViewModels
         /// <summary>
         /// The model for managing shifts.
         /// </summary>
-        private readonly ShiftModel shiftModel = new ();
+        private readonly ShiftsDatabaseService shiftModel = new ShiftsDatabaseService();
 
         /// <summary>
         /// The collection of shifts displayed in the view.
@@ -51,7 +51,7 @@ namespace Project.ViewModels.UpdateViewModels
         /// <summary>
         /// Gets or sets the ID of the shifts to be updated.
         /// </summary>
-        public ObservableCollection<Shift> Shifts { get; set; } = new ();
+        public ObservableCollection<ShiftModel> Shifts { get; set; } = new ();
 
         /// <summary>
         /// Gets or sets the error message to be displayed.
@@ -77,7 +77,8 @@ namespace Project.ViewModels.UpdateViewModels
         private void LoadShifts()
         {
             this.Shifts.Clear();
-            foreach (Shift shift in this.shiftModel.GetShifts())
+            var result = this.shiftModel.GetShifts().Result;
+            foreach (ShiftModel shift in result)
             {
                 this.Shifts.Add(shift);
             }
@@ -92,19 +93,19 @@ namespace Project.ViewModels.UpdateViewModels
 
             StringBuilder errorMessages = new StringBuilder();
 
-            foreach (Shift shift in this.Shifts)
+            foreach (ShiftModel shift in this.Shifts)
             {
                 if (!this.ValidateShift(shift))
                 {
                     hasErrors = true;
-                    errorMessages.AppendLine("Shift " + shift.ShiftID + ": " + this.ErrorMessage);
+                    errorMessages.AppendLine("Shift " + shift.ShiftId + ": " + this.ErrorMessage);
                 }
                 else
                 {
                     bool success = this.shiftModel.UpdateShift(shift);
                     if (!success)
                     {
-                        errorMessages.AppendLine("Failed to save changes for shift: " + shift.ShiftID);
+                        errorMessages.AppendLine("Failed to save changes for shift: " + shift.ShiftId);
                         hasErrors = true;
                     }
                 }
@@ -125,7 +126,7 @@ namespace Project.ViewModels.UpdateViewModels
         /// </summary>
         /// <param name="shift">Shift to be validated.</param>
         /// <returns>True if the shift is valid, false otherwise.</returns>
-        private bool ValidateShift(Shift shift)
+        private bool ValidateShift(ShiftModel shift)
         {
             if (shift.StartTime != new TimeSpan(8, 0, 0) && shift.StartTime != new TimeSpan(20, 0, 0))
             {

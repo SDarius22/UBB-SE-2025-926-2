@@ -7,23 +7,23 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Project.ViewModels.DeleteViewModels
+namespace Hospital.ViewModels.DeleteViewModels
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Windows.Input;
-    using Project.ClassModels;
-    using Project.Models;
-    using Project.Utils;
+    using Hospital.DatabaseServices;
+    using Hospital.Models;
+    using Hospital.Utils;
 
     /// <summary>
     /// ViewModel for managing the deletion of drugs.
     /// </summary>
     public class DrugDeleteViewModel : INotifyPropertyChanged
     {
-        private readonly DrugModel drugModel = new DrugModel();
-        private ObservableCollection<Drug> drugs;
+        private readonly DrugsDatabaseService drugModel = new DrugsDatabaseService();
+        private ObservableCollection<DrugModel> drugs;
         private int drugID;
         private string errorMessage;
         private string messageColor = "Red";
@@ -31,7 +31,7 @@ namespace Project.ViewModels.DeleteViewModels
         /// <summary>
         /// Gets or sets the collection of drugs displayed in the DataGrid.
         /// </summary>
-        public ObservableCollection<Drug> Drugs
+        public ObservableCollection<DrugModel> Drugs
         {
             get { return this.drugs; }
             set { this.SetProperty(ref this.drugs, value); }
@@ -95,11 +95,11 @@ namespace Project.ViewModels.DeleteViewModels
         public DrugDeleteViewModel()
         {
             // Initialize non-nullable fields
-            this.drugs = new ObservableCollection<Drug>();
+            this.drugs = new ObservableCollection<DrugModel>();
             this.errorMessage = string.Empty;
 
             // Load drugs for the DataGrid
-            this.Drugs = new ObservableCollection<Drug>(this.drugModel.GetDrugs());
+            this.Drugs = new ObservableCollection<DrugModel>(this.drugModel.GetDrugs());
 
             this.DeleteDrugCommand = new RelayCommand(this.RemoveDrug);
         }
@@ -135,7 +135,7 @@ namespace Project.ViewModels.DeleteViewModels
 
             if (success)
             {
-                this.Drugs = new ObservableCollection<Drug>(this.drugModel.GetDrugs());
+                this.Drugs = new ObservableCollection<DrugModel>(this.drugModel.GetDrugs());
             }
         }
 

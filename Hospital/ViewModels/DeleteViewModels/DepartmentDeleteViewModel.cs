@@ -1,20 +1,20 @@
-namespace Project.ViewModels.DeleteViewModels
+namespace Hospital.ViewModels.DeleteViewModels
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Windows.Input;
-    using Project.ClassModels;
-    using Project.Models;
-    using Project.Utils;
+    using Hospital.DatabaseServices;
+    using Hospital.Models;
+    using Hospital.Utils;
 
     /// <summary>
     /// ViewModel for deleting departments.
     /// </summary>
     public class DepartmentDeleteViewModel : INotifyPropertyChanged
     {
-        private readonly DepartmentModel departmentModel = new DepartmentModel();
-        private ObservableCollection<Department> departments;
+        private readonly DepartmentsDatabaseService departmentModel = new DepartmentsDatabaseService();
+        private ObservableCollection<DepartmentModel> departments;
         private int departmentID;
         private string errorMessage = string.Empty;
         private string messageColor = "Red";
@@ -25,7 +25,7 @@ namespace Project.ViewModels.DeleteViewModels
         public DepartmentDeleteViewModel()
         {
             // Load departments for the DataGrid
-            this.departments = new ObservableCollection<Department>(this.departmentModel.GetDepartments());
+            this.departments = new ObservableCollection<DepartmentModel>(this.departmentModel.GetDepartments());
             this.DeleteDepartmentCommand = new RelayCommand(this.RemoveDepartment);
         }
 
@@ -37,7 +37,7 @@ namespace Project.ViewModels.DeleteViewModels
         /// <summary>
         /// Gets or sets the collection of departments.
         /// </summary>
-        public ObservableCollection<Department> Departments
+        public ObservableCollection<DepartmentModel> Departments
         {
             get => this.departments;
             set => this.SetProperty(ref this.departments, value);
@@ -126,7 +126,7 @@ namespace Project.ViewModels.DeleteViewModels
 
             if (success)
             {
-                this.Departments = new ObservableCollection<Department>(this.departmentModel.GetDepartments());
+                this.Departments = new ObservableCollection<DepartmentModel>(this.departmentModel.GetDepartments());
             }
         }
 

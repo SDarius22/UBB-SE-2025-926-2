@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Project.ViewModel
+namespace Hospital.ViewModel
 {
     using System;
     using System.Collections.Generic;
@@ -18,17 +18,17 @@ namespace Project.ViewModel
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Project.ClassModels;
-    using Project.Models;
-    using Project.Utils;
+    using Hospital.DatabaseServices;
+    using Hospital.Models;
+    using Hospital.Utils;
 
     /// <summary>
     /// ViewModel for updating doctors in the system.
     /// </summary>
     public class DoctorUpdateViewModel : INotifyPropertyChanged
     {
-        private readonly DoctorModel doctorModel = new DoctorModel();
-        private readonly UserModel userModel = new UserModel();
+        private readonly DoctorsDatabaseService doctorModel = new DoctorsDatabaseService();
+        private readonly UserDatabaseService userModel = new UserDatabaseService();
         private string errorMessage = string.Empty;
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Project.ViewModel
         /// <summary>
         /// Gets the list of doctors to be displayed and updated.
         /// </summary>
-        public ObservableCollection<Doctor> Doctors { get; set; } = new ObservableCollection<Doctor>();
+        public ObservableCollection<DoctorJointModel> Doctors { get; set; } = new ObservableCollection<DoctorJointModel>();
 
         /// <summary>
         /// Loads the doctors from the model into the view model.
@@ -70,7 +70,7 @@ namespace Project.ViewModel
         {
             this.Doctors.Clear();
 
-            foreach (Doctor doctor in this.doctorModel.GetDoctors())
+            foreach (DoctorJointModel doctor in this.doctorModel.GetDoctors())
             {
                 this.Doctors.Add(doctor);
             }
@@ -84,19 +84,19 @@ namespace Project.ViewModel
             bool hasErrors = false;
             StringBuilder errorMessages = new StringBuilder();
 
-            foreach (Doctor doctor in this.Doctors)
+            foreach (DoctorJointModel doctor in this.Doctors)
             {
                 if (!this.ValidateDoctor(doctor))
                 {
                     hasErrors = true;
-                    errorMessages.AppendLine($"Doctor {doctor.DoctorID}: {this.ErrorMessage}");
+                    errorMessages.AppendLine($"Doctor {doctor.DoctorId}: {this.ErrorMessage}");
                 }
                 else
                 {
                     bool success = this.doctorModel.UpdateDoctor(doctor);
                     if (!success)
                     {
-                        errorMessages.AppendLine($"Failed to save changes for doctor: {doctor.DoctorID}");
+                        errorMessages.AppendLine($"Failed to save changes for doctor: {doctor.DoctorId}");
                         hasErrors = true;
                     }
                 }
@@ -110,24 +110,18 @@ namespace Project.ViewModel
         /// </summary>
         /// <param name="doctor">The doctor to validate.</param>
         /// <returns><c>true</c> if valid; otherwise, <c>false</c>.</returns>
-        private bool ValidateDoctor(Doctor doctor)
+        private bool ValidateDoctor(DoctorJointModel doctor)
         {
-            if (!this.userModel.UserExistsWithRole(doctor.UserID, "Doctor") ||
-                this.doctorModel.UserExistsInDoctors(doctor.UserID, doctor.DoctorID))
+            if (!this.userModel.UserExistsWithRole(doctor.UserId, "Doctor") ||
+                this.doctorModel.UserExistsInDoctors(doctor.UserId, doctor.DoctorId))
             {
                 this.ErrorMessage = "UserID doesn’t exist or has already been approved";
                 return false;
             }
 
-            if (!this.doctorModel.DoesDepartmentExist(doctor.DepartmentID))
+            if (!this.doctorModel.DoesDepartmentExist(doctor.DepartmentId))
             {
                 this.ErrorMessage = "DepartmentID doesn’t exist in the Departments Records";
-                return false;
-            }
-
-            if (doctor.Experience < 0)
-            {
-                this.ErrorMessage = "The experience provided should be a positive number";
                 return false;
             }
 
