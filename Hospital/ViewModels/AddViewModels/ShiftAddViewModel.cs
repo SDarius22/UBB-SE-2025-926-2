@@ -13,9 +13,9 @@ namespace Project.ViewModels.AddViewModels
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Windows.Input;
-    using Project.ClassModels;
-    using Project.Models;
-    using Project.Utils;
+    using Hospital.DatabaseServices;
+    using Hospital.Models;
+    using Hospital.Utils;
 
     /// <summary>
     /// ViewModel for adding shifts.
@@ -34,12 +34,12 @@ namespace Project.ViewModels.AddViewModels
         /// <summary>
         /// Gets or sets the collection of shifts displayed in the view.
         /// </summary>
-        public ObservableCollection<Shift> Shifts { get; set; } = new ();
+        public ObservableCollection<ShiftModel> Shifts { get; set; } = new ();
 
         /// <summary>
         /// Gets or sets the ID of the shift to be deleted.
         /// </summary>
-        public DateOnly Date
+        public DateTime Date
         {
             get => this.date;
             set
@@ -96,12 +96,12 @@ namespace Project.ViewModels.AddViewModels
         /// <summary>
         /// Gets or sets the model for managing shifts.
         /// </summary>
-        private readonly ShiftModel shiftModel = new ();
+        private readonly ShiftsDatabaseService shiftModel = new ShiftsDatabaseService();
         
         /// <summary>
         /// Gets or sets the model for managing doctors.
         /// </summary>
-        private DateOnly date;
+        private DateTime date;
         
         /// <summary>
         /// Gets or sets the start time of the shift.
@@ -124,7 +124,8 @@ namespace Project.ViewModels.AddViewModels
         private void LoadShifts()
         {
             this.Shifts.Clear();
-            foreach (Shift shift in this.shiftModel.GetShifts())
+            var list = this.shiftModel.GetShifts().Result;
+            foreach (ShiftModel shift in list)
             {
                 this.Shifts.Add(shift);
             }
@@ -135,13 +136,11 @@ namespace Project.ViewModels.AddViewModels
         /// </summary>
         private void SaveShift()
         {
-            var shift = new Shift
-            {
-                ShiftID = 0,
-                Date = this.Date,
-                StartTime = this.StartTime,
-                EndTime = this.EndTime,
-            };
+            var shift = new ShiftModel(
+                0,
+                this.Date,
+                this.StartTime,
+                this.EndTime);
 
             if (this.ValidateShift(shift))
             {
@@ -159,7 +158,7 @@ namespace Project.ViewModels.AddViewModels
         /// </summary>
         /// <param name="shift">The shift to validate.</param>
         /// <returns>True if the shift is valid, false otherwise.</returns>
-        private bool ValidateShift(Shift shift)
+        private bool ValidateShift(ShiftModel shift)
         {
             if (shift.StartTime != new TimeSpan(8, 0, 0) && shift.StartTime != new TimeSpan(20, 0, 0))
             {
