@@ -10,5 +10,13 @@ namespace Hospital.DatabaseServices
         Task<List<ScheduleModel>> GetSchedules();
         Task<List<ShiftModel>> GetShiftsByDoctorId(int doctorId);
         Task<List<ShiftModel>> GetDoctorDaytimeShifts(int doctorId);
+
+        public bool AddShift(ShiftModel shift);
+
+        public bool UpdateShift(ShiftModel shift);
+
+        public bool DoesShiftExist(int shiftID);
+
+        public bool DeleteShift(int shiftID);
     }
 }
