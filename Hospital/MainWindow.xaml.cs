@@ -172,22 +172,12 @@ namespace Hospital
 
     public sealed partial class MainWindow : Window
     {
-        private AdminMainPage? adminMainPage;
-
         public MainWindow()
         {
             this.InitializeComponent();
-        }
 
-        /// <summary>
-        /// Invoked when the application is launched.
-        /// </summary>
-        /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs args)
-        {
-            this.adminMainPage = new AdminMainPage();
-            this.adminMainPage.Activate();
+            // Set the content of MainWindow to AdminMainPage
+            this.Content = new AdminMainPage();
         }
-
     }
 }

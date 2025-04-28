@@ -1,9 +1,9 @@
-namespace Hospital
+namespace Hospital.Views
 {
     using System.Collections.ObjectModel;
     using Microsoft.UI.Xaml.Controls;
-    using Hospital.ClassModels;
     using Hospital.Models;
+    using Hospital.DatabaseServices;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -11,8 +11,8 @@ namespace Hospital
     ///
     public sealed partial class ScheduleAndShifts : Page
     {
-        private readonly ShiftModel shiftModel = new ();
-        private readonly ScheduleModel scheduleModel = new ();
+        private readonly ShiftsDatabaseService shiftModel = new ();
+        private readonly ScheduleDatabaseService scheduleModel = new ();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleAndShifts"/> class.
@@ -26,23 +26,23 @@ namespace Hospital
         /// <summary>
         /// Gets or Sets the Shifts.
         /// </summary>
-        public ObservableCollection<Shift> Shifts { get; set; } = new ();
+        public ObservableCollection<ShiftModel> Shifts { get; set; } = new ();
 
         /// <summary>
         /// Gets or Sets the Schedules.
         /// </summary>
-        public ObservableCollection<Schedule> Schedules { get; set; } = new ();
+        public ObservableCollection<ScheduleModel> Schedules { get; set; } = new ();
 
         private void Load()
         {
             this.Shifts.Clear();
-            foreach (Shift shift in this.shiftModel.GetShifts())
+            foreach (ShiftModel shift in this.shiftModel.GetShifts())
             {
                 this.Shifts.Add(shift);
             }
 
             this.Schedules.Clear();
-            foreach (Schedule schedule in this.scheduleModel.GetSchedules())
+            foreach (ScheduleModel schedule in this.scheduleModel.GetSchedules())
             {
                 this.Schedules.Add(schedule);
             }

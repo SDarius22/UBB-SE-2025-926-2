@@ -22,26 +22,26 @@ namespace Hospital
     using Microsoft.UI.Xaml.Input;
     using Microsoft.UI.Xaml.Media;
     using Microsoft.UI.Xaml.Navigation;
-    using Hospital.ClassModels;
     using Hospital.Models;
     using Windows.Foundation;
     using Windows.Foundation.Collections;
+    using Hospital.DatabaseServices;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class Drugs : Page
+    public sealed partial class DrugsPage : Page
     {
         /// <summary>
         /// Gets the collection of drugs to be displayed.
         /// </summary>
-        public ObservableCollection<Drug> DrugsList { get; set; } = new ();
-        private readonly DrugModel drugModel = new ();
+        public ObservableCollection<DrugModel> DrugsList { get; set; } = new ();
+        private readonly DrugsDatabaseService drugModel = new ();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Drugs"/> class.
         /// </summary>
-        public Drugs()
+        public DrugsPage()
         {
             this.InitializeComponent();
             this.Load();
@@ -53,7 +53,7 @@ namespace Hospital
         private void Load()
         {
             this.DrugsList.Clear();
-            foreach (Drug drug in this.drugModel.GetDrugs())
+            foreach (DrugModel drug in this.drugModel.GetDrugs())
             {
                 this.DrugsList.Add(drug);
             }

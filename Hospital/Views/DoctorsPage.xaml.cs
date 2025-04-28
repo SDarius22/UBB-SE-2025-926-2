@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace Hospital
+namespace Hospital.Views
 {
     using System.IO;
     using System.Linq;
@@ -24,10 +24,10 @@ namespace Hospital
     using Microsoft.UI.Xaml.Input;
     using Microsoft.UI.Xaml.Media;
     using Microsoft.UI.Xaml.Navigation;
-    using Hospital.ClassModels;
     using Hospital.Models;
     using Windows.Foundation;
     using Windows.Foundation.Collections;
+    using Hospital.DatabaseServices;
 
     /// <summary>
     /// A page that displays a list of doctors with sorting and search functionality.
@@ -37,9 +37,9 @@ namespace Hospital
         /// <summary>
         /// Gets or sets the list of doctors.
         /// </summary>
-        public ObservableCollection<Doctor> Doctors { get; set; } = new ();
+        public ObservableCollection<DoctorJointModel> Doctors { get; set; } = new ();
 
-        private DoctorModel doctorModel = new ();
+        private DoctorsDatabaseService doctorModel = new ();
 
         private Dictionary<string, ListSortDirection> sortingStates = new ()
         {
@@ -69,9 +69,9 @@ namespace Hospital
         private void LoadDoctors()
         {
             this.Doctors.Clear();
-            List<Doctor> doctorsList = this.doctorModel.GetDoctors();
+            List<DoctorJointModel> doctorsList = this.doctorModel.GetDoctors();
 
-            foreach (Doctor doctor in doctorsList)
+            foreach (DoctorJointModel doctor in doctorsList)
             {
                 this.Doctors.Add(doctor);
             }
@@ -90,7 +90,7 @@ namespace Hospital
         /// </summary>
         private void MoreInfoClick(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.Tag is Doctor doctor)
+            if (sender is Button button && button.Tag is DoctorJointModel doctor)
             {
                 this.Frame.Navigate(typeof(DoctorInfoPage), doctor);
             }
@@ -137,24 +137,24 @@ namespace Hospital
         /// <summary>
         /// Sorts the doctor list based on a given field and direction.
         /// </summary>
-        private ObservableCollection<Doctor> SortDoctors(ObservableCollection<Doctor> doctors, string field, ListSortDirection direction)
+        private ObservableCollection<DoctorJointModel> SortDoctors(ObservableCollection<DoctorJointModel> doctors, string field, ListSortDirection direction)
         {
-            List<Doctor> sortedDoctors = doctors.ToList();
+            List<DoctorJointModel> sortedDoctors = doctors.ToList();
 
             if (field == "DoctorID")
             {
                 sortedDoctors = direction == ListSortDirection.Ascending
-                    ? sortedDoctors.OrderBy(x => x.DoctorID).ToList()
-                    : sortedDoctors.OrderByDescending(x => x.DoctorID).ToList();
+                    ? sortedDoctors.OrderBy(x => x.DoctorId).ToList()
+                    : sortedDoctors.OrderByDescending(x => x.DoctorId).ToList();
             }
             else if (field == "Rating")
             {
                 sortedDoctors = direction == ListSortDirection.Ascending
-                    ? sortedDoctors.OrderBy(x => x.Rating).ToList()
-                    : sortedDoctors.OrderByDescending(x => x.Rating).ToList();
+                    ? sortedDoctors.OrderBy(x => x.DoctorRating).ToList()
+                    : sortedDoctors.OrderByDescending(x => x.DoctorRating).ToList();
             }
 
-            return new ObservableCollection<Doctor>(sortedDoctors);
+            return new ObservableCollection<DoctorJointModel>(sortedDoctors);
         }
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace Hospital
                 return;
             }
 
-            var filteredDoctors = this.Doctors.Where(doctor => doctor.UserID.ToString().Contains(search)).ToList();
+            var filteredDoctors = this.Doctors.Where(doctor => doctor.UserId.ToString().Contains(search)).ToList();
 
             if (filteredDoctors.Count == 0)
             {

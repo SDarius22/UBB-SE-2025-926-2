@@ -20,8 +20,8 @@
   <ItemGroup>
     <Page Remove="Views\AdminMainPage.xaml" />
     <Page Remove="Views\DoctorInfoPage.xaml" />
-    <Page Remove="Views\Doctors.xaml" />
-    <Page Remove="Views\Drugs.xaml" />
+    <Page Remove="Views\DoctorsPage.xaml" />
+    <Page Remove="Views\DrugsPage.xaml" />
     <Page Remove="Views\EquipmentPage.xaml" />
     <Page Remove="Views\HomePage.xaml" />
     <Page Remove="Views\LoginPage.xaml" />
@@ -53,6 +53,7 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -72,10 +73,10 @@
     <None Update="Views\DoctorInfoPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
-    <None Update="Views\Doctors.xaml">
+    <None Update="Views\DoctorsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
-    <None Update="Views\Drugs.xaml">
+    <None Update="Views\DrugsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
     <None Update="Views\EquipmentPage.xaml">

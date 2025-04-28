@@ -13,6 +13,8 @@ namespace Hospital.Models
         public float NumberStars { get; set; }
         public string Motivation { get; set; }
 
+        public RatingModel() { }
+
         public RatingModel(int ratingId, int medicalRecordId, float numberStars, string motivation)
         {
             RatingId = ratingId;

@@ -12,7 +12,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Hospital.ViewModel;
+using Hospital.ViewModels;
 using Hospital.ViewModels.DeleteViewModels;
 
 // To learn more about WinUI, the WinUI Hospital structure,

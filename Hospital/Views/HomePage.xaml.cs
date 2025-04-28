@@ -1,4 +1,4 @@
-namespace Hospital
+namespace Hospital.Views
 {
     using Microsoft.UI.Xaml.Controls;
 

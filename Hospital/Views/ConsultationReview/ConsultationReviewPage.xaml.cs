@@ -1,12 +1,12 @@
-namespace Hospital.ConsultationReview
+namespace Hospital.Views.ConsultationReview
 {
     using System;
     using Microsoft.UI;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Media;
-    using Hospital.ClassModels;
     using Hospital.Models;
+    using Hospital.DatabaseServices;
 
     /// <summary>
     /// ConsultationReview Page.
@@ -16,7 +16,7 @@ namespace Hospital.ConsultationReview
         private int reviewID;
         private int selectedRating = 0;
         private int medicalRecordID;
-        private ReviewModel reviewModel = new ();
+        private RatingDatabaseService reviewModel = new ();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConsultationReviewPage"/> class.
@@ -82,13 +82,13 @@ namespace Hospital.ConsultationReview
 
             if (this.FeedbackError.Visibility == Visibility.Collapsed && this.RatingError.Visibility == Visibility.Collapsed)
             {
-                Review review = new Review(
-                    reviewID: 0,
-                    medicalRecordID: this.medicalRecordID,
-                    text: this.FeedbackTextBox.Text,
-                    nrStars: this.selectedRating);
+                RatingModel review = new RatingModel(
+                    ratingId: 0,
+                    medicalRecordId: this.medicalRecordID,
+                    motivation: this.FeedbackTextBox.Text,
+                    numberStars: this.selectedRating);
 
-                bool isSuccess = this.reviewModel.AddReview(review);
+                bool isSuccess = this.reviewModel.AddRating(review);
 
                 if (isSuccess)
                 {

@@ -15,6 +15,8 @@ namespace Hospital.Models
         public string LicenseNumber { get; set; }
         public string DoctorName { get; set; } // DOESN'T EXIST IN THE DATABASE
 
+        public DoctorJointModel() { }
+
         public DoctorJointModel(int doctorId, int userId, string doctorName, int departmentId, double rating, string licenseNumber)
         {
             DoctorId = doctorId;
@@ -23,6 +25,15 @@ namespace Hospital.Models
             DoctorRating = rating;
             LicenseNumber = licenseNumber;
             DoctorName = doctorName;
+        }
+
+        public DoctorJointModel(int doctorId, int userId, int departmentId, double rating, string licenseNumber)
+        {
+            DoctorId = doctorId;
+            UserId = userId;
+            DepartmentId = departmentId;
+            DoctorRating = rating;
+            LicenseNumber = licenseNumber;
         }
 
     }

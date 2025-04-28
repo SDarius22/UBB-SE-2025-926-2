@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -17,6 +18,7 @@ namespace Hospital.DatabaseServices
         public bool AddRating(RatingModel rating);
 
         public bool RemoveRating(int ratingId);
+
 
     }
 }

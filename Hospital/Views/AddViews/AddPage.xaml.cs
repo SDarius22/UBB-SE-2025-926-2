@@ -13,12 +13,12 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Hospital.ModifyViews;
-using Hospital.AddViews;
+using Hospital.Views.AddViews;
 
 // To learn more about WinUI, the WinUI Hospital structure,
 // and more about our Hospital templates, see: http://aka.ms/winui-Hospital-info.
 
-namespace Hospital
+namespace Hospital.Views
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

@@ -1,5 +1,6 @@
 ﻿using Hospital.Models;
 using Hospital.DatabaseServices;
+using Hospital.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 using Hospital.Managers;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using Hospital.Commands;
+
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Hospital.Views;

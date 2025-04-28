@@ -12,10 +12,13 @@ namespace Hospital.Models
 
         public int ShiftId { get; set; }
 
-        public ScheduleModel(int doctorId, int shiftId)
+        public int ScheduleId { get; set; }
+
+        public ScheduleModel(int doctorId, int shiftId, int scheduleId)
         {
             DoctorId = doctorId;
             ShiftId = shiftId;
+            ScheduleId = scheduleId;
         }
     }
 }

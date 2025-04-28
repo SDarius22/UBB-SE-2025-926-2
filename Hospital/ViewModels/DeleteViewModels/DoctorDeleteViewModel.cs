@@ -111,6 +111,7 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// </summary>
         public event PropertyChangedEventHandler? PropertyChanged;
 
+
         /// <summary>
         /// Raises the <see cref="PropertyChanged"/> event for the specified property.
         /// </summary>
