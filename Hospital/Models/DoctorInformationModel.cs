@@ -14,7 +14,7 @@ namespace Hospital.Models
     /// <summary>
     /// Represents information about a doctor.
     /// </summary>
-    public class DoctorInformation
+    public class DoctorInformationModel
     {
         /// <summary>
         /// Gets or sets the user ID.
@@ -76,10 +76,6 @@ namespace Hospital.Models
         /// </summary>
         public string LicenseNumber { get; set; }
 
-        /// <summary>
-        /// Gets or sets the years of experience of the doctor.
-        /// </summary>
-        public float Experience { get; set; }
 
         /// <summary>
         /// Gets or sets the rating of the doctor.
@@ -97,7 +93,7 @@ namespace Hospital.Models
         public string DepartmentName { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DoctorInformation"/> class.
+        /// Initializes a new instance of the <see cref="DoctorInformationModel"/> class.
         /// </summary>
         /// <param name="userID">The user ID.</param>
         /// <param name="username">The username.</param>
@@ -111,11 +107,10 @@ namespace Hospital.Models
         /// <param name="registrationDate">The registration date of the doctor.</param>
         /// <param name="doctorID">The doctor ID.</param>
         /// <param name="licenseNumber">The license number of the doctor.</param>
-        /// <param name="experience">The years of experience of the doctor.</param>
         /// <param name="rating">The rating of the doctor.</param>
         /// <param name="departmentID">The department ID.</param>
         /// <param name="departmentName">The name of the department.</param>
-        public DoctorInformation(
+        public DoctorInformationModel(
     int userID,
     string username,
     string mail,
@@ -128,7 +123,6 @@ namespace Hospital.Models
     DateTime registrationDate,
     int doctorID,
     string licenseNumber,
-    float experience,
     float rating,
     int departmentID,
     string departmentName)
@@ -145,7 +139,6 @@ namespace Hospital.Models
             this.RegistrationDate = registrationDate;
             this.DoctorID = doctorID;
             this.LicenseNumber = licenseNumber;
-            this.Experience = experience;
             this.Rating = rating;
             this.DepartmentID = departmentID;
             this.DepartmentName = departmentName;
