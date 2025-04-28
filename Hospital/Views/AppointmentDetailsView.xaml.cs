@@ -10,7 +10,6 @@ using WinRT.Interop;
 using Windows.Graphics;
 using Hospital.Exceptions;
 
-
 namespace Hospital.Views
 {
     public sealed partial class AppointmentDetailsView : Window
@@ -45,7 +44,6 @@ namespace Hospital.Views
                     int screenWidth = displayArea.WorkArea.Width;
                     int screenHeight = displayArea.WorkArea.Height;
 
-
                     int centerX = (screenWidth - width) / 2;
                     int centerY = (screenHeight - height) / 2;
 
@@ -67,7 +65,6 @@ namespace Hospital.Views
             CancelAppointmentDisabledButton.Visibility = _viewModel.CanCancelAppointment ? Visibility.Collapsed : Visibility.Visible;
         }
 
-
         private void GoBack_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -82,7 +79,7 @@ namespace Hospital.Views
                 PrimaryButtonText = "Yes",
                 CloseButtonText = "No",
                 DefaultButton = ContentDialogButton.Close,
-                XamlRoot = this.Content.XamlRoot
+                XamlRoot = this.Content.XamlRoot,
             };
 
             ContentDialogResult result = await confirmationDialog.ShowAsync();
@@ -99,14 +96,13 @@ namespace Hospital.Views
                         Title = "Cancellation Failed",
                         Content = ex.Message,
                         CloseButtonText = "OK",
-                        XamlRoot = this.Content.XamlRoot
+                        XamlRoot = this.Content.XamlRoot,
                     };
 
                     await errorDialog.ShowAsync();
                 }
             }
         }
-
 
         private void CloseWindow()
         {

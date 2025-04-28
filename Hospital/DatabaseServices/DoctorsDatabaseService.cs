@@ -48,7 +48,6 @@
 
                 SqlDataReader reader = await selectDoctorsCommand.ExecuteReaderAsync().ConfigureAwait(false);
 
-
                 // Prepare the list of doctors
                 List<DoctorJointModel> doctorsList = new List<DoctorJointModel>();
 

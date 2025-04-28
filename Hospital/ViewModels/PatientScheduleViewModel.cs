@@ -96,7 +96,7 @@ namespace Hospital.ViewModels
                     TimeSlot = startTime,
                     Time = startTime.ToString("hh:mm tt"),
                     Appointment = "",
-                    HighlightStatus = "None"
+                    HighlightStatus = "None",
                 });
 
                 startTime = startTime.AddMinutes(30);

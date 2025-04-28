@@ -92,7 +92,7 @@ namespace HospitalTest
             Assert.That(connectionString, Does.Contain("Data Source=DESKTOP-H700VKM\\MSSQLSERVER02;Initial Catalog=HospitalDB;Integrated Security=True;TrustServerCertificate=True"));
             Assert.That(connectionString, Does.Contain("Data Source=DESKTOP-H700VKM\\MSSQLSERVER02;Initial Catalog=HospitalDB;Integrated Security=True;TrustServerCertificate=True"));
         }
-        
+
         #endregion
 
         #region GetDepartmentsFromDataBase Tests
@@ -140,8 +140,8 @@ namespace HospitalTest
                 var departmentIds = new HashSet<int>();
                 foreach (var department in result)
                 {
-                    Assert.That(departmentIds.Add(department.DepartmentId), 
-                        Is.True, 
+                    Assert.That(departmentIds.Add(department.DepartmentId),
+                        Is.True,
                         $"Duplicate department ID found: {department.DepartmentId}");
                 }
             });
@@ -159,13 +159,13 @@ namespace HospitalTest
                 foreach (var department in result)
                 {
                     // Check department name format
-                    Assert.That(department.DepartmentName, Does.Match(@"^[A-Za-z\s\-]+$"), 
+                    Assert.That(department.DepartmentName, Does.Match(@"^[A-Za-z\s\-]+$"),
                         $"Department name '{department.DepartmentName}' contains invalid characters");
-                    
+
                     // Check department name length
-                    Assert.That(department.DepartmentName.Length, Is.AtLeast(2), 
+                    Assert.That(department.DepartmentName.Length, Is.AtLeast(2),
                         $"Department name '{department.DepartmentName}' is too short");
-                    Assert.That(department.DepartmentName.Length, Is.AtMost(100), 
+                    Assert.That(department.DepartmentName.Length, Is.AtMost(100),
                         $"Department name '{department.DepartmentName}' is too long");
                 }
             });
@@ -181,9 +181,9 @@ namespace HospitalTest
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(firstResult.Count, Is.EqualTo(secondResult.Count), 
+                Assert.That(firstResult.Count, Is.EqualTo(secondResult.Count),
                     "Number of departments should be consistent between calls");
-               
+
                 // Check if the order is consistent
                 for (int i = 0; i < firstResult.Count; i++)
                 {
@@ -205,7 +205,7 @@ namespace HospitalTest
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null, "Result should not be null");
-                Assert.That((endTime - startTime).TotalSeconds, Is.LessThan(5), 
+                Assert.That((endTime - startTime).TotalSeconds, Is.LessThan(5),
                     "Query execution took too long");
             });
         }
@@ -350,12 +350,12 @@ public class DirectDepartmentsDatabaseServiceTests
             new DepartmentModel(3, "Test Department 3")
         };
 
-        
+
         mockDatabaseService.Setup(ds => ds.GetDepartmentsFromDataBase())
             .ReturnsAsync(departments);
-        
+
         var service = new DepartmentsDatabaseService(mockDatabaseService.Object);
-        
+
         // Act
         var result = await service.GetDepartmentsFromDataBase();
 

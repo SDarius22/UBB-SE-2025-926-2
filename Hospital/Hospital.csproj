@@ -17,6 +17,18 @@
     <None Remove="Views\MedicalRecordDetailsView.xaml" />
     <None Remove="Views\MedicalRecordsHistoryView.xaml" />
   </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Views\AdminMainPage.xaml" />
+    <Page Remove="Views\DoctorInfoPage.xaml" />
+    <Page Remove="Views\Doctors.xaml" />
+    <Page Remove="Views\Drugs.xaml" />
+    <Page Remove="Views\EquipmentPage.xaml" />
+    <Page Remove="Views\HomePage.xaml" />
+    <Page Remove="Views\LoginPage.xaml" />
+    <Page Remove="Views\RoomAndDepartments.xaml" />
+    <Page Remove="Views\ScheduleAndShifts.xaml" />
+    <Page Remove="Views\TestPage.xaml" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -52,6 +64,38 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Views\AdminMainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Views\DoctorInfoPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Views\Doctors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Views\Drugs.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Views\EquipmentPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Views\HomePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Views\LoginPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Views\RoomAndDepartments.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Views\ScheduleAndShifts.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Views\TestPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\MedicalRecordDetailsView.xaml">

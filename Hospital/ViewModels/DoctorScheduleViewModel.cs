@@ -42,12 +42,10 @@ namespace Hospital.ViewModels
 
         public ICommand OpenDetailsCommand { get; set; }
 
-
         private const int TimeSlotIntervalInMinutes = 30; // The time interval for each slot (in minutes)
 
         private const int DefaultDoctorId = 1; // Default ID for testing
         public int DoctorId { get; set; } = DefaultDoctorId;
-
 
         private DateTimeOffset _minimumDateForSelectingAppointment;
         public DateTimeOffset MinimumDateForSelectingAppointment
@@ -106,8 +104,6 @@ namespace Hospital.ViewModels
 
             SelectedSlot = selectedSlot;
         }
-
-
 
         public async Task LoadAppointmentsForDoctor()
         {
@@ -178,8 +174,6 @@ namespace Hospital.ViewModels
                 throw new Exception($"Database access failed: {exception.Message}");
             }
         }
-
-
 
     }
 }

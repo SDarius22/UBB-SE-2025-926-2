@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Hospital Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 	  <TargetFramework>net8.0-windows10.0.19041</TargetFramework>
@@ -7,7 +7,7 @@
 
     <IsPackable>false</IsPackable>
 	<CollectCoverage>true</CollectCoverage>
-    <IsTestProject>true</IsTestProject>
+    <IsTestHospital>true</IsTestHospital>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
@@ -21,11 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Hospital\Hospital.csproj" />
+    <HospitalReference Include="..\Hospital\Hospital.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="NUnit.Framework" />
   </ItemGroup>
 
-</Project>
+</Hospital>

@@ -42,7 +42,6 @@ namespace Hospital.DatabaseServices
 
                 object result = await insertMedicalRecordCommand.ExecuteScalarAsync().ConfigureAwait(false);
 
-
                 int medicalRecordId = result != null ? Convert.ToInt32(result) : -1;
                 return medicalRecordId;
             }
@@ -109,11 +108,9 @@ namespace Hospital.DatabaseServices
                         reader.GetInt32(7),     // ProcedureId
                         reader.GetString(8),    // ProcedureName
                         reader.GetDateTime(9),  // Date
-                        reader.GetString(10)    // Conclusion
-                    ));
+                        reader.GetString(10))    // Conclusion
+                    );
                 }
-
-
 
                 if (medicalRecords.Count == 0)
                 {
@@ -184,8 +181,7 @@ namespace Hospital.DatabaseServices
                         reader.GetInt32(7),     // ProcedureId
                         reader.GetString(8),    // ProcedureName
                         reader.GetDateTime(9),  // Date
-                        reader.GetString(10)     // Conclusion
-                    );
+                        reader.GetString(10));     // Conclusion
                 }
 
                 if (medicalRecord == null)
@@ -257,8 +253,8 @@ namespace Hospital.DatabaseServices
                         reader.GetInt32(7),     // ProcedureId
                         reader.GetString(8),    // ProcedureName
                         reader.GetDateTime(9),  // Date
-                        reader.GetString(10)    // Conclusion
-                    ));
+                        reader.GetString(10))    // Conclusion
+                    );
                 }
 
                 if (medicalRecords.Count == 0)

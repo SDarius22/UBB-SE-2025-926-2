@@ -24,7 +24,7 @@ namespace Hospital.Managers
         {
             return Appointments;
         }
-        
+
         public async Task LoadDoctorAppointmentsOnDate(int doctorId, DateTime date)
         {
             try
@@ -49,9 +49,7 @@ namespace Hospital.Managers
                     .ConfigureAwait(false);
 
                 Appointments = new List<AppointmentJointModel>(
-                    appointments.Where(appointment => appointment.DateAndTime > DateTime.Now && !appointment.Finished)
-                );
-
+                    appointments.Where(appointment => appointment.DateAndTime > DateTime.Now && !appointment.Finished));
 
                 foreach (AppointmentJointModel appointment in Appointments)
                 {

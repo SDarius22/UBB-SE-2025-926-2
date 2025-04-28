@@ -12,7 +12,6 @@ namespace Hospital.Models
         public int MedicalRecordId { get; set; }
         public string Files { get; set; }
 
-
         public DocumentModel(int documentId, int medicalRecordId, string files)
         {
             DocumentId = documentId;

@@ -32,14 +32,12 @@ namespace Hospital.Views
             this.rootGrid.DataContext = _viewModel;
         }
 
-
-
         private async void UploadFiles_Click(object sender, RoutedEventArgs e)
         {
             var picker = new FileOpenPicker
             {
                 ViewMode = PickerViewMode.Thumbnail,
-                FileTypeFilter = { ".jpg", ".png", ".pdf", ".docx" }
+                FileTypeFilter = { ".jpg", ".png", ".pdf", ".docx" },
             };
 
             // Get the window's HWND
@@ -86,7 +84,6 @@ namespace Hospital.Views
             }
         }
 
-
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -98,7 +95,7 @@ namespace Hospital.Views
                 Title = "Success",
                 Content = message,
                 CloseButtonText = "OK",
-                XamlRoot = this.Content.XamlRoot
+                XamlRoot = this.Content.XamlRoot,
             };
             await successDialog.ShowAsync();
         }
@@ -109,7 +106,7 @@ namespace Hospital.Views
                 Title = "Error",
                 Content = message,
                 CloseButtonText = "OK",
-                XamlRoot = this.Content.XamlRoot
+                XamlRoot = this.Content.XamlRoot,
             };
             await errorDialog.ShowAsync();
         }

@@ -29,7 +29,6 @@ namespace Hospital.ViewModels
 
         public string ProcedureDuration { get; private set; }
 
-
         private bool _canCancelAppointment;
 
         public bool CanCancelAppointment
@@ -69,8 +68,7 @@ namespace Hospital.ViewModels
 
             CancelAppointmentCommand = new RelayCommand(
                 async _ => await CancelAppointment(),
-                _ => CanCancelAppointment
-            );
+                _ => CanCancelAppointment);
         }
 
         public DateTime AppointmentDateTime => _appointment.DateAndTime;

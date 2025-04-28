@@ -76,7 +76,7 @@ namespace Hospital.Views
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     VerticalAlignment = VerticalAlignment.Top,
                     BorderBrush = new SolidColorBrush(Colors.Green),
-                    BorderThickness = new Thickness(2)
+                    BorderThickness = new Thickness(2),
                 };
 
                 newCalendar.CalendarViewDayItemChanging += CalendarView_DayItemChanging;
@@ -162,7 +162,7 @@ namespace Hospital.Views
             {
                 Title = "Appointment Info",
                 XamlRoot = this.Content.XamlRoot,
-                RequestedTheme = ElementTheme.Default
+                RequestedTheme = ElementTheme.Default,
             };
 
             var dialogContent = new StackPanel();
@@ -170,7 +170,7 @@ namespace Hospital.Views
             {
                 Text = message,
                 TextWrapping = TextWrapping.Wrap,
-                Margin = new Thickness(0, 0, 0, 20)
+                Margin = new Thickness(0, 0, 0, 20),
             });
 
             var buttonPanel = CreateAppointmentButtonPanel(appointment, dialog);
@@ -187,7 +187,7 @@ namespace Hospital.Views
             {
                 Orientation = Orientation.Horizontal,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Spacing = 10
+                Spacing = 10,
             };
 
             var createRecordBtn = new Button { Content = "Create Medical Record" };
@@ -231,7 +231,7 @@ namespace Hospital.Views
                 Content = $"No appointments scheduled in this shift slot.\nTime: {slot.Time}",
                 CloseButtonText = "OK",
                 XamlRoot = this.Content.XamlRoot,
-                RequestedTheme = ElementTheme.Default
+                RequestedTheme = ElementTheme.Default,
             };
 
             await dialog.ShowAsync();
@@ -246,7 +246,7 @@ namespace Hospital.Views
                     Title = "Error",
                     Content = message,
                     CloseButtonText = "OK",
-                    RequestedTheme = ElementTheme.Default
+                    RequestedTheme = ElementTheme.Default,
                 };
 
                 if (this.Content is FrameworkElement rootElement)

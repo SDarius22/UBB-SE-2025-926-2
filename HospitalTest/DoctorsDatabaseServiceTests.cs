@@ -105,13 +105,13 @@ namespace HospitalTest
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null, "Result should not be null");
-                
+
                 // Check for duplicate doctor IDs
                 var doctorIds = new HashSet<int>();
                 foreach (var doctor in result)
                 {
-                    Assert.That(doctorIds.Add(doctor.DoctorId), 
-                        Is.True, 
+                    Assert.That(doctorIds.Add(doctor.DoctorId),
+                        Is.True,
                         $"Duplicate doctor ID found: {doctor.DoctorId}");
                 }
             });
@@ -140,17 +140,17 @@ namespace HospitalTest
                 foreach (var doctor in result)
                 {
                     // Check doctor name format
-                    Assert.That(doctor.DoctorName, Is.Not.Empty, 
+                    Assert.That(doctor.DoctorName, Is.Not.Empty,
                         $"Doctor name should not be empty for ID: {doctor.DoctorId}");
-                    
+
                     // Check license number format
-                    Assert.That(doctor.LicenseNumber, Is.Not.Empty, 
+                    Assert.That(doctor.LicenseNumber, Is.Not.Empty,
                         $"License number should not be empty for ID: {doctor.DoctorId}");
-                    
+
                     // Check rating range
-                    Assert.That(doctor.DoctorRating, Is.GreaterThanOrEqualTo(0), 
+                    Assert.That(doctor.DoctorRating, Is.GreaterThanOrEqualTo(0),
                         $"Doctor rating should be non-negative for ID: {doctor.DoctorId}");
-                    Assert.That(doctor.DoctorRating, Is.LessThanOrEqualTo(5), 
+                    Assert.That(doctor.DoctorRating, Is.LessThanOrEqualTo(5),
                         $"Doctor rating should not exceed 5 for ID: {doctor.DoctorId}");
                 }
             });
@@ -179,7 +179,7 @@ namespace HospitalTest
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null, "Result should not be null");
-                Assert.That((endTime - startTime).TotalSeconds, Is.LessThan(5), 
+                Assert.That((endTime - startTime).TotalSeconds, Is.LessThan(5),
                     "Query execution took too long");
             });
         }
@@ -230,10 +230,10 @@ namespace HospitalTest
             // Arrange
             var testService = new MockDoctorsDatabaseService();
             int departmentId = 1;
-            
+
             // Act
             var result = await testService.GetDoctorsByDepartment(departmentId);
-            
+
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(2));
@@ -250,7 +250,7 @@ namespace HospitalTest
         {
             // Simulate database access without actually connecting to a database
             await Task.Delay(10); // Simulate network delay
-            
+
             // Return test data
             return new List<DoctorJointModel>
             {
@@ -270,10 +270,10 @@ namespace HospitalTest
             // Arrange
             var mockService = new MockDoctorsDatabaseService();
             int departmentId = 1;
-            
+
             // Act
             var result = await mockService.GetDoctorsByDepartment(departmentId);
-            
+
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(2));
@@ -364,7 +364,7 @@ namespace HospitalTest
             // Arrange
             var service = new DoctorsDatabaseService();
             int departmentId = 1;
-            
+
             // Act
             List<DoctorJointModel>? result = null;
             try
@@ -381,7 +381,7 @@ namespace HospitalTest
                 };
                 Console.WriteLine($"Database connection failed: {ex.Message}");
             }
-            
+
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.GreaterThan(0));
@@ -393,7 +393,7 @@ namespace HospitalTest
             // Arrange
             var service = new DoctorsDatabaseService();
             int[] departmentIds = { 1, 2, 3, 4, 5 };
-            
+
             // Act & Assert
             foreach (int departmentId in departmentIds)
             {
@@ -413,7 +413,7 @@ namespace HospitalTest
                         new DoctorJointModel(2, 102, "Test Doctor 2", departmentId, 4.8, "LIC456")
                     };
                     Console.WriteLine($"Database connection failed for department {departmentId}: {ex.Message}");
-                    
+
                     Assert.That(result, Is.Not.Null, $"Mock result for department {departmentId} should not be null");
                     Assert.That(result.Count, Is.EqualTo(2), $"Mock result for department {departmentId} should have 2 doctors");
                 }
@@ -426,7 +426,7 @@ namespace HospitalTest
             // Arrange
             var service = new DoctorsDatabaseService();
             int negativeDepartmentId = -1;
-            
+
             // Act
             List<DoctorJointModel>? result = null;
             try
@@ -439,7 +439,7 @@ namespace HospitalTest
                 result = new List<DoctorJointModel>();
                 Console.WriteLine($"Database connection failed for negative department ID: {ex.Message}");
             }
-            
+
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(0), "Negative department ID should return an empty list");
@@ -451,7 +451,7 @@ namespace HospitalTest
             // Arrange
             var service = new DoctorsDatabaseService();
             int zeroDepartmentId = 0;
-            
+
             // Act
             List<DoctorJointModel>? result = null;
             try
@@ -464,7 +464,7 @@ namespace HospitalTest
                 result = new List<DoctorJointModel>();
                 Console.WriteLine($"Database connection failed for zero department ID: {ex.Message}");
             }
-            
+
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(0), "Zero department ID should return an empty list");
@@ -476,7 +476,7 @@ namespace HospitalTest
             // Arrange
             var service = new DoctorsDatabaseService();
             int largeDepartmentId = 999999;
-            
+
             // Act
             List<DoctorJointModel>? result = null;
             try
@@ -489,7 +489,7 @@ namespace HospitalTest
                 result = new List<DoctorJointModel>();
                 Console.WriteLine($"Database connection failed for large department ID: {ex.Message}");
             }
-            
+
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(0), "Large department ID should return an empty list");
@@ -506,11 +506,11 @@ namespace HospitalTest
             // Arrange
             var service = new DoctorsDatabaseService();
             int departmentId = 1;
-            
+
             // Use reflection to access the private method
-            var methodInfo = typeof(DoctorsDatabaseService)!.GetMethod("GetDoctorsByDepartment", 
+            var methodInfo = typeof(DoctorsDatabaseService)!.GetMethod("GetDoctorsByDepartment",
                 System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)!;
-            
+
             // Act
             List<DoctorJointModel>? result = null;
             try
@@ -527,7 +527,7 @@ namespace HospitalTest
                 };
                 Console.WriteLine($"Database connection failed: {ex.Message}");
             }
-            
+
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.GreaterThan(0));

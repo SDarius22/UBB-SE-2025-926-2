@@ -36,8 +36,7 @@ namespace Hospital.DatabaseServices
                         reader.GetInt32(0),
                         reader.GetDateTime(1),
                         reader.GetTimeSpan(2),
-                        reader.GetTimeSpan(3)
-                    ));
+                        reader.GetTimeSpan(3)));
                 }
             }
             catch (SqlException sqlException)
@@ -111,8 +110,7 @@ namespace Hospital.DatabaseServices
                         reader.GetInt32(0),
                         reader.GetDateTime(1),
                         reader.GetTimeSpan(2),
-                        reader.GetTimeSpan(3)
-                    ));
+                        reader.GetTimeSpan(3)));
                 }
             }
             catch (SqlException sqlException)
@@ -129,7 +127,7 @@ namespace Hospital.DatabaseServices
 
         public async Task<List<ShiftModel>> GetDoctorDaytimeShifts(int doctorId)
         {
-            if(doctorId <= 0)
+            if (doctorId <= 0)
             {
                 throw new ShiftNotFoundException("Error loading upcoming shifts for doctor.");
             }
@@ -157,8 +155,7 @@ namespace Hospital.DatabaseServices
                         reader.GetInt32(0),
                         reader.GetDateTime(1),
                         reader.GetTimeSpan(2),
-                        reader.GetTimeSpan(3)
-                    ));
+                        reader.GetTimeSpan(3)));
                 }
             }
             catch (SqlException sqlException)
@@ -173,7 +170,6 @@ namespace Hospital.DatabaseServices
             return shifts;
         }
     }
-
 
 }
 

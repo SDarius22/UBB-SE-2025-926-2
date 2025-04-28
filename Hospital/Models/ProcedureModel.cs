@@ -14,7 +14,7 @@ namespace Hospital.Models
 
         // Duration in minutes
         public int DepartmentId { get; set; }
-        
+
         public TimeSpan ProcedureDuration { get; set; }
 
         public ProcedureModel(int procedureId, int departmentId, string name, TimeSpan duration)

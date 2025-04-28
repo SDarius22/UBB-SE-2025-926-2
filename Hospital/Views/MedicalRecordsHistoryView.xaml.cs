@@ -42,7 +42,7 @@ namespace Hospital.Views
                     {
                         Title = "No element selected",
                         Content = "Please select a medical record to view its details.",
-                        CloseButtonText = "OK"
+                        CloseButtonText = "OK",
                     };
                     validationDialog.XamlRoot = this.Content.XamlRoot;
                     await validationDialog.ShowAsync();
@@ -54,7 +54,7 @@ namespace Hospital.Views
                 {
                     Title = "Error",
                     Content = $"Error: {ex.Message}",
-                    CloseButtonText = "OK"
+                    CloseButtonText = "OK",
                 };
                 validationDialog.XamlRoot = this.Content.XamlRoot;
                 await validationDialog.ShowAsync();
@@ -90,7 +90,6 @@ namespace Hospital.Views
             m_TitleBar.InactiveBackgroundColor = Colors.SeaGreen;
             m_TitleBar.ButtonInactiveForegroundColor = Colors.Gainsboro;
             m_TitleBar.ButtonInactiveBackgroundColor = Colors.SeaGreen;
-
 
             /*arrivalCalendarDatePicker.MinDate = DateTime.Today;
             arrivalCalendarDatePicker.Date = DateTime.Today;
