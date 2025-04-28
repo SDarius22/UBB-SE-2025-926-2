@@ -1,4 +1,4 @@
-namespace Hospital.DeleteViews
+namespace Hospital.Views.DeleteViews
 {
     using System;
     using System.Collections.Generic;

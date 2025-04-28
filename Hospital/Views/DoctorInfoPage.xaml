@@ -42,9 +42,6 @@
                     <TextBlock Text="License Number:" FontWeight="Bold" FontSize="16" Grid.Row="2" Grid.Column="0" />
                     <TextBlock Text="{Binding LicenseNumber}" FontSize="16" Grid.Row="2" Grid.Column="1" />
 
-                    <TextBlock Text="Experience:" FontWeight="Bold" FontSize="16" Grid.Row="3" Grid.Column="0" />
-                    <TextBlock Text="{Binding Experience}" FontSize="16" Grid.Row="3" Grid.Column="1" />
-
                     <TextBlock Text="Rating:" FontWeight="Bold" FontSize="16" Grid.Row="4" Grid.Column="0" />
                     <TextBlock Text="{Binding Rating}" FontSize="16" Grid.Row="4" Grid.Column="1" />
 

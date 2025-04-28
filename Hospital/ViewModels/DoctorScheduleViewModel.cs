@@ -93,7 +93,7 @@ namespace Hospital.ViewModels
             MinimumDateForSelectingAppointment = start;
             MaximumDateForSelectingAppointment = end;
 
-            OpenDetailsCommand = new RelayCommand(OpenAppointmentForDoctor);
+            OpenDetailsCommand = new RelayCommand<object>(OpenAppointmentForDoctor);
         }
 
         private void OpenAppointmentForDoctor(object objectTimeSlot)

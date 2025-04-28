@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Hospital
+namespace Hospital.Veiws
 {
     using System;
     using System.Collections.Generic;

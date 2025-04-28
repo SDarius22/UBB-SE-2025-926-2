@@ -1,4 +1,4 @@
-namespace Hospital.ModifyViews
+namespace Hospital.Views.ModifyViews
 {
     using System;
     using System.Collections.Generic;

@@ -31,7 +31,7 @@
         <ListView ItemsSource="{x:Bind DrugsList, Mode=OneWay}" BorderThickness="1" BorderBrush="Gray" Grid.Row="2"
                   ScrollViewer.VerticalScrollBarVisibility="Auto" SelectionMode="None">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="model:Drug">
+                <DataTemplate x:DataType="model:DrugModel">
                     <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="10">
                         <Grid ColumnDefinitions="2*, 1*, 2*, 1*, 2*">
                             <TextBlock Text="{x:Bind DrugID}" Grid.Column="0" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>

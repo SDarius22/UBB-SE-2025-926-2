@@ -1,4 +1,4 @@
-namespace Hospital
+namespace Hospital.Views
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;

@@ -1,4 +1,4 @@
-namespace Hospital.DeleteViews
+namespace Hospital.Views.DeleteViews
 {
     using Microsoft.UI.Xaml.Controls;
     using Hospital.ViewModels.DeleteViewModels;

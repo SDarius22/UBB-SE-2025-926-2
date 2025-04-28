@@ -40,7 +40,7 @@ namespace Hospital.Views
                 }
                 else if (selectedTag == "DrugPage")
                 {
-                    this.HomePageFrame.Navigate(typeof(Drugs));
+                    this.HomePageFrame.Navigate(typeof(DrugsPage));
                 }
             }
         }

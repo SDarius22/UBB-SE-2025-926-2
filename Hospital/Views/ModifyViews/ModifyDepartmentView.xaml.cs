@@ -1,4 +1,4 @@
-namespace Hospital.ModifyViews
+namespace Hospital.Views.ModifyViews
 {
     using Microsoft.UI.Xaml.Controls;
     using Hospital.ViewModels.UpdateViewModels;

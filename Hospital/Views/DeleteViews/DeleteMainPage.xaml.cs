@@ -1,6 +1,6 @@
 using Microsoft.UI.Xaml.Controls;
 
-namespace Hospital.DeleteViews
+namespace Hospital.Views.DeleteViews
 {
     public sealed partial class DeleteMainPage : Page
     {

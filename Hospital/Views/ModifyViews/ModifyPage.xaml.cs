@@ -16,7 +16,7 @@ using Microsoft.UI.Xaml.Navigation;
 // To learn more about WinUI, the WinUI Hospital structure,
 // and more about our Hospital templates, see: http://aka.ms/winui-Hospital-info.
 
-namespace Hospital.ModifyViews
+namespace Hospital.Views.ModifyViews
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
