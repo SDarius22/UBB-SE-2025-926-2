@@ -5,16 +5,16 @@ namespace Project.ViewModels.AddViewModels
     using System.ComponentModel;
     using System.Linq;
     using System.Windows.Input;
-    using Project.ClassModels;
-    using Project.Models;
-    using Project.Utils;
+    using Hospital.DatabaseServices;
+    using Hospital.Models;
+    using Hospital.Utils;
 
     /// <summary>
     /// ViewModel for adding rooms. Handles room data binding, validation, and interaction with the RoomModel.
     /// </summary>
     public class RoomAddViewModel : INotifyPropertyChanged
     {
-        private readonly RoomModel roomModel = new RoomModel();
+        private readonly RoomDatabaseService roomModel = new RoomDatabaseService();
         private int capacity;
         private int departmentID;
         private string errorMessage = string.Empty;
@@ -37,7 +37,7 @@ namespace Project.ViewModels.AddViewModels
         /// <summary>
         /// Gets or sets the collection of existing rooms.
         /// </summary>
-        public ObservableCollection<Room> Rooms { get; set; } = new ObservableCollection<Room>();
+        public ObservableCollection<RoomModel> Rooms { get; set; } = new ObservableCollection<RoomModel>();
 
         /// <summary>
         /// Gets or sets the capacity for a new room.
@@ -111,7 +111,7 @@ namespace Project.ViewModels.AddViewModels
         private void LoadRooms()
         {
             this.Rooms.Clear();
-            foreach (Room room in this.roomModel?.GetRooms() ?? Enumerable.Empty<Room>())
+            foreach (RoomModel room in this.roomModel?.GetRooms() ?? Enumerable.Empty<RoomModel>())
             {
                 this.Rooms.Add(room);
             }
@@ -122,7 +122,7 @@ namespace Project.ViewModels.AddViewModels
         /// </summary>
         private void SaveRoom()
         {
-            var room = new Room
+            var room = new RoomModel
             {
                 RoomID = 0,
                 Capacity = this.Capacity,
@@ -146,7 +146,7 @@ namespace Project.ViewModels.AddViewModels
         /// </summary>
         /// <param name="room">The room to validate.</param>
         /// <returns>True if the room is valid; otherwise, false.</returns>
-        private bool ValidateRoom(Room room)
+        private bool ValidateRoom(RoomModel room)
         {
             if (room.Capacity <= 0)
             {
