@@ -15,14 +15,13 @@ using Hospital.ViewModels;
 
 namespace Hospital.Views
 {
-    public sealed partial class PatientScheduleView : Window
+public sealed partial class PatientScheduleView : Page
     {
         private readonly PatientScheduleViewModel _viewModel;
         private readonly DispatcherQueue _dispatcherQueue;
 
         public PatientScheduleView()
         {
-            this.ExtendsContentIntoTitleBar = false;
             this.InitializeComponent();
 
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
@@ -36,6 +35,7 @@ namespace Hospital.Views
 
             LoadAppointmentsAndUpdateUI();
         }
+
 
         private async void LoadAppointmentsAndUpdateUI()
         {
@@ -95,7 +95,7 @@ namespace Hospital.Views
             {
                 Title = "Appointment Details",
                 CloseButtonText = "Close",
-                XamlRoot = this.Content.XamlRoot,
+                XamlRoot = AppointmentsCalendar.XamlRoot,
                 RequestedTheme = ElementTheme.Default,
             };
 
@@ -165,7 +165,7 @@ namespace Hospital.Views
                 PrimaryButtonText = "Yes",
                 CloseButtonText = "No",
                 DefaultButton = ContentDialogButton.Close,
-                XamlRoot = this.Content.XamlRoot,
+                XamlRoot = AppointmentsCalendar.XamlRoot,
             };
 
             var result = await confirmDialog.ShowAsync();
@@ -188,7 +188,7 @@ namespace Hospital.Views
                         Title = "Cancellation Failed",
                         Content = ex.Message,
                         CloseButtonText = "OK",
-                        XamlRoot = this.Content.XamlRoot,
+                        XamlRoot = AppointmentsCalendar.XamlRoot,
                     };
                     await errorDialog.ShowAsync();
                 }

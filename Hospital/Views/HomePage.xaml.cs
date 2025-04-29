@@ -46,7 +46,7 @@ namespace Hospital.Views
                 {
                     this.HomePageFrame.Navigate(typeof(PatientScheduleView));
                 }
-                else if (selectedTag == "Medical Records")
+                else if (selectedTag == "MedicalRecords")
                 {
                     this.HomePageFrame.Navigate(typeof(MedicalRecordsHistoryView));
                 }

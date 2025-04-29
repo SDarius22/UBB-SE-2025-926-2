@@ -219,8 +219,7 @@ namespace Hospital.Views
 
         private void ShowMedicalRecordsHistory(int patientId)
         {
-            var recordsHistoryView = new MedicalRecordsHistoryView(patientId, _medicalRecordManager, _documentManager);
-            recordsHistoryView.Activate();
+            var recordsHistoryView = new MedicalRecordsHistoryView();
         }
 
         private async Task ShowEmptySlotDialog(TimeSlotModel slot)

@@ -54,7 +54,13 @@ namespace Hospital.ViewModels
             }
 
             var medicalRecordDetailsView = new MedicalRecordDetailsView(medicalRecord, _documentManager);
-            medicalRecordDetailsView.Activate();
+
+            // Replace the non-existent 'Activate' method with a valid navigation or display logic
+            // Assuming you want to navigate to the view or display it in some way
+            medicalRecordDetailsView.InitializeComponent(); // Ensure the view is initialized
+            // Add logic to display the view, e.g., setting it as the content of a frame or window
+            // Example:
+            // Application.Current.MainWindow.Content = medicalRecordDetailsView;
         }
     }
 }
