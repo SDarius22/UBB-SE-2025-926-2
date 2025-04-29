@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Hospital.Views
 {
-    public sealed partial class CreateMedicalRecordForm : Window
+    public sealed partial class CreateMedicalRecordForm : Page
     {
 
         private readonly MedicalRecordCreationFormViewModel _viewModel;
@@ -71,7 +71,6 @@ namespace Hospital.Views
                     }
 
                     await ShowSuccessDialog("Medical record created successfully!");
-                    this.Close();
                 }
             }
             catch (ValidationException ex)
@@ -84,10 +83,7 @@ namespace Hospital.Views
             }
         }
 
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
+
         private async Task ShowSuccessDialog(string message)
         {
             ContentDialog successDialog = new ContentDialog
@@ -95,7 +91,6 @@ namespace Hospital.Views
                 Title = "Success",
                 Content = message,
                 CloseButtonText = "OK",
-                XamlRoot = this.Content.XamlRoot,
             };
             await successDialog.ShowAsync();
         }
@@ -106,7 +101,6 @@ namespace Hospital.Views
                 Title = "Error",
                 Content = message,
                 CloseButtonText = "OK",
-                XamlRoot = this.Content.XamlRoot,
             };
             await errorDialog.ShowAsync();
         }

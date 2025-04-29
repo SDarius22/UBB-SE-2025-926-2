@@ -58,6 +58,12 @@ namespace Hospital.Views.AddViews
                     case "Shifts":
                         ContentFrame.Navigate(typeof(AddShiftView));
                         break;
+                    case "Patients":
+                        ContentFrame.Navigate(typeof(AppointmentCreationForm));
+                        break;
+                    case "MedicalRecords":
+                        ContentFrame.Navigate(typeof(CreateMedicalRecordForm));
+                        break;
                     default:
                         break;
                 }

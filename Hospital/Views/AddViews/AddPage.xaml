@@ -22,6 +22,8 @@
                 <NavigationViewItem Content="Shifts" Tag="Shifts" />
                 <NavigationViewItem Content="Departments" Tag="Departments" />
                 <NavigationViewItem Content="Rooms" Tag="Rooms" />
+                <NavigationViewItem Content="Patient" Tag="Patient" />
+                <NavigationViewItem Content="MedicalRecords" Tag="MedicalRecords" />
             </NavigationView.MenuItems>
 
             <NavigationView.Content>

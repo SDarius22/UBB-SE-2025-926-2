@@ -214,7 +214,6 @@ namespace Hospital.Views
         {
             var viewModel = new MedicalRecordCreationFormViewModel(_medicalRecordManager, _documentManager);
             var medicalRecordCreateView = new CreateMedicalRecordForm(viewModel, appointment);
-            medicalRecordCreateView.Activate();
         }
 
         private void ShowMedicalRecordsHistory(int patientId)
