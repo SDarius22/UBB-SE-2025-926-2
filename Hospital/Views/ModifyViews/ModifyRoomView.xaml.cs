@@ -1,4 +1,4 @@
-namespace Project.Gui.ModifyViews
+namespace Hospital.Views.ModifyViews
 {
     using System;
     using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace Project.Gui.ModifyViews
     using Microsoft.UI.Xaml.Input;
     using Microsoft.UI.Xaml.Media;
     using Microsoft.UI.Xaml.Navigation;
-    using Project.ViewModels.UpdateViewModels;
+    using Hospital.ViewModels.UpdateViewModels;
     using Windows.Foundation;
     using Windows.Foundation.Collections;
 

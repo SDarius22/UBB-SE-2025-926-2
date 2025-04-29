@@ -1,17 +1,17 @@
-namespace Project.Gui
+namespace Hospital.Views
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using Microsoft.UI.Xaml.Controls;
-    using Project.ClassModels;
-    using Project.Models;
+    using Hospital.Models;
+    using Hospital.DatabaseServices;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class EquipmentPage : Page
     {
-        private readonly EquipmentModel equipmentModel = new ();
+        private readonly EquipmentDatabaseService equipmentModel = new ();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EquipmentPage"/> class.
@@ -25,13 +25,13 @@ namespace Project.Gui
         /// <summary>
         /// Gets or Sets the Equipments.
         /// </summary>
-        public ObservableCollection<Equipment> Equipments { get; set; } = new ();
+        public ObservableCollection<EquipmentModel> Equipments { get; set; } = new ();
 
         private void LoadEquiptment()
         {
             this.Equipments.Clear();
-            List<Equipment> equipments = this.equipmentModel.GetEquipments();
-            foreach (Equipment equipment in equipments)
+            List<EquipmentModel> equipments = this.equipmentModel.GetEquipments();
+            foreach (EquipmentModel equipment in equipments)
             {
                 this.Equipments.Add(equipment);
             }

@@ -16,7 +16,6 @@ namespace Hospital.Helpers
             //    int totalMinutes = (int)initialDuration.TotalMinutes;
             //    int roundedMinutes = (int)Math.Round(totalMinutes / slotDuration) * (int)slotDuration;
             //    return TimeSpan.FromMinutes(roundedMinutes);
-
             double slotDuration = ApplicationConfiguration.GetInstance().SlotDuration;
 
             int procedureDurationInMinutes = (int)procedureDuration.TotalMinutes;

@@ -27,7 +27,6 @@ namespace Hospital.Managers
             _shifts = await _shiftsDatabaseService.GetShiftsByDoctorId(doctorID);
         }
 
-
         public List<ShiftModel> GetShifts()
         {
             return _shifts;
@@ -86,7 +85,7 @@ namespace Hospital.Managers
                     TimeSlot = startTime,
                     Time = startTime.ToString(TimeFormat),
                     Appointment = "",
-                    HighlightStatus = "None"
+                    HighlightStatus = "None",
                 };
 
                 String highlightStatus = "None";

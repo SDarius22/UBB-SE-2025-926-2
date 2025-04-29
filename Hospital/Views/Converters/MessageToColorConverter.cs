@@ -1,4 +1,4 @@
-namespace Project.Utils
+namespace Hospital.Utils
 {
     using System;
     using Microsoft.UI.Xaml.Data;

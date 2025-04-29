@@ -1,7 +1,7 @@
-namespace Project.Gui.ModifyViews
+namespace Hospital.Views.ModifyViews
 {
     using Microsoft.UI.Xaml.Controls;
-    using Project.ViewModels.UpdateViewModels;
+    using Hospital.ViewModels.UpdateViewModels;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

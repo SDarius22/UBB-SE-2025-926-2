@@ -21,9 +21,8 @@ using System.Threading.Tasks;
 using Windows.UI.Popups;
 using System.Security.AccessControl;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
+// To learn more about WinUI, the WinUI Hospital structure,
+// and more about our Hospital templates, see: http://aka.ms/winui-Hospital-info.
 namespace Hospital.Views
 {
     /// <summary>
@@ -42,8 +41,6 @@ namespace Hospital.Views
             _viewModel.Root = this.Content.XamlRoot;
             this.AppWindow.Resize(new(1000, 1400));
         }
-
-
 
         public static Task<AppointmentCreationForm> CreateAppointmentCreationForm(
             AppointmentCreationFormViewModel viewModel)
@@ -69,7 +66,7 @@ namespace Hospital.Views
             }
         }
 
-        //this method is used to style the title bar of the window
+        // this method is used to style the title bar of the window
         private void StyleTitleBar()
         {
             // Get the title bar of the app window.
@@ -111,7 +108,7 @@ namespace Hospital.Views
                 {
                     Title = "Error",
                     Content = ex.Message,
-                    CloseButtonText = "OK"
+                    CloseButtonText = "OK",
                 };
                 errorDialog.XamlRoot = this.Content.XamlRoot;
                 await errorDialog.ShowAsync();
@@ -130,7 +127,7 @@ namespace Hospital.Views
                 {
                     Title = "Error",
                     Content = ex.Message,
-                    CloseButtonText = "OK"
+                    CloseButtonText = "OK",
                 };
                 errorDialog.XamlRoot = this.Content.XamlRoot;
                 await errorDialog.ShowAsync();
@@ -155,7 +152,7 @@ namespace Hospital.Views
                 {
                     Title = "Error",
                     Content = ex.Message,
-                    CloseButtonText = "OK"
+                    CloseButtonText = "OK",
                 };
                 errorDialog.XamlRoot = this.Content.XamlRoot;
                 await errorDialog.ShowAsync();
@@ -178,7 +175,7 @@ namespace Hospital.Views
             {
                 Title = "Error",
                 Content = message,
-                CloseButtonText = "OK"
+                CloseButtonText = "OK",
             };
             errorDialog.XamlRoot = this.Content.XamlRoot;
             await errorDialog.ShowAsync();

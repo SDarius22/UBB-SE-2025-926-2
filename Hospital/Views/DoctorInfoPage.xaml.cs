@@ -1,4 +1,4 @@
-namespace Project.Gui
+namespace Hospital.Views
 {
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
@@ -30,9 +30,9 @@ namespace Project.Gui
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if (e.Parameter is Doctor doctor)
+            if (e.Parameter is DoctorJointModel doctor)
             {
-                int doctorID = doctor.DoctorID;
+                int doctorID = doctor.DoctorId;
                 this.viewModel.LoadDoctorInformation(doctorID);
             }
         }

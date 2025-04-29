@@ -15,7 +15,6 @@ namespace Hospital.DatabaseServices
             _configuration = ApplicationConfiguration.GetInstance();
         }
 
-
         /// <summary>
         /// Adds a new drug to the database.
         /// </summary>

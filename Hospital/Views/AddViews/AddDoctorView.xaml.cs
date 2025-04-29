@@ -14,10 +14,10 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+// To learn more about WinUI, the WinUI Hospital structure,
+// and more about our Hospital templates, see: http://aka.ms/winui-Hospital-info.
 
-namespace Project.Gui.AddViews
+namespace Hospital.Views.AddViews
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

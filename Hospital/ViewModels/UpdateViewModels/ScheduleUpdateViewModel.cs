@@ -46,7 +46,6 @@ namespace Hospital.ViewModels.UpdateViewModels
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadSchedules();
         }
-        
         public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
@@ -70,8 +69,8 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// Gets or sets the collection of schedules displayed in the view.
         /// </summary>
-        public ObservableCollection<ScheduleModel> Schedules { get; set; } = new ();
-        
+        public ObservableCollection<ScheduleModel> Schedules { get; set; } = new();
+
         protected void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

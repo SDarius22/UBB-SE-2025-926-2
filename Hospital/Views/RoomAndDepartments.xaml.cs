@@ -1,18 +1,18 @@
-namespace Project.Gui
+namespace Hospital.Views
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using Microsoft.UI.Xaml.Controls;
-    using Project.ClassModels;
-    using Project.Models;
+    using Hospital.Models;
+    using Hospital.DatabaseServices;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class RoomAndDepartments : Page
     {
-        private readonly RoomModel roomModel = new ();
-        private readonly DepartmentModel departmentModel = new ();
+        private readonly RoomDatabaseService roomModel = new ();
+        private readonly DepartmentsDatabaseService departmentModel = new ();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RoomAndDepartments"/> class.
@@ -26,27 +26,27 @@ namespace Project.Gui
         /// <summary>
         /// Gets or Sets Rooms.
         /// </summary>
-        public ObservableCollection<Room> Rooms { get; set; } = new ();
+        public ObservableCollection<RoomModel> Rooms { get; set; } = new ();
 
         /// <summary>
         /// Gets or Sets Departments.
         /// </summary>
-        public ObservableCollection<Department> Departments { get; set; } = new ();
+        public ObservableCollection<DepartmentModel> Departments { get; set; } = new ();
 
         private void Load()
         {
             this.Departments.Clear();
-            foreach (Department department in this.departmentModel.GetDepartments())
+            foreach (DepartmentModel department in this.departmentModel.GetDepartments())
             {
                 this.Departments.Add(department);
             }
 
             this.Rooms.Clear();
 
-            List<Room>? rooms = this.roomModel.GetRooms();
+            List<RoomModel>? rooms = this.roomModel.GetRooms();
             if (rooms != null)
             {
-                foreach (Room room in rooms)
+                foreach (RoomModel room in rooms)
                 {
                     this.Rooms.Add(room);
                 }

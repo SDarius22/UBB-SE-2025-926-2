@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="Project.Gui.HomePage"
+    x:Class="Hospital.Views.HomePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Project.Gui"
+    xmlns:local="using:Hospital"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -18,6 +18,8 @@
                 <NavigationViewItem Content="Rooms and Departments" Tag="Rooms" />
                 <NavigationViewItem Content="Schedule and Shifts" Tag="Schedule" />
                 <NavigationViewItem Content="Drugs" Tag="DrugPage" />
+                <NavigationViewItem Content="Patient" Tag="Patient" />
+                <NavigationViewItem Content="Medical Records" Tag="MedicalRecords" />
             </NavigationView.MenuItems>
 
             <Frame x:Name="HomePageFrame" Grid.Column="1"/>

@@ -357,7 +357,7 @@
             List<DoctorJointModel> doctors = new List<DoctorJointModel>();
             using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
             {
-                string query = "SELECT * FROM Doctors";
+                string query = "SELECT DoctorId, UserId, DepartmentId, Rating, LicenseNumber FROM Doctors";
                 SqlCommand command = new SqlCommand(query, connection);
                 connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
@@ -367,9 +367,9 @@
                     doctors.Add(new DoctorJointModel(
                         reader.GetInt32(0),
                         reader.GetInt32(1),
-                        reader.GetInt32(4),
+                        reader.GetInt32(2),
                         reader.GetDouble(3),
-                        reader.GetString(5)));
+                        reader.GetString(4)));
                 }
             }
 

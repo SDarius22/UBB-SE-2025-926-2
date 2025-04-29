@@ -11,4 +11,8 @@ namespace Hospital.DatabaseServices.Interfaces
         public bool DoesEquipmentExist(int equipmentID);
         public List<EquipmentModel> GetEquipments();
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> dbf29defeda16dddeaad4741dab9f7dd8d0a692e

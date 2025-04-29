@@ -47,11 +47,11 @@ namespace Hospital.ViewModels.UpdateViewModels
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        
+
         /// <summary>
         /// Gets or sets the ID of the shifts to be updated.
         /// </summary>
-        public ObservableCollection<ShiftModel> Shifts { get; set; } = new ();
+        public ObservableCollection<ShiftModel> Shifts { get; set; } = new();
 
         /// <summary>
         /// Gets or sets the error message to be displayed.
@@ -70,7 +70,6 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// Gets the command for saving changes.
         /// </summary>
         public ICommand SaveChangesCommand { get; }
-        
         /// <summary>
         /// Loads the shifts from the model.
         /// </summary>

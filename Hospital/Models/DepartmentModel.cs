@@ -11,6 +11,8 @@ namespace Hospital.Models
         public int DepartmentId { get; set; }
         public string DepartmentName { get; set; }
 
+        public DepartmentModel() { }
+
         public DepartmentModel(int departmentId, string departmentName)
         {
             this.DepartmentId = departmentId;

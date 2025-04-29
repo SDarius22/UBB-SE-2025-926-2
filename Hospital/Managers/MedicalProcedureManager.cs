@@ -46,7 +46,5 @@ namespace Hospital.Managers
             }
         }
 
-
-
     }
 }

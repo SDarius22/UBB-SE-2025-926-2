@@ -34,7 +34,7 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Gets or sets the collection of shifts displayed in the view.
         /// </summary>
-        public ObservableCollection<ShiftModel> Shifts { get; set; } = new ();
+        public ObservableCollection<ShiftModel> Shifts { get; set; } = new();
 
         /// <summary>
         /// Gets or sets the ID of the shift to be deleted.
@@ -48,7 +48,6 @@ namespace Hospital.ViewModels.AddViewModels
                 this.OnPropertyChanged(nameof(this.Date));
             }
         }
-        
         /// <summary>
         /// Gets or sets the start time of the shift.
         /// </summary>
@@ -61,7 +60,6 @@ namespace Hospital.ViewModels.AddViewModels
                 this.OnPropertyChanged(nameof(this.StartTime));
             }
         }
-        
         /// <summary>
         /// Gets or sets the end time of the shift.
         /// </summary>
@@ -74,7 +72,6 @@ namespace Hospital.ViewModels.AddViewModels
                 this.OnPropertyChanged(nameof(this.EndTime));
             }
         }
-        
         /// <summary>
         /// Gets or sets the error message to display in the view.
         /// </summary>
@@ -97,22 +94,18 @@ namespace Hospital.ViewModels.AddViewModels
         /// Gets or sets the model for managing shifts.
         /// </summary>
         private readonly ShiftsDatabaseService shiftModel = new ShiftsDatabaseService();
-        
         /// <summary>
         /// Gets or sets the model for managing doctors.
         /// </summary>
         private DateTime date;
-        
         /// <summary>
         /// Gets or sets the start time of the shift.
         /// </summary>
         private TimeSpan startTime;
-        
         /// <summary>
         /// Gets or sets the end time of the shift.
         /// </summary>
         private TimeSpan endTime;
-        
         /// <summary>
         /// Gets or sets the error message to display in the view.
         /// </summary>

@@ -1,9 +1,10 @@
-namespace Project.Gui
+namespace Hospital.Views
 {
     using System.Collections.ObjectModel;
     using Microsoft.UI.Xaml.Controls;
-    using Hospital.DatabaseServices;
     using Hospital.Models;
+    using Hospital.DatabaseServices;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -11,8 +12,8 @@ namespace Project.Gui
     ///
     public sealed partial class ScheduleAndShifts : Page
     {
-        private readonly ShiftModel shiftModel = new ();
-        private readonly ScheduleModel scheduleModel = new ();
+        private readonly ShiftsDatabaseService shiftModel = new ();
+        private readonly ScheduleDatabaseService scheduleModel = new ();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleAndShifts"/> class.
@@ -20,29 +21,30 @@ namespace Project.Gui
         public ScheduleAndShifts()
         {
             this.InitializeComponent();
-            this.Load();
+            this.LoadAsync();
         }
 
         /// <summary>
         /// Gets or Sets the Shifts.
         /// </summary>
-        public ObservableCollection<Shift> Shifts { get; set; } = new ();
+        public ObservableCollection<ShiftModel> Shifts { get; set; } = new ();
 
         /// <summary>
         /// Gets or Sets the Schedules.
         /// </summary>
-        public ObservableCollection<Schedule> Schedules { get; set; } = new ();
+        public ObservableCollection<ScheduleModel> Schedules { get; set; } = new ();
 
-        private void Load()
+        private async Task LoadAsync()
         {
             this.Shifts.Clear();
-            foreach (Shift shift in this.shiftModel.GetShifts())
+            var shifts = await this.shiftModel.GetShifts();
+            foreach (ShiftModel shift in shifts)
             {
                 this.Shifts.Add(shift);
             }
 
             this.Schedules.Clear();
-            foreach (Schedule schedule in this.scheduleModel.GetSchedules())
+            foreach (ScheduleModel schedule in this.scheduleModel.GetSchedules())
             {
                 this.Schedules.Add(schedule);
             }

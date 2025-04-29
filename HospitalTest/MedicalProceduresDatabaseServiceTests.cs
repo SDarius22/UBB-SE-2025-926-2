@@ -105,13 +105,13 @@ namespace HospitalTest
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null, "Result should not be null");
-                
+
                 // Check for duplicate procedure IDs
                 var procedureIds = new HashSet<int>();
                 foreach (var procedure in result)
                 {
-                    Assert.That(procedureIds.Add(procedure.ProcedureId), 
-                        Is.True, 
+                    Assert.That(procedureIds.Add(procedure.ProcedureId),
+                        Is.True,
                         $"Duplicate procedure ID found: {procedure.ProcedureId}");
                 }
             });
@@ -140,19 +140,19 @@ namespace HospitalTest
                 foreach (var procedure in result)
                 {
                     // Check procedure ID is positive
-                    Assert.That(procedure.ProcedureId, Is.GreaterThan(0), 
+                    Assert.That(procedure.ProcedureId, Is.GreaterThan(0),
                         $"Procedure ID should be positive for ID: {procedure.ProcedureId}");
-                    
+
                     // Check department ID is positive
-                    Assert.That(procedure.DepartmentId, Is.GreaterThan(0), 
+                    Assert.That(procedure.DepartmentId, Is.GreaterThan(0),
                         $"Department ID should be positive for ID: {procedure.ProcedureId}");
-                    
+
                     // Check procedure name is not empty
-                    Assert.That(procedure.ProcedureName, Is.Not.Empty, 
+                    Assert.That(procedure.ProcedureName, Is.Not.Empty,
                         $"Procedure name should not be empty for ID: {procedure.ProcedureId}");
-                    
+
                     // Check procedure duration is positive
-                    Assert.That(procedure.ProcedureDuration, Is.GreaterThan(TimeSpan.Zero), 
+                    Assert.That(procedure.ProcedureDuration, Is.GreaterThan(TimeSpan.Zero),
                         $"Procedure duration should be positive for ID: {procedure.ProcedureId}");
                 }
             });
@@ -181,7 +181,7 @@ namespace HospitalTest
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null, "Result should not be null");
-                Assert.That((endTime - startTime).TotalSeconds, Is.LessThan(5), 
+                Assert.That((endTime - startTime).TotalSeconds, Is.LessThan(5),
                     "Query execution took too long");
             });
         }
@@ -232,10 +232,10 @@ namespace HospitalTest
             // Arrange
             var testService = new MockMedicalProceduresDatabaseService();
             int departmentId = 1;
-            
+
             // Act
             var result = await testService.GetProceduresByDepartmentId(departmentId);
-            
+
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(2));
@@ -253,7 +253,7 @@ namespace HospitalTest
         {
             // Simulate database access without actually connecting to a database
             await Task.Delay(10); // Simulate network delay
-            
+
             // Return test data
             return new List<ProcedureModel>
             {
@@ -273,10 +273,10 @@ namespace HospitalTest
             // Arrange
             var mockService = new MockMedicalProceduresDatabaseService();
             int departmentId = 1;
-            
+
             // Act
             var result = await mockService.GetProceduresByDepartmentId(departmentId);
-            
+
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(2));
@@ -368,7 +368,7 @@ namespace HospitalTest
             // Arrange
             var service = new MedicalProceduresDatabaseService();
             int departmentId = 1;
-            
+
             // Act
             List<ProcedureModel>? result = null;
             try
@@ -385,7 +385,7 @@ namespace HospitalTest
                 };
                 Console.WriteLine($"Database connection failed: {ex.Message}");
             }
-            
+
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.GreaterThan(0));
@@ -397,7 +397,7 @@ namespace HospitalTest
             // Arrange
             var service = new MedicalProceduresDatabaseService();
             int[] departmentIds = { 1, 2, 3, 4, 5 };
-            
+
             // Act & Assert
             foreach (int departmentId in departmentIds)
             {
@@ -417,7 +417,7 @@ namespace HospitalTest
                         new ProcedureModel(2, departmentId, "Procedure 2", TimeSpan.FromMinutes(45))
                     };
                     Console.WriteLine($"Database connection failed for department {departmentId}: {ex.Message}");
-                    
+
                     Assert.That(result, Is.Not.Null, $"Mock result for department {departmentId} should not be null");
                     Assert.That(result.Count, Is.EqualTo(2), $"Mock result for department {departmentId} should have 2 procedures");
                 }
@@ -430,7 +430,7 @@ namespace HospitalTest
             // Arrange
             var service = new MedicalProceduresDatabaseService();
             int negativeDepartmentId = -1;
-            
+
             // Act
             List<ProcedureModel>? result = null;
             try
@@ -443,7 +443,7 @@ namespace HospitalTest
                 result = new List<ProcedureModel>();
                 Console.WriteLine($"Database connection failed for negative department ID: {ex.Message}");
             }
-            
+
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(0), "Negative department ID should return an empty list");
@@ -455,7 +455,7 @@ namespace HospitalTest
             // Arrange
             var service = new MedicalProceduresDatabaseService();
             int zeroDepartmentId = 0;
-            
+
             // Act
             List<ProcedureModel>? result = null;
             try
@@ -468,7 +468,7 @@ namespace HospitalTest
                 result = new List<ProcedureModel>();
                 Console.WriteLine($"Database connection failed for zero department ID: {ex.Message}");
             }
-            
+
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(0), "Zero department ID should return an empty list");
@@ -480,7 +480,7 @@ namespace HospitalTest
             // Arrange
             var service = new MedicalProceduresDatabaseService();
             int largeDepartmentId = 999999;
-            
+
             // Act
             List<ProcedureModel>? result = null;
             try
@@ -493,7 +493,7 @@ namespace HospitalTest
                 result = new List<ProcedureModel>();
                 Console.WriteLine($"Database connection failed for large department ID: {ex.Message}");
             }
-            
+
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(0), "Large department ID should return an empty list");
@@ -510,11 +510,11 @@ namespace HospitalTest
             // Arrange
             var service = new MedicalProceduresDatabaseService();
             int departmentId = 1;
-            
+
             // Use reflection to access the private method
-            var methodInfo = typeof(MedicalProceduresDatabaseService)!.GetMethod("GetProceduresByDepartmentId", 
+            var methodInfo = typeof(MedicalProceduresDatabaseService)!.GetMethod("GetProceduresByDepartmentId",
                 System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)!;
-            
+
             // Act
             List<ProcedureModel>? result = null;
             try
@@ -531,7 +531,7 @@ namespace HospitalTest
                 };
                 Console.WriteLine($"Database connection failed: {ex.Message}");
             }
-            
+
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.GreaterThan(0));

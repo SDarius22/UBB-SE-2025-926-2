@@ -13,9 +13,19 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Views\AdminMainPage.xaml" />
     <None Remove="Views\AppointmentCreationForm.xaml" />
+    <None Remove="Views\DoctorInfoPage.xaml" />
+    <None Remove="Views\DoctorsPage.xaml" />
+    <None Remove="Views\DrugsPage.xaml" />
+    <None Remove="Views\EquipmentPage.xaml" />
+    <None Remove="Views\HomePage.xaml" />
+    <None Remove="Views\LoginPage.xaml" />
     <None Remove="Views\MedicalRecordDetailsView.xaml" />
     <None Remove="Views\MedicalRecordsHistoryView.xaml" />
+    <None Remove="Views\RoomAndDepartments.xaml" />
+    <None Remove="Views\ScheduleAndShifts.xaml" />
+    <None Remove="Views\TestPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,6 +51,7 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -52,6 +63,38 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\AdminMainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\DoctorInfoPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\DoctorsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\DrugsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\EquipmentPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\HomePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\LoginPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\RoomAndDepartments.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\ScheduleAndShifts.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\TestPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\MedicalRecordDetailsView.xaml">

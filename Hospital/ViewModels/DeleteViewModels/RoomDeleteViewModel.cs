@@ -16,7 +16,7 @@ namespace Hospital.ViewModels.DeleteViewModels
     public class RoomDeleteViewModel : INotifyPropertyChanged
     {
         private readonly RoomDatabaseService roomModel = new RoomDatabaseService();
-        private ObservableCollection<RoomModel> rooms = new ();
+        private ObservableCollection<RoomModel> rooms = new();
         private int roomID;
         private string errorMessage = string.Empty;
         private string messageColor = "Red";

@@ -1,9 +1,10 @@
-namespace Project.Gui
+namespace Hospital.Views
 {
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using Project.Gui.DeleteViews;
-    using Project.Gui.ModifyViews;
+    using Hospital.Views.DeleteViews;
+    using Hospital.Views.ModifyViews;
+    using Hospital.Views.AddViews;
 
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
@@ -56,8 +57,8 @@ namespace Project.Gui
                         this.ContentFrame.Navigate(typeof(ModifyPage));
                         break;
                     case "LogOut":
-                        var loginPage = new LoginPage();
-                        loginPage.Activate();
+                        var loginWindow = new LoginPage();
+                        loginWindow.Activate();
                         this.Close();
                         break;
                     case "Delete":

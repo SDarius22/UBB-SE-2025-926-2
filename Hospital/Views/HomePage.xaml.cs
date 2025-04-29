@@ -1,4 +1,4 @@
-namespace Project.Gui
+namespace Hospital.Views
 {
     using Microsoft.UI.Xaml.Controls;
 
@@ -40,7 +40,15 @@ namespace Project.Gui
                 }
                 else if (selectedTag == "DrugPage")
                 {
-                    this.HomePageFrame.Navigate(typeof(Drugs));
+                    this.HomePageFrame.Navigate(typeof(DrugsPage));
+                }
+                else if (selectedTag == "Patient")
+                {
+                    this.HomePageFrame.Navigate(typeof(PatientScheduleView));
+                }
+                else if (selectedTag == "MedicalRecords")
+                {
+                    this.HomePageFrame.Navigate(typeof(MedicalRecordsHistoryView));
                 }
             }
         }

@@ -375,7 +375,7 @@ namespace Hospital.Tests.Managers
             var result = _appointmentManager.CanCancelAppointment(null!);
             Assert.IsFalse(result);
         }
-        
+
         [Test]
         public Task RemoveAppointment_InvalidAppointmentId_ThrowsCorrectMessage()
         {

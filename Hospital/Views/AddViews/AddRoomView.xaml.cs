@@ -1,4 +1,4 @@
-namespace Project.Gui.AddViews
+namespace Hospital.Views.AddViews
 {
     using System;
     using System.Collections.Generic;

@@ -146,4 +146,8 @@ namespace Hospital.ViewModel
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> dbf29defeda16dddeaad4741dab9f7dd8d0a692e

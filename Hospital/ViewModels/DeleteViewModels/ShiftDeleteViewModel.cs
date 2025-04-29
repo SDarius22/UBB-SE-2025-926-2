@@ -30,22 +30,20 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// The model for managing shifts.
         /// </summary>
         private readonly ShiftsDatabaseService shiftModel = new ShiftsDatabaseService();
-        
+
         /// <summary>
         /// The collection of shifts displayed in the view.
         /// </summary>
-        private ObservableCollection<ShiftModel> shifts = new ();
-        
+        private ObservableCollection<ShiftModel> shifts = new();
+
         /// <summary>
         /// The ID of the shift to be deleted.
         /// </summary>
         private int shiftID;
-        
         /// <summary>
         /// The error message to be displayed.
         /// </summary>
         private string errorMessage;
-        
         /// <summary>
         /// The color of the message to be displayed.
         /// </summary>

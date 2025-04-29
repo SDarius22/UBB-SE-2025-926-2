@@ -40,4 +40,38 @@
         /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null.</param>
         public void Execute(object? parameter) => this.execute();
     }
+<<<<<<< HEAD
+
+    public class RelayCommand<T> : ICommand
+    {
+        private readonly Action<T> execute;
+        private readonly Predicate<T>? canExecute;
+
+        public RelayCommand(Action<T> execute, Predicate<T>? canExecute = null)
+        {
+            this.execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            this.canExecute = canExecute;
+        }
+
+        public bool CanExecute(object? parameter)
+        {
+            if (canExecute == null)
+                return true;
+
+            if (parameter == null && typeof(T).IsValueType)
+                return canExecute.Invoke(default!);
+
+            return parameter is T t && canExecute(t);
+        }
+
+        public void Execute(object? parameter)
+        {
+            if (parameter is T t)
+                execute(t);
+        }
+
+        public event EventHandler? CanExecuteChanged;
+    }
+=======
+>>>>>>> dbf29defeda16dddeaad4741dab9f7dd8d0a692e
 }

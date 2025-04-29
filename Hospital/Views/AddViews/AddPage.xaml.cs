@@ -12,13 +12,12 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Project.Gui.ModifyViews;
-using Project.Gui.AddViews;
+using Hospital.Views.AddViews;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+// To learn more about WinUI, the WinUI Hospital structure,
+// and more about our Hospital templates, see: http://aka.ms/winui-Hospital-info.
 
-namespace Project.Gui
+namespace Hospital.Views.AddViews
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -41,9 +40,6 @@ namespace Project.Gui
                     case "Doctors":
                         ContentFrame.Navigate(typeof(AddDoctorView));
                         break;
-                    case "Departments":
-                        ContentFrame.Navigate(typeof(AddDepartmentView));
-                        break;
                     case "Drugs":
                         ContentFrame.Navigate(typeof(AddDrugView));
                         break;
@@ -51,13 +47,16 @@ namespace Project.Gui
                         ContentFrame.Navigate(typeof(AddEquipmentView));
                         break;
                     case "Rooms":
-                        ContentFrame.Navigate(typeof(AddRoomView));
+                        ContentFrame.Navigate(typeof(AddRoomAndDepartments));
                         break;
                     case "Schedules":
-                        ContentFrame.Navigate(typeof(AddScheduleView));
+                        ContentFrame.Navigate(typeof(AddScheduleAndShifts));
                         break;
-                    case "Shifts":
-                        ContentFrame.Navigate(typeof(AddShiftView));
+                    case "Patients":
+                        ContentFrame.Navigate(typeof(AppointmentCreationForm));
+                        break;
+                    case "MedicalRecords":
+                        ContentFrame.Navigate(typeof(CreateMedicalRecordForm));
                         break;
                     default:
                         break;

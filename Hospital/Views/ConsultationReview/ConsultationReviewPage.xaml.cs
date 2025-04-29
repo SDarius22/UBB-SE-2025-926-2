@@ -1,4 +1,4 @@
-namespace Project.Gui.ConsultationReview
+namespace Hospital.Views.ConsultationReview
 {
     using System;
     using Microsoft.UI;
@@ -16,7 +16,7 @@ namespace Project.Gui.ConsultationReview
         private int reviewID;
         private int selectedRating = 0;
         private int medicalRecordID;
-        private RatingDatabaseService reviewModel = new();
+        private RatingDatabaseService reviewModel = new ();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConsultationReviewPage"/> class.

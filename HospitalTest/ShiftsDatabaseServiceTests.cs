@@ -55,7 +55,7 @@ namespace Hospital.Tests.DatabaseServices
             });
         }
 
-   
+
 
         [Test]
         public async Task GetShiftsByDoctorId_ValidId_ReturnsShifts()

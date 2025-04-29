@@ -48,16 +48,17 @@ namespace Hospital.Managers
             }
         }
 
-
-        public async Task<MedicalRecordJointModel> GetMedicalRecordById(int medicalRecordId) 
-            {
-            try 
+        public async Task<MedicalRecordJointModel> GetMedicalRecordById(int medicalRecordId)
+        {
+            try
             {
                 return await _medicalRecordsDatabaseService.GetMedicalRecordById(medicalRecordId);
-            } catch (MedicalRecordNotFoundException) 
+            }
+            catch (MedicalRecordNotFoundException)
             {
                 throw new MedicalRecordNotFoundException("No medical record found for the given id.");
-            } catch (Exception exception) 
+            }
+            catch (Exception exception)
             {
                 Console.WriteLine($"Error loading medical record: {exception.Message}");
                 return null;
@@ -78,8 +79,7 @@ namespace Hospital.Managers
                     detailedAppointment.DoctorId,
                     detailedAppointment.ProcedureId,
                     conclusion,
-                    DateTime.Now
-                );
+                    DateTime.Now);
 
                 // Insert the new record into the database and get the generated ID.
                 int newMedicalRecordId = await _medicalRecordsDatabaseService.AddMedicalRecord(medicalRecord)
@@ -102,7 +102,6 @@ namespace Hospital.Managers
                 return -1;
             }
         }
-
 
         public async Task LoadMedicalRecordsForDoctor(int doctorId)
         {

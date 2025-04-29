@@ -1,4 +1,4 @@
-﻿namespace Project.Gui.Converters
+﻿namespace Hospital.Converters
 {
     using System;
     using Microsoft.UI.Xaml.Data;

@@ -15,14 +15,13 @@ using Hospital.ViewModels;
 
 namespace Hospital.Views
 {
-    public sealed partial class PatientScheduleView : Window
+public sealed partial class PatientScheduleView : Page
     {
         private readonly PatientScheduleViewModel _viewModel;
         private readonly DispatcherQueue _dispatcherQueue;
 
         public PatientScheduleView()
         {
-            this.ExtendsContentIntoTitleBar = false;
             this.InitializeComponent();
 
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
@@ -36,6 +35,7 @@ namespace Hospital.Views
 
             LoadAppointmentsAndUpdateUI();
         }
+
 
         private async void LoadAppointmentsAndUpdateUI()
         {
@@ -95,15 +95,15 @@ namespace Hospital.Views
             {
                 Title = "Appointment Details",
                 CloseButtonText = "Close",
-                XamlRoot = this.Content.XamlRoot,
-                RequestedTheme = ElementTheme.Default
+                XamlRoot = AppointmentsCalendar.XamlRoot,
+                RequestedTheme = ElementTheme.Default,
             };
 
             StackPanel dialogContent = new StackPanel { Spacing = 10 };
             dialogContent.Children.Add(new TextBlock
             {
                 Text = message,
-                TextWrapping = TextWrapping.Wrap
+                TextWrapping = TextWrapping.Wrap,
             });
 
             bool canCancel = _viewModel.CanCancelAppointment(appointment);
@@ -121,7 +121,7 @@ namespace Hospital.Views
                 Orientation = Orientation.Horizontal,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Spacing = 10,
-                Margin = new Thickness(0, 10, 0, 0)
+                Margin = new Thickness(0, 10, 0, 0),
             };
 
             if (canCancel)
@@ -132,7 +132,7 @@ namespace Hospital.Views
                     Width = 160,
                     Height = 40,
                     Background = new SolidColorBrush(Colors.Red),
-                    Foreground = new SolidColorBrush(Colors.White)
+                    Foreground = new SolidColorBrush(Colors.White),
                 };
                 cancelBtn.Click += async (s, e) => await HandleAppointmentCancellation(dialog, appointment);
                 buttonRow.Children.Add(cancelBtn);
@@ -146,7 +146,7 @@ namespace Hospital.Views
                     Height = 40,
                     IsEnabled = false,
                     Background = new SolidColorBrush(Color.FromArgb(255, 255, 102, 102)),
-                    Foreground = new SolidColorBrush(Colors.White)
+                    Foreground = new SolidColorBrush(Colors.White),
                 };
                 ToolTipService.SetToolTip(disabledBtn, "You can only cancel appointments more than 24 hours in advance.");
                 buttonRow.Children.Add(disabledBtn);
@@ -165,7 +165,7 @@ namespace Hospital.Views
                 PrimaryButtonText = "Yes",
                 CloseButtonText = "No",
                 DefaultButton = ContentDialogButton.Close,
-                XamlRoot = this.Content.XamlRoot
+                XamlRoot = AppointmentsCalendar.XamlRoot,
             };
 
             var result = await confirmDialog.ShowAsync();
@@ -188,7 +188,7 @@ namespace Hospital.Views
                         Title = "Cancellation Failed",
                         Content = ex.Message,
                         CloseButtonText = "OK",
-                        XamlRoot = this.Content.XamlRoot
+                        XamlRoot = AppointmentsCalendar.XamlRoot,
                     };
                     await errorDialog.ShowAsync();
                 }

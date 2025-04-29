@@ -28,18 +28,16 @@ namespace Hospital.DatabaseServices
                 using SqlConnection sqlConnection = new SqlConnection(_configuration.DatabaseConnection);
                 await sqlConnection.OpenAsync().ConfigureAwait(false);
 
-                //Prepare the command
+                // Prepare the command
                 SqlCommand selectProceduresCommand = new SqlCommand(selectProceduresByDepartmentQuery, sqlConnection);
                 selectProceduresCommand.Parameters.AddWithValue("@departmentId", departmentId);
 
-
                 SqlDataReader reader = await selectProceduresCommand.ExecuteReaderAsync().ConfigureAwait(false);
 
-
-                //Prepare the list of procedures
+                // Prepare the list of procedures
                 List<ProcedureModel> procedures = new List<ProcedureModel>();
 
-                //Read the data from the database
+                // Read the data from the database
                 while (await reader.ReadAsync().ConfigureAwait(false))
                 {
                     int procedureId = reader.GetInt32(0);

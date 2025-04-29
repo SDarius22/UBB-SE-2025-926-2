@@ -129,7 +129,7 @@ namespace Hospital.DatabaseServices
 
         public async Task<List<ShiftModel>> GetDoctorDaytimeShifts(int doctorId)
         {
-            if(doctorId <= 0)
+            if (doctorId <= 0)
             {
                 throw new ShiftNotFoundException("Error loading upcoming shifts for doctor.");
             }
@@ -250,4 +250,3 @@ namespace Hospital.DatabaseServices
 
 
 }
-

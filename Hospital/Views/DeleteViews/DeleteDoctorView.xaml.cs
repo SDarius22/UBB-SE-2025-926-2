@@ -14,10 +14,10 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Hospital.ViewModels.DeleteViewModels;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+// To learn more about WinUI, the WinUI Hospital structure,
+// and more about our Hospital templates, see: http://aka.ms/winui-Hospital-info.
 
-namespace Project.Gui.DeleteViews
+namespace Hospital.Views.DeleteViews
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
