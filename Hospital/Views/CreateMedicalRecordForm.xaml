@@ -55,8 +55,7 @@
                    Margin="0,0,10,10"/>
         <TextBox Grid.Row="1" Grid.Column="1"
                  Text="{Binding PatientName}"
-                 Margin="0,0,0,10"
-                 IsReadOnly="True"/>
+                 Margin="0,0,0,10"/>
 
         <!-- Doctor -->
         <TextBlock Grid.Row="2" Grid.Column="0"
@@ -66,8 +65,7 @@
                    Margin="0,0,10,10"/>
         <TextBox Grid.Row="2" Grid.Column="1"
                  Text="{Binding DoctorName}"
-                 Margin="0,0,0,10"
-                 IsReadOnly="True"/>
+                 Margin="0,0,0,10"/>
 
         <!-- Date -->
         <TextBlock Grid.Row="3" Grid.Column="0"
@@ -88,8 +86,7 @@
                    Margin="0,0,10,10"/>
         <TextBox Grid.Row="4" Grid.Column="1"
                  Text="{Binding AppointmentTime}"
-                 Margin="0,0,0,10"
-                 IsReadOnly="True"/>
+                 Margin="0,0,0,10"/>
 
         <!-- Department -->
         <TextBlock Grid.Row="5" Grid.Column="0"
@@ -99,8 +96,7 @@
                    Margin="0,0,10,10"/>
         <TextBox Grid.Row="5" Grid.Column="1"
                  Text="{Binding Department}"
-                 Margin="0,0,0,10"
-                 IsReadOnly="True"/>
+                 Margin="0,0,0,10"/>
 
         <!-- Upload Files Section -->
         <StackPanel Grid.Row="6" Grid.Column="0"

@@ -1,5 +1,4 @@
-﻿
-using Hospital.Configs;
+﻿using Hospital.Configs;
 using Hospital.DatabaseServices;
 using Hospital.Exceptions;
 using Hospital.Helpers;
@@ -158,6 +157,19 @@ namespace Hospital.ViewModels
             _doctorManager = doctorManagerModel;
             _shiftManager = shiftManagerModel;
             _appointmentManager = appointmentManagerModel;
+
+            // initialize lists
+            DepartmentsList = new ObservableCollection<DepartmentModel>();
+            ProceduresList = new ObservableCollection<ProcedureModel>();
+            DoctorsList = new ObservableCollection<DoctorJointModel>();
+
+            // set calendar dates
+            MinimumDate = DateTimeOffset.Now;
+            MaximumDate = MinimumDate.AddMonths(MaxAppointmentBookingRangeInMonths);
+        }
+
+        public AppointmentCreationFormViewModel()
+        {
 
             // initialize lists
             DepartmentsList = new ObservableCollection<DepartmentModel>();

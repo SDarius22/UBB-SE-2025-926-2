@@ -22,6 +22,11 @@
                 <NavigationViewItem Content="Shifts" Tag="Shifts" />
                 <NavigationViewItem Content="Departments" Tag="Departments" />
                 <NavigationViewItem Content="Rooms" Tag="Rooms" />
+<<<<<<< Updated upstream
+=======
+                <NavigationViewItem Content="Patients" Tag="Patients" />
+                <NavigationViewItem Content="Medical Records" Tag="MedicalRecords" />
+>>>>>>> Stashed changes
             </NavigationView.MenuItems>
 
             <NavigationView.Content>

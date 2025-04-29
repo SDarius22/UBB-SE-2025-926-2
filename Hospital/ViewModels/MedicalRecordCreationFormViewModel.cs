@@ -17,6 +17,9 @@ namespace Hospital.ViewModels
         private readonly IMedicalRecordManager _medicalRecordManager;
         private readonly IDocumentManager _documentManager;
 
+        private int _patientId;
+        private int _doctorId;
+        private int _procedureId;
         private string _patientName;
         private string _doctorName;
         private string _appointmentTime;
@@ -32,7 +35,13 @@ namespace Hospital.ViewModels
         private DateTime _appointmentDate;
         public DateTimeOffset? AppointmentDateOffset
         {
-            get => new DateTimeOffset(_appointmentDate);
+            get
+            {
+                if (_appointmentDate == DateTime.MinValue)
+                    return null;
+
+                return new DateTimeOffset(_appointmentDate);
+            }
             set
             {
                 if (value.HasValue)
@@ -51,6 +60,12 @@ namespace Hospital.ViewModels
         {
             _medicalRecordManager = medicalRecordManager;
             _documentManager = documentManagerModel;
+            _appointmentDate = DateTime.Now;
+            Documents = new ObservableCollection<string>();
+        }
+        
+        public MedicalRecordCreationFormViewModel()
+        {
             Documents = new ObservableCollection<string>();
         }
 
@@ -59,24 +74,65 @@ namespace Hospital.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public async Task<int> CreateMedicalRecord(AppointmentJointModel appointment, string conclusion)
+        //public async Task<int> CreateMedicalRecord(AppointmentJointModel appointment, string conclusion)
+        //{
+        //    try
+        //    {
+        //        return await _medicalRecordManager.CreateMedicalRecordWithAppointment(appointment, conclusion);
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        Console.WriteLine($"Error creating medical record: {exception.Message}");
+        //        throw;
+        //    }
+        //}
+
+        public async Task<int> CreateMedicalRecord()
         {
             try
             {
-                return await _medicalRecordManager.CreateMedicalRecordWithAppointment(appointment, conclusion);
+                var medicalRecord = new MedicalRecordModel(
+                    medicalRecordId: 0,
+                    patientId: this.PatientId,
+                    doctorId: this.DoctorId,
+                    procedureId: this.ProcedureId,
+                    conclusion: this.Conclusion,
+                    dateAndTime: this.AppointmentDate
+                );
+
+                return await _medicalRecordManager.CreateMedicalRecord(medicalRecord);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                Console.WriteLine($"Error creating medical record: {exception.Message}");
+                Console.WriteLine($"Error creating medical record: {ex.Message}");
                 throw;
             }
         }
+
 
         public async Task AddDocument(int medicalRecordId, string path)
         {
             var document = new DocumentModel(0, medicalRecordId, path);
             await _documentManager.AddDocumentToMedicalRecord(document);
             Documents.Add(path);
+        }
+
+        public int PatientId
+        {
+            get => _patientId;
+            set { _patientId = value; OnPropertyChanged(nameof(PatientId)); }
+        }
+
+        public int DoctorId
+        {
+            get => _doctorId;
+            set { _doctorId = value; OnPropertyChanged(nameof(DoctorId)); }
+        }
+
+        public int ProcedureId
+        {
+            get => _procedureId;
+            set { _procedureId = value; OnPropertyChanged(nameof(ProcedureId)); }
         }
 
         public string PatientName

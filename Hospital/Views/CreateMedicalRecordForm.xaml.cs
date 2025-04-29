@@ -6,29 +6,47 @@ using Hospital.ViewModels;
 using Hospital.Models;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.UI.Xaml.Navigation;
+using Hospital.Managers;
+using Hospital.DatabaseServices;
 
 namespace Hospital.Views
 {
     public sealed partial class CreateMedicalRecordForm : Window
     {
 
-        private readonly MedicalRecordCreationFormViewModel _viewModel;
-        private readonly AppointmentJointModel _appointment;
+        private MedicalRecordCreationFormViewModel _viewModel;
+        private AppointmentJointModel _appointment;
+        private MedicalRecordManager _medicalRecordManager;
 
-        public CreateMedicalRecordForm(MedicalRecordCreationFormViewModel viewModel, AppointmentJointModel appointment)
+        //public CreateMedicalRecordForm(MedicalRecordCreationFormViewModel viewModel, AppointmentJointModel appointment)
+        //{
+        //    this.InitializeComponent();
+        //    _viewModel = viewModel;
+        //    _appointment = appointment;
+
+        //    // Populate ViewModel from the Appointment
+        //    _viewModel.PatientName = appointment.PatientName;
+        //    _viewModel.DoctorName = appointment.DoctorName;
+        //    _viewModel.AppointmentDate = appointment.DateAndTime;
+        //    _viewModel.AppointmentTime = appointment.DateAndTime.ToString("hh:mm tt");
+        //    _viewModel.Department = appointment.DepartmentName;
+
+        //    // Set the data context for binding
+        //    this.rootGrid.DataContext = _viewModel;
+        //}
+
+        public CreateMedicalRecordForm()
         {
             this.InitializeComponent();
-            _viewModel = viewModel;
-            _appointment = appointment;
+        }
 
-            // Populate ViewModel from the Appointment
-            _viewModel.PatientName = appointment.PatientName;
-            _viewModel.DoctorName = appointment.DoctorName;
-            _viewModel.AppointmentDate = appointment.DateAndTime;
-            _viewModel.AppointmentTime = appointment.DateAndTime.ToString("hh:mm tt");
-            _viewModel.Department = appointment.DepartmentName;
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
 
-            // Set the data context for binding
+            _viewModel = new MedicalRecordCreationFormViewModel();
+            _medicalRecordManager = new MedicalRecordManager(new MedicalRecordsDatabaseService());
             this.rootGrid.DataContext = _viewModel;
         }
 
@@ -56,22 +74,30 @@ namespace Hospital.Views
                 }
             }
         }
+
         private async void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                int recordId = await _viewModel.CreateMedicalRecord(_appointment, _viewModel.Conclusion);
+                var newMedicalRecord = new MedicalRecordModel(
+                    medicalRecordId: 0,
+                    patientId: 1,
+                    doctorId: 1,
+                    procedureId: 1,
+                    conclusion: _viewModel.Conclusion,
+                    dateAndTime: _viewModel.AppointmentDate
+                );
 
-                if (recordId > 0)
+                int createdRecordId = await _medicalRecordManager.CreateMedicalRecord(newMedicalRecord);
+
+                if (createdRecordId > 0)
                 {
-                    // Add documents with the new MedicalRecordId
-                    foreach (var documentPath in _viewModel.DocumentPaths)
-                    {
-                        await _viewModel.AddDocument(recordId, documentPath);
-                    }
-
                     await ShowSuccessDialog("Medical record created successfully!");
                     this.Close();
+                }
+                else
+                {
+                    await ShowErrorDialog("Failed to create medical record.");
                 }
             }
             catch (ValidationException ex)
@@ -80,14 +106,23 @@ namespace Hospital.Views
             }
             catch (Exception ex)
             {
-                await ShowErrorDialog("Failed to create medical record: " + ex.Message);
+                await ShowErrorDialog("An unexpected error occurred: " + ex.Message);
             }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
+<<<<<<< Updated upstream
             this.Close();
         }
+=======
+            if (this.Frame.CanGoBack)
+            {
+                this.Frame.GoBack();
+            }
+        }
+
+>>>>>>> Stashed changes
         private async Task ShowSuccessDialog(string message)
         {
             ContentDialog successDialog = new ContentDialog
