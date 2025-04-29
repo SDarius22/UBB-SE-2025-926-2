@@ -176,8 +176,10 @@ namespace Hospital
         {
             this.InitializeComponent();
 
-            // Set the content of MainWindow to AdminMainPage
-            this.Content = new AdminMainPage();
+            var loginWindow = new LoginPage();
+            loginWindow.Activate();
+
+            this.Close();
         }
     }
 }

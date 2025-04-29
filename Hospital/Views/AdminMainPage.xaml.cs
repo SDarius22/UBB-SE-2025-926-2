@@ -2,13 +2,14 @@ namespace Hospital.Views
 {
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using Hospital.DeleteViews;
-    using Hospital.ModifyViews;
+    using Hospital.Views.DeleteViews;
+    using Hospital.Views.ModifyViews;
+    using Hospital.Views.AddViews;
 
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AdminMainPage : Page
+    public sealed partial class AdminMainPage : Window
     {
         /// <summary>
         /// Initializes a new instance of the  <see cref="AdminMainPage"/> class.
@@ -56,8 +57,8 @@ namespace Hospital.Views
                         this.ContentFrame.Navigate(typeof(ModifyPage));
                         break;
                     case "LogOut":
-                        var loginPage = new LoginPage();
-                        loginPage.Activate();
+                        var loginWindow = new LoginPage();
+                        loginWindow.Activate();
                         this.Close();
                         break;
                     case "Delete":

@@ -15,19 +15,17 @@
   <ItemGroup>
     <None Remove="Views\AdminMainPage.xaml" />
     <None Remove="Views\AppointmentCreationForm.xaml" />
+    <None Remove="Views\DoctorInfoPage.xaml" />
+    <None Remove="Views\DoctorsPage.xaml" />
+    <None Remove="Views\DrugsPage.xaml" />
     <None Remove="Views\EquipmentPage.xaml" />
     <None Remove="Views\HomePage.xaml" />
     <None Remove="Views\LoginPage.xaml" />
     <None Remove="Views\MedicalRecordDetailsView.xaml" />
     <None Remove="Views\MedicalRecordsHistoryView.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Remove="Views\DoctorInfoPage.xaml" />
-    <Page Remove="Views\DoctorsPage.xaml" />
-    <Page Remove="Views\DrugsPage.xaml" />
-    <Page Remove="Views\RoomAndDepartments.xaml" />
-    <Page Remove="Views\ScheduleAndShifts.xaml" />
-    <Page Remove="Views\TestPage.xaml" />
+    <None Remove="Views\RoomAndDepartments.xaml" />
+    <None Remove="Views\ScheduleAndShifts.xaml" />
+    <None Remove="Views\TestPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -70,15 +68,15 @@
     <Page Update="Views\AdminMainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <None Update="Views\DoctorInfoPage.xaml">
+    <Page Update="Views\DoctorInfoPage.xaml">
       <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="Views\DoctorsPage.xaml">
+    </Page>
+    <Page Update="Views\DoctorsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="Views\DrugsPage.xaml">
+    </Page>
+    <Page Update="Views\DrugsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
-    </None>
+    </Page>
     <Page Update="Views\EquipmentPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -88,15 +86,15 @@
     <Page Update="Views\LoginPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <None Update="Views\RoomAndDepartments.xaml">
+    <Page Update="Views\RoomAndDepartments.xaml">
       <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="Views\ScheduleAndShifts.xaml">
+    </Page>
+    <Page Update="Views\ScheduleAndShifts.xaml">
       <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="Views\TestPage.xaml">
+    </Page>
+    <Page Update="Views\TestPage.xaml">
       <Generator>MSBuild:Compile</Generator>
-    </None>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\MedicalRecordDetailsView.xaml">

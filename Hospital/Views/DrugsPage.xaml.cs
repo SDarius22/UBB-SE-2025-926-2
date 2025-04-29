@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Hospital.Veiws
+namespace Hospital.Views
 {
     using System;
     using System.Collections.Generic;
@@ -39,7 +39,7 @@ namespace Hospital.Veiws
         private readonly DrugsDatabaseService drugModel = new ();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Drugs"/> class.
+        /// Initializes a new instance of the <see cref="DrugsPage"/> class.
         /// </summary>
         public DrugsPage()
         {

@@ -4,6 +4,7 @@ namespace Hospital.Views
     using Microsoft.UI.Xaml.Controls;
     using Hospital.Models;
     using Hospital.DatabaseServices;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -20,7 +21,7 @@ namespace Hospital.Views
         public ScheduleAndShifts()
         {
             this.InitializeComponent();
-            this.Load();
+            this.LoadAsync();
         }
 
         /// <summary>
@@ -33,10 +34,11 @@ namespace Hospital.Views
         /// </summary>
         public ObservableCollection<ScheduleModel> Schedules { get; set; } = new ();
 
-        private void Load()
+        private async Task LoadAsync()
         {
             this.Shifts.Clear();
-            foreach (ShiftModel shift in this.shiftModel.GetShifts())
+            var shifts = await this.shiftModel.GetShifts();
+            foreach (ShiftModel shift in shifts)
             {
                 this.Shifts.Add(shift);
             }

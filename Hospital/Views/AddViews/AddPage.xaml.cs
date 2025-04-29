@@ -12,7 +12,6 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Hospital.ModifyViews;
 using Hospital.Views.AddViews;
 
 // To learn more about WinUI, the WinUI Hospital structure,
