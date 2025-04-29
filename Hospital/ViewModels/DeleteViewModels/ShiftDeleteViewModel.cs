@@ -40,12 +40,10 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// The ID of the shift to be deleted.
         /// </summary>
         private int shiftID;
-
         /// <summary>
         /// The error message to be displayed.
         /// </summary>
         private string errorMessage;
-
         /// <summary>
         /// The color of the message to be displayed.
         /// </summary>

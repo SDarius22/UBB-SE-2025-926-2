@@ -46,7 +46,6 @@ namespace Hospital.ViewModels.UpdateViewModels
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadSchedules();
         }
-
         public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>

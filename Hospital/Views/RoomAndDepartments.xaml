@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
+<<<<<<< HEAD
     x:Class="Hospital.Views.RoomAndDepartments"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,6 +8,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:model="using:Hospital.Models"
+=======
+    x:Class="Project.Gui.RoomAndDepartments"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Project.Gui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="using:Project.Models"
+>>>>>>> dbf29defeda16dddeaad4741dab9f7dd8d0a692e
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -29,11 +39,19 @@
 
         <ListView ItemsSource="{x:Bind Departments, Mode=OneWay}" BorderThickness="1" BorderBrush="Gray" Grid.Row="2" SelectionMode="None">
             <ListView.ItemTemplate>
+<<<<<<< HEAD
                 <DataTemplate x:DataType="model:DepartmentModel">
                     <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="10">
                         <Grid ColumnDefinitions="1*, 2*">
                             <TextBlock Text="{x:Bind DepartmentId}" Grid.Column="0" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                             <TextBlock Text="{x:Bind DepartmentName}" Grid.Column="1" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+=======
+                <DataTemplate x:DataType="model:Department">
+                    <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="10">
+                        <Grid ColumnDefinitions="1*, 2*">
+                            <TextBlock Text="{x:Bind DepartmentID}" Grid.Column="0" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Text="{x:Bind Name}" Grid.Column="1" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+>>>>>>> dbf29defeda16dddeaad4741dab9f7dd8d0a692e
                         </Grid>
                     </Border>
                 </DataTemplate>
@@ -50,7 +68,11 @@
 
         <ListView ItemsSource="{x:Bind Rooms, Mode=OneWay}" BorderThickness="1" BorderBrush="Gray" Grid.Row="5" SelectionMode="None">
             <ListView.ItemTemplate>
+<<<<<<< HEAD
                 <DataTemplate x:DataType="model:RoomModel">
+=======
+                <DataTemplate x:DataType="model:Room">
+>>>>>>> dbf29defeda16dddeaad4741dab9f7dd8d0a692e
                     <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="10">
                         <Grid ColumnDefinitions="1*, 1*, 1*">
                             <TextBlock Text="{x:Bind RoomID}" Grid.Column="0" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>

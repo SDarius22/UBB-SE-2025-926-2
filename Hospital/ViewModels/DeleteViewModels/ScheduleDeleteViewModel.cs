@@ -26,22 +26,18 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// The model for managing schedules.
         /// </summary>
         private readonly ScheduleDatabaseService scheduleModel = new ScheduleDatabaseService();
-
         /// <summary>
         /// The collection of schedules displayed in the view.
         /// </summary>
         private ObservableCollection<ScheduleModel> schedules;
-
         /// <summary>
         /// The ID of the schedule to be deleted.
         /// </summary>
         private int scheduleID;
-
         /// <summary>
         /// The error message to be displayed.
         /// </summary>
         private string errorMessage;
-
         /// <summary>
         /// The color of the message to be displayed.
         /// </summary>

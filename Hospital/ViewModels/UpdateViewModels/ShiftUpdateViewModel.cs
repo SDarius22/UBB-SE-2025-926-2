@@ -70,7 +70,6 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// Gets the command for saving changes.
         /// </summary>
         public ICommand SaveChangesCommand { get; }
-
         /// <summary>
         /// Loads the shifts from the model.
         /// </summary>
