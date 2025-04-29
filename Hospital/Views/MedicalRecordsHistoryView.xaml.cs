@@ -23,7 +23,11 @@ namespace Hospital.Views
         {
             this.InitializeComponent();
 
+<<<<<<< Updated upstream
             _viewModel = new MedicalRecordsHistoryViewModel(1,new MedicalRecordManager(new DatabaseServices.MedicalRecordsDatabaseService()),new DocumentManager(new DatabaseServices.DocumentDatabaseService(),new FileService()));
+=======
+            _viewModel = new MedicalRecordsHistoryViewModel(1, new MedicalRecordManager(new DatabaseServices.MedicalRecordsDatabaseService()), new DocumentManager(new DatabaseServices.DocumentDatabaseService(), new FileService()));
+>>>>>>> Stashed changes
             this.MedicalRecordsPanel.DataContext = _viewModel;
         }
 

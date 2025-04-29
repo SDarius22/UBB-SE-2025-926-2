@@ -241,7 +241,7 @@ namespace Hospital.ViewModels
 
             foreach (ShiftModel shift in _shiftsList)
             {
-                HighlightedDates.Add(new DateTimeOffset(shift.DateTime));
+                HighlightedDates.Add(new DateTimeOffset(shift.Date));
             }
 
             IsDateEnabled = true;

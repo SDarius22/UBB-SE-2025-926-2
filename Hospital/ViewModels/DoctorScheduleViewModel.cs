@@ -129,8 +129,8 @@ namespace Hospital.ViewModels
                 ShiftDates.Clear();
                 foreach (var shift in Shifts)
                 {
-                    var shiftStartDate = shift.DateTime.Date;
-                    var shiftEndDate = shift.DateTime.Date;
+                    var shiftStartDate = shift.Date.Date;
+                    var shiftEndDate = shift.Date.Date;
 
                     if (shift.EndTime <= shift.StartTime)
                     {

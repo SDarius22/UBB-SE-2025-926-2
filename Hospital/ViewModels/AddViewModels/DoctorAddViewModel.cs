@@ -26,7 +26,6 @@ namespace Hospital.ViewModels.AddViewModels
         private readonly DoctorsDatabaseService doctorModel = new DoctorsDatabaseService();
         private int userID;
         private int departmentID;
-        private float experience;
         private string licenseNumber = string.Empty;
         private string errorMessage = string.Empty;
 

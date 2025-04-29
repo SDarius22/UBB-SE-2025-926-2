@@ -15,7 +15,11 @@ using Hospital.ViewModels;
 
 namespace Hospital.Views
 {
+<<<<<<< Updated upstream
 public sealed partial class PatientScheduleView : Page
+=======
+    public sealed partial class PatientScheduleView : Page
+>>>>>>> Stashed changes
     {
         private readonly PatientScheduleViewModel _viewModel;
         private readonly DispatcherQueue _dispatcherQueue;
