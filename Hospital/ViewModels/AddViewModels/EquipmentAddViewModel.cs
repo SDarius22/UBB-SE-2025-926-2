@@ -123,7 +123,8 @@
         private void LoadEquipments()
         {
             this.Equipments.Clear();
-            foreach (EquipmentModel equipment in this.equipmentModel.GetEquipments())
+            var result = this.equipmentModel.GetEquipments().Result;
+            foreach (EquipmentModel equipment in result)
             {
                 this.Equipments.Add(equipment);
             }

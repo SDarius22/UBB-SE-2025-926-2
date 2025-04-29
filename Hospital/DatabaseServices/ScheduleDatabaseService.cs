@@ -1,5 +1,6 @@
 ﻿using Hospital.Configs;
 using Hospital.DatabaseServices.Interfaces;
+using Hospital.Exceptions;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
@@ -160,22 +161,31 @@ namespace Hospital.DatabaseServices
         /// Function to get a list of all schedules from the database.
         /// </summary>
         /// <returns>A list of schedules from the database.</returns>
-        public List<ScheduleModel> GetSchedules()
+        public async Task<List<ScheduleModel>> GetSchedules()
         {
+            const string selectSchedulesQuery = "SELECT ScheduleId, DoctorId, ShiftId FROM Schedules";
             List<ScheduleModel> schedules = new List<ScheduleModel>();
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+
+            try
             {
-                string query = "SELECT ScheduleId, DoctorId, ShiftId FROM Schedules";
-                SqlCommand command = new SqlCommand(query, connection);
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                using SqlConnection sqlConnection = new SqlConnection(_configuration.DatabaseConnection);
+                await sqlConnection.OpenAsync();
+
+                using SqlCommand selectSchedulesCommand = new SqlCommand(selectSchedulesQuery, sqlConnection);
+
+                using SqlDataReader reader = await selectSchedulesCommand.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
                 {
-                    schedules.Add(new ScheduleModel(
-                        reader.GetInt32(reader.GetOrdinal("ScheduleId")),
-                        reader.GetInt32(reader.GetOrdinal("DoctorId")),
-                        reader.GetInt32(reader.GetOrdinal("ShiftId"))));
+                    schedules.Add(new ScheduleModel(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2)));
                 }
+            }
+            catch (SqlException sqlException)
+            {
+                throw new ShiftNotFoundException($"SQL Error: {sqlException.Message}");
+            }
+            catch (Exception exception)
+            {
+                throw new ShiftNotFoundException($"General Error: {exception.Message}");
             }
 
             return schedules;

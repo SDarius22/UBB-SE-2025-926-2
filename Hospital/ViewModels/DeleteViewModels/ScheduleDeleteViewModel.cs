@@ -53,7 +53,7 @@ namespace Hospital.ViewModels.DeleteViewModels
         public ScheduleDeleteViewModel()
         {
             // Load schedules for the DataGrid
-            this.Schedules = new ObservableCollection<ScheduleModel>(this.scheduleModel.GetSchedules());
+            this.Schedules = new ObservableCollection<ScheduleModel>(this.scheduleModel.GetSchedules().Result);
 
             this.DeleteScheduleCommand = new RelayCommand(this.RemoveSchedule);
         }
@@ -143,7 +143,7 @@ namespace Hospital.ViewModels.DeleteViewModels
 
             if (success)
             {
-                this.Schedules = new ObservableCollection<ScheduleModel>(this.scheduleModel.GetSchedules());
+                this.Schedules = new ObservableCollection<ScheduleModel>(this.scheduleModel.GetSchedules().Result);
             }
         }
 

@@ -59,7 +59,7 @@
         private void LoadEquipments()
         {
             this.Equipments.Clear();
-            foreach (EquipmentModel equipment in this.equipmentModel.GetEquipments())
+            foreach (EquipmentModel equipment in this.equipmentModel.GetEquipments().Result)
             {
                 this.Equipments.Add(equipment);
             }

@@ -30,7 +30,7 @@ namespace Hospital.Views
         private void LoadEquiptment()
         {
             this.Equipments.Clear();
-            List<EquipmentModel> equipments = this.equipmentModel.GetEquipments();
+            List<EquipmentModel> equipments = this.equipmentModel.GetEquipments().Result;
             foreach (EquipmentModel equipment in equipments)
             {
                 this.Equipments.Add(equipment);

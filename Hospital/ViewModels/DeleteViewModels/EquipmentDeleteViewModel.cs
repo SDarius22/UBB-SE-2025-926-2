@@ -25,7 +25,7 @@
         public EquipmentDeleteViewModel()
         {
             // Load equipment for the DataGrid
-            this.Equipments = new ObservableCollection<EquipmentModel>(this.equipmentModel.GetEquipments());
+            this.Equipments = new ObservableCollection<EquipmentModel>(this.equipmentModel.GetEquipments().Result);
             this.DeleteEquipmentCommand = new RelayCommand(this.RemoveEquipment);
         }
 
@@ -126,7 +126,7 @@
 
             if (success)
             {
-                this.Equipments = new ObservableCollection<EquipmentModel>(this.equipmentModel.GetEquipments());
+                this.Equipments = new ObservableCollection<EquipmentModel>(this.equipmentModel.GetEquipments().Result);
             }
         }
 
