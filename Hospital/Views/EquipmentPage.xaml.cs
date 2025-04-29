@@ -27,11 +27,12 @@ namespace Hospital.Views
         /// </summary>
         public ObservableCollection<EquipmentModel> Equipments { get; set; } = new ();
 
-        private void LoadEquiptment()
+        private async void LoadEquiptment()
         {
             this.Equipments.Clear();
-            List<EquipmentModel> equipments = this.equipmentModel.GetEquipments();
-            foreach (EquipmentModel equipment in equipments)
+            var list = await this.equipmentModel.GetEquipments();
+
+            foreach (EquipmentModel equipment in list)
             {
                 this.Equipments.Add(equipment);
             }

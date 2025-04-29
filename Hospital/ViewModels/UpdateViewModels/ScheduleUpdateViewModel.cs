@@ -80,10 +80,12 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// Loads the schedules from the database and populates the Schedules collection.
         /// </summary>
-        private void LoadSchedules()
+        private async void LoadSchedules()
         {
             this.Schedules.Clear();
-            foreach (ScheduleModel schedule in this.scheduleModel.GetSchedules())
+            var list = await this.scheduleModel.GetSchedules();
+
+            foreach (ScheduleModel schedule in list)
             {
                 this.Schedules.Add(schedule);
             }

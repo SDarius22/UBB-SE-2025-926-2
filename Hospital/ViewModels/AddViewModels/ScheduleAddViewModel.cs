@@ -120,7 +120,8 @@ namespace Hospital.ViewModels.AddViewModels
         private async void LoadSchedules()
         {
             this.Schedules.Clear();
-            foreach (ScheduleModel schedule in this.scheduleModel.GetSchedules())
+            var list = await this.scheduleModel.GetSchedules();
+            foreach (ScheduleModel schedule in list)
             {
                 this.Schedules.Add(schedule);
             }

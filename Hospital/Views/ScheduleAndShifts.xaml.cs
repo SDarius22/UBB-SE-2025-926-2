@@ -44,7 +44,8 @@ namespace Hospital.Views
             }
 
             this.Schedules.Clear();
-            foreach (ScheduleModel schedule in this.scheduleModel.GetSchedules())
+            var schedules = await this.scheduleModel.GetSchedules();
+            foreach (ScheduleModel schedule in schedules)
             {
                 this.Schedules.Add(schedule);
             }

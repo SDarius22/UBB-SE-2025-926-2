@@ -13,11 +13,20 @@ namespace Hospital.Views
     {
 
         private readonly MedicalRecordCreationFormViewModel _viewModel;
+        private readonly AppointmentJointModel _appointment;
 
-        public CreateMedicalRecordForm()
+        public CreateMedicalRecordForm(MedicalRecordCreationFormViewModel viewModel, AppointmentJointModel appointment)
         {
             this.InitializeComponent();
-            _viewModel = new MedicalRecordCreationFormViewModel();
+            _viewModel = viewModel;
+            _appointment = appointment;
+
+            // Populate ViewModel from the Appointment
+            _viewModel.PatientName = appointment.PatientName;
+            _viewModel.DoctorName = appointment.DoctorName;
+            _viewModel.AppointmentDate = appointment.DateAndTime;
+            _viewModel.AppointmentTime = appointment.DateAndTime.ToString("hh:mm tt");
+            _viewModel.Department = appointment.DepartmentName;
 
             // Set the data context for binding
             this.rootGrid.DataContext = _viewModel;

@@ -16,6 +16,6 @@ namespace Hospital.DatabaseServices.Interfaces
         public bool DoesScheduleExist(int scheduleID);
         public bool DoesDoctorExist(int doctorID);
         public bool DoesShiftExist(int shiftID);
-        public List<ScheduleModel> GetSchedules();
+        public Task<List<ScheduleModel>> GetSchedules();
     }
 }
