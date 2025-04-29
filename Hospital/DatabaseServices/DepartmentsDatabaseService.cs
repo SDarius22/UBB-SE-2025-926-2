@@ -160,7 +160,7 @@ namespace Hospital.DatabaseServices
             List<DepartmentModel> departments = new List<DepartmentModel>();
             using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
             {
-                string query = "SELECT * FROM DepartmentModels";
+                string query = "SELECT * FROM Departments";
                 SqlCommand command = new SqlCommand(query, connection);
                 connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
