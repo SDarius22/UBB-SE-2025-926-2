@@ -117,7 +117,7 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Loads the schedules from the database and populates the Schedules collection.
         /// </summary>
-        private void LoadSchedules()
+        private async void LoadSchedules()
         {
             this.Schedules.Clear();
             foreach (ScheduleModel schedule in this.scheduleModel.GetSchedules())

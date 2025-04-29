@@ -121,10 +121,10 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Loads the shifts from the database and populates the Shifts collection.
         /// </summary>
-        private void LoadShifts()
+        private async void LoadShifts()
         {
             this.Shifts.Clear();
-            var list = this.shiftModel.GetShifts().Result;
+            var list = await this.shiftModel.GetShifts();
             foreach (ShiftModel shift in list)
             {
                 this.Shifts.Add(shift);

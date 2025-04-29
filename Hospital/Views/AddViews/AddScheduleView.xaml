@@ -42,8 +42,8 @@
         <ScrollViewer Grid.Row="7" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
             <controls:DataGrid ItemsSource="{Binding Schedules}" AutoGenerateColumns="False" IsReadOnly="True" HorizontalAlignment="Stretch" Width="Auto">
                 <controls:DataGrid.Columns>
-                    <controls:DataGridTextColumn Header="Doctor ID" Binding="{Binding DoctorID}" Width="*"/>
-                    <controls:DataGridTextColumn Header="Shift ID" Binding="{Binding ShiftID}" Width="*"/>
+                    <controls:DataGridTextColumn Header="Doctor ID" Binding="{Binding DoctorId}" Width="*"/>
+                    <controls:DataGridTextColumn Header="Shift ID" Binding="{Binding ShiftId}" Width="*"/>
                 </controls:DataGrid.Columns>
             </controls:DataGrid>
         </ScrollViewer>

@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
 	<Grid>
-		<Pivot>
+		<Pivot SelectionChanged="Pivot_SelectionChanged">
 			<PivotItem Header="Add Room">
 				<Frame x:Name="RoomFrame" />
 			</PivotItem>
