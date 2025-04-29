@@ -16,10 +16,8 @@
                 <NavigationViewItem Content="Doctors" Tag="Doctors" />
                 <NavigationViewItem Content="Equipment" Tag="Equipment" />
                 <NavigationViewItem Content="Drugs" Tag="Drugs" />
-                <NavigationViewItem Content="Schedule" Tag="Schedule" />
-                <NavigationViewItem Content="Shifts" Tag="Shifts" />
-                <NavigationViewItem Content="Departments" Tag="Departments" />
-                <NavigationViewItem Content="Rooms" Tag="Rooms" />
+                <NavigationViewItem Content="Schedule and Shifts" Tag="Schedule" />
+                <NavigationViewItem Content="Departments and Rooms" Tag="Departments" />
             </NavigationView.MenuItems>
 
             <Frame x:Name="ModifyPageFrame" Grid.Column="1"/>

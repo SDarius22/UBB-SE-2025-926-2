@@ -19,49 +19,40 @@ using Microsoft.UI.Xaml.Navigation;
 namespace Hospital.Views.ModifyViews
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// Code-behind for the ModifyPage, handling navigation between different modification views.
     /// </summary>
     public sealed partial class ModifyPage : Page
     {
         public ModifyPage()
         {
             this.InitializeComponent();
-            ModifyPageFrame.Navigate(typeof(ModifyDoctorView));
+            ModifyPageFrame.Navigate(typeof(ModifyDoctorView)); // Default view
         }
 
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            if (args.SelectedItem is NavigationViewItem selectedItem)
+            if (args.SelectedItemContainer != null)
             {
-                string selectedTag = selectedItem.Tag.ToString();
-
-                if (selectedTag == "Doctors")
+                string invokedItemName = args.SelectedItemContainer.Tag.ToString();
+                switch (invokedItemName)
                 {
-                    ModifyPageFrame.Navigate(typeof(ModifyDoctorView));
-                }
-                else if (selectedTag == "Equipment")
-                {
-                    ModifyPageFrame.Navigate(typeof(ModifyEquipmentView));
-                }
-                else if (selectedTag == "Drugs")
-                {
-                    ModifyPageFrame.Navigate(typeof(ModifyDrugView));
-                }
-                else if (selectedTag == "Schedule")
-                {
-                    ModifyPageFrame.Navigate(typeof(ModifyScheduleView));
-                }
-                else if (selectedTag == "Shifts")
-                {
-                    ModifyPageFrame.Navigate(typeof(ModifyShiftView));
-                }
-                else if (selectedTag == "Departments")
-                {
-                    ModifyPageFrame.Navigate(typeof(ModifyDepartmentView));
-                }
-                else if (selectedTag == "Rooms")
-                {
-                    ModifyPageFrame.Navigate(typeof(ModifyRoomView));
+                    case "Doctors":
+                        ModifyPageFrame.Navigate(typeof(ModifyDoctorView));
+                        break;
+                    case "Equipment":
+                        ModifyPageFrame.Navigate(typeof(ModifyEquipmentView));
+                        break;
+                    case "Drugs":
+                        ModifyPageFrame.Navigate(typeof(ModifyDrugView));
+                        break;
+                    case "Schedule":
+                        ModifyPageFrame.Navigate(typeof(ModifyScheduleAndShifts));
+                        break;
+                    case "Departments":
+                        ModifyPageFrame.Navigate(typeof(ModifyRoomAndDepartments));
+                        break;
+                    default:
+                        break;
                 }
             }
         }

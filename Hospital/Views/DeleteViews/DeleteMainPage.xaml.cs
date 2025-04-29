@@ -20,19 +20,13 @@ namespace Hospital.Views.DeleteViews
                         ContentFrame.Navigate(typeof(DeleteDoctorView));
                         break;
                     case "DeleteRooms":
-                        ContentFrame.Navigate(typeof(DeleteRoomView));
-                        break;
-                    case "DeleteDepartments":
-                        ContentFrame.Navigate(typeof(DeleteDepartmentView));
+                        ContentFrame.Navigate(typeof(DeleteRoomAndDepartments));
                         break;
                     case "DeleteSchedules":
-                        ContentFrame.Navigate(typeof(DeleteScheduleView));
+                        ContentFrame.Navigate(typeof(DeleteSchedulesAndShifts));
                         break;
                     case "DeleteDrugs":
                         ContentFrame.Navigate(typeof(DeleteDrugView));
-                        break;
-                    case "DeleteShifts":
-                        ContentFrame.Navigate(typeof(DeleteShiftView));
                         break;
                     case "DeleteEquipments":
                         ContentFrame.Navigate(typeof(DeleteEquipmentView));

@@ -18,12 +18,10 @@
                 <NavigationViewItem Content="Doctors" Tag="Doctors" />
                 <NavigationViewItem Content="Equipment" Tag="Equipments" />
                 <NavigationViewItem Content="Drugs" Tag="Drugs" />
-                <NavigationViewItem Content="Schedule" Tag="Schedules" />
-                <NavigationViewItem Content="Shifts" Tag="Shifts" />
-                <NavigationViewItem Content="Departments" Tag="Departments" />
-                <NavigationViewItem Content="Rooms" Tag="Rooms" />
+                <NavigationViewItem Content="Schedule and Shifts" Tag="Schedules" />
+                <NavigationViewItem Content="Rooms and Departments" Tag="Rooms" />
                 <NavigationViewItem Content="Patient" Tag="Patient" />
-                <NavigationViewItem Content="MedicalRecords" Tag="MedicalRecords" />
+                <NavigationViewItem Content="Medical Records" Tag="MedicalRecords" />
             </NavigationView.MenuItems>
 
             <NavigationView.Content>

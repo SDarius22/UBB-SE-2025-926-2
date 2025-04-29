@@ -40,9 +40,6 @@ namespace Hospital.Views.AddViews
                     case "Doctors":
                         ContentFrame.Navigate(typeof(AddDoctorView));
                         break;
-                    case "Departments":
-                        ContentFrame.Navigate(typeof(AddDepartmentView));
-                        break;
                     case "Drugs":
                         ContentFrame.Navigate(typeof(AddDrugView));
                         break;
@@ -50,13 +47,10 @@ namespace Hospital.Views.AddViews
                         ContentFrame.Navigate(typeof(AddEquipmentView));
                         break;
                     case "Rooms":
-                        ContentFrame.Navigate(typeof(AddRoomView));
+                        ContentFrame.Navigate(typeof(AddRoomAndDepartments));
                         break;
                     case "Schedules":
-                        ContentFrame.Navigate(typeof(AddScheduleView));
-                        break;
-                    case "Shifts":
-                        ContentFrame.Navigate(typeof(AddShiftView));
+                        ContentFrame.Navigate(typeof(AddScheduleAndShifts));
                         break;
                     case "Patients":
                         ContentFrame.Navigate(typeof(AppointmentCreationForm));
