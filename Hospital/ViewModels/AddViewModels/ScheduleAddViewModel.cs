@@ -85,14 +85,17 @@ namespace Hospital.ViewModels.AddViewModels
         /// The ID of the doctor to be added.
         /// </summary>
         private int doctorID;
+
         /// <summary>
         /// The ID of the shift to be added.
         /// </summary>
         private int shiftID;
+
         /// <summary>
         /// The color of the message displayed in the view.
         /// </summary>
         private string errorMessage = string.Empty;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleAddViewModel"/> class.
         /// </summary>
@@ -101,6 +104,7 @@ namespace Hospital.ViewModels.AddViewModels
             this.SaveScheduleCommand = new RelayCommand(this.SaveSchedule);
             this.LoadSchedules();
         }
+
         /// <summary>
         /// Raises the <see cref="PropertyChanged"/> event for the specified property.
         /// </summary>
@@ -121,6 +125,7 @@ namespace Hospital.ViewModels.AddViewModels
                 this.Schedules.Add(schedule);
             }
         }
+
         /// <summary>
         /// Saves the schedule to the database.
         /// </summary>

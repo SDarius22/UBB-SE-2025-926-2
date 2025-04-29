@@ -1,4 +1,4 @@
-namespace Hospital.ViewModels.DeleteViewModels
+﻿namespace Hospital.ViewModels.DeleteViewModels
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;

@@ -40,7 +40,6 @@
         /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null.</param>
         public void Execute(object? parameter) => this.execute();
     }
-<<<<<<< HEAD
 
     public class RelayCommand<T> : ICommand
     {
@@ -72,6 +71,4 @@
 
         public event EventHandler? CanExecuteChanged;
     }
-=======
->>>>>>> dbf29defeda16dddeaad4741dab9f7dd8d0a692e
 }
