@@ -18,6 +18,8 @@
                 <NavigationViewItem Content="Rooms and Departments" Tag="Rooms" />
                 <NavigationViewItem Content="Schedule and Shifts" Tag="Schedule" />
                 <NavigationViewItem Content="Drugs" Tag="DrugPage" />
+                <NavigationViewItem Content="Patient" Tag="Patient" />
+                <NavigationViewItem Content="Medical Records" Tag="MedicalRecords" />
             </NavigationView.MenuItems>
 
             <Frame x:Name="HomePageFrame" Grid.Column="1"/>

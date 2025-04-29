@@ -42,6 +42,14 @@ namespace Hospital.Views
                 {
                     this.HomePageFrame.Navigate(typeof(DrugsPage));
                 }
+                else if (selectedTag == "Patient")
+                {
+                    this.HomePageFrame.Navigate(typeof(PatientScheduleView));
+                }
+                else if (selectedTag == "Medical Records")
+                {
+                    this.HomePageFrame.Navigate(typeof(MedicalRecordsHistoryView));
+                }
             }
         }
     }

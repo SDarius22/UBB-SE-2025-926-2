@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using Hospital.Managers;
+using Hospital.Services;
 
 namespace Hospital.Views
 {
@@ -92,7 +94,22 @@ namespace Hospital.Views
         {
             if (sender is Button button && button.Tag is DoctorJointModel doctor)
             {
-                this.Frame.Navigate(typeof(DoctorInfoPage), doctor);
+                // Create instances of the required services
+                var appointmentsDatabaseService = new AppointmentsDatabaseService(); // Replace with actual implementation
+                var shiftsDatabaseService = new ShiftsDatabaseService(); // Replace with actual implementation
+                var medicalRecordsDatabaseService = new MedicalRecordsDatabaseService(); // Replace with actual implementation
+                var documentDatabaseService = new DocumentDatabaseService(); // Replace with actual implementation
+                var fileService = new FileService(); // Replace with actual implementation
+
+                // Create instances of the required managers
+                IAppointmentManager appointmentManager = new AppointmentManager(appointmentsDatabaseService);
+                IShiftManager shiftManager = new ShiftManager(shiftsDatabaseService);
+                IMedicalRecordManager medicalRecordManager = new MedicalRecordManager(medicalRecordsDatabaseService);
+                IDocumentManager documentManager = new DocumentManager(documentDatabaseService, fileService);
+
+                // Create and show the DoctorScheduleView window
+                var scheduleWindow = new DoctorScheduleView(appointmentManager, shiftManager, medicalRecordManager, documentManager);
+                scheduleWindow.Activate();
             }
         }
 
