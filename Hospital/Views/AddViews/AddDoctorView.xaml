@@ -34,9 +34,6 @@
         <TextBox Text="{Binding DepartmentID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ZeroToEmptyStringConverter}}"
                  PlaceholderText="Enter department ID" Margin="0,0,0,10" Grid.Row="2"/>
 
-        <TextBox Text="{Binding Experience, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ZeroToEmptyStringConverter}}"
-                 PlaceholderText="Enter experience" Margin="0,0,0,10" Grid.Row="3"/>
-
         <TextBox Text="{Binding LicenseNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  PlaceholderText="Enter license number" Margin="0,0,0,10" Grid.Row="4"/>
 
@@ -47,10 +44,9 @@
         <ScrollViewer Grid.Row="7" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
             <controls:DataGrid ItemsSource="{Binding Doctors}" AutoGenerateColumns="False" IsReadOnly="True" HorizontalAlignment="Stretch" Width="Auto">
                 <controls:DataGrid.Columns>
-                    <controls:DataGridTextColumn Header="User ID" Binding="{Binding UserID}" Width="*"/>
-                    <controls:DataGridTextColumn Header="Department ID" Binding="{Binding DepartmentID}" Width="*"/>
-                    <controls:DataGridTextColumn Header="Experience" Binding="{Binding Experience}" Width="*"/>
-                    <controls:DataGridTextColumn Header="Rating" Binding="{Binding Rating}" Width="*"/>
+                    <controls:DataGridTextColumn Header="User ID" Binding="{Binding UserId}" Width="*"/>
+                    <controls:DataGridTextColumn Header="Department ID" Binding="{Binding DepartmentId}" Width="*"/>
+                    <controls:DataGridTextColumn Header="Rating" Binding="{Binding DoctorRating}" Width="*"/>
                     <controls:DataGridTextColumn Header="License Number" Binding="{Binding LicenseNumber}" Width="*"/>
                 </controls:DataGrid.Columns>
             </controls:DataGrid>

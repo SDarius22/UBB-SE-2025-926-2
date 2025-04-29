@@ -56,10 +56,11 @@
         /// <summary>
         /// Loads the equipment from the database.
         /// </summary>
-        private void LoadEquipments()
+        private async void LoadEquipments()
         {
             this.Equipments.Clear();
-            foreach (EquipmentModel equipment in this.equipmentModel.GetEquipments())
+            var list = await this.equipmentModel.GetEquipments();
+            foreach (EquipmentModel equipment in list)
             {
                 this.Equipments.Add(equipment);
             }

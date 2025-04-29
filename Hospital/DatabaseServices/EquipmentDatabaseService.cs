@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Hospital.Configs;
 using Hospital.DatabaseServices.Interfaces;
+using Hospital.Exceptions;
 using Microsoft.Data.SqlClient;
 using EquipmentModel = Hospital.Models.EquipmentModel;
 
@@ -122,16 +124,21 @@ namespace Hospital.DatabaseServices
         /// Retrieves all equipment from the database.
         /// </summary>
         /// <returns>A list of equipment.</returns>
-        public List<EquipmentModel> GetEquipments()
+
+        public async Task<List<EquipmentModel>> GetEquipments()
         {
+            const string selectSchedulesQuery = "SELECT * FROM Equipments";
             List<EquipmentModel> equipments = new List<EquipmentModel>();
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+
+            try
             {
-                string query = "SELECT * FROM Equipments";
-                SqlCommand command = new SqlCommand(query, connection);
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                using SqlConnection sqlConnection = new SqlConnection(_configuration.DatabaseConnection);
+                await sqlConnection.OpenAsync();
+
+                using SqlCommand selectSchedulesCommand = new SqlCommand(selectSchedulesQuery, sqlConnection);
+
+                using SqlDataReader reader = await selectSchedulesCommand.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
                 {
                     EquipmentModel equipment = new EquipmentModel
                     {
@@ -143,6 +150,14 @@ namespace Hospital.DatabaseServices
                     };
                     equipments.Add(equipment);
                 }
+            }
+            catch (SqlException sqlException)
+            {
+                throw new ShiftNotFoundException($"SQL Error: {sqlException.Message}");
+            }
+            catch (Exception exception)
+            {
+                throw new ShiftNotFoundException($"General Error: {exception.Message}");
             }
 
             return equipments;

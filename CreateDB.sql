@@ -381,6 +381,40 @@ GO
 
 exec InsertData @nrOfRows = 10;
 
+
+GO
+CREATE OR ALTER PROCEDURE InsertMoreUsers
+    @nrOfRows INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @i INT = 1;
+
+    WHILE @i <= @nrOfRows
+    BEGIN
+        -- Insert into Users
+        INSERT INTO Users (Username, Mail, Password, Role, Name, Birthdate, Cnp, Address, PhoneNumber, RegistrationDate)
+        VALUES (
+            CONCAT('user', @i),
+            CONCAT('user', @i, '@example.com'),
+            'password',
+            CASE WHEN @i % 3 = 0 THEN 'Admin' WHEN @i % 2 = 0 THEN 'Doctor' ELSE 'Patient' END,
+            CONCAT('User ', @i),
+            DATEADD(YEAR, -20, GETDATE()),
+            RIGHT(CONCAT('6040322012025', @i), 13),
+            CONCAT('Address Nr. ', @i),
+            RIGHT(CONCAT('0765432189', @i), 10),
+            GETDATE()
+        );
+
+        SET @i = @i + 1;
+    END
+END;
+GO
+
+EXEC InsertMoreUsers @nrOfRows = 10;
+
 INSERT INTO Patients (UserId, BloodType, EmergencyContact, Allergies, Weight, Height)
 VALUES 
 (5, 'A+', '111-222-3333', 'Peanuts', 60.5, 165),

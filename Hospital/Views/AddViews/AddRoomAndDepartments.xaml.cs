@@ -11,7 +11,28 @@ namespace Hospital.Views.AddViews
         {
             this.InitializeComponent();
             this.RoomFrame.Navigate(typeof(AddRoomView));
-            this.DepartmentFrame.Navigate(typeof(AddDepartmentView));
+        }
+
+        private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                var pivotItem = e.AddedItems[0] as PivotItem;
+                if (pivotItem != null)
+                {
+                    // Only navigate if the frame hasn't been navigated to this type before
+                    if (pivotItem.Header.ToString() == "Add Room" &&
+                        this.RoomFrame.SourcePageType != typeof(AddRoomView))
+                    {
+                        this.DepartmentFrame.Navigate(typeof(AddDepartmentView));
+                    }
+                    else if (pivotItem.Header.ToString() == "Add Department" &&
+                             this.DepartmentFrame.SourcePageType != typeof(AddDepartmentView))
+                    {
+                        this.DepartmentFrame.Navigate(typeof(AddShiftView));
+                    }
+                }
+            }
         }
     }
 }

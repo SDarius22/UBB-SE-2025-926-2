@@ -19,7 +19,7 @@ namespace Hospital.DatabaseServices
 
         public async Task<List<ShiftModel>> GetShifts()
         {
-            const string selectShiftsQuery = "SELECT ShiftId, DateTime, StartTime, EndTime FROM Shifts";
+            const string selectShiftsQuery = "SELECT ShiftId, Date, StartTime, EndTime FROM Shifts";
             List<ShiftModel> shifts = new List<ShiftModel>();
 
             try
@@ -89,7 +89,7 @@ namespace Hospital.DatabaseServices
                 throw new ShiftNotFoundException("Error loading shifts for doctor.");
             }
             const string selectShiftsByDoctorIdQuery = @"
-            SELECT s.ShiftId, s.DateTime, s.StartTime, s.EndTime
+            SELECT s.ShiftId, s.Date, s.StartTime, s.EndTime
             FROM Shifts s
             JOIN Schedules sch ON s.ShiftId = sch.ShiftId
             WHERE sch.DoctorId = @DoctorId";
@@ -134,7 +134,7 @@ namespace Hospital.DatabaseServices
                 throw new ShiftNotFoundException("Error loading upcoming shifts for doctor.");
             }
             const string selectDaytimeShiftByDoctorIdQuery = @"
-            SELECT s.ShiftId, s.DateTime, s.StartTime, s.EndTime
+            SELECT s.ShiftId, s.Date, s.StartTime, s.EndTime
             FROM Shifts s
             JOIN Schedules sch ON s.ShiftId = sch.ShiftId
             WHERE sch.DoctorId = @DoctorId AND s.StartTime < '20:00:00'
@@ -176,7 +176,7 @@ namespace Hospital.DatabaseServices
         public bool AddShift(ShiftModel shift)
         {
             using SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection);
-            string query = "INSERT INTO Shifts (DateTime, StartTime, EndTime) VALUES (@DateTime, @StartTime, @EndTime)";
+            string query = "INSERT INTO Shifts (Date, StartTime, EndTime) VALUES (@DateTime, @StartTime, @EndTime)";
             SqlCommand command = new SqlCommand(query, connection);
             command.Parameters.AddWithValue("@DateTime", shift.DateTime);
             command.Parameters.AddWithValue("@StartTime", shift.StartTime);
@@ -192,7 +192,7 @@ namespace Hospital.DatabaseServices
             try
             {
                 using SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection);
-                string query = "UPDATE Shifts SET DateTime = @DateTime, StartTime = @StartTime, EndTime = @EndTime WHERE ShiftId = @ShiftId";
+                string query = "UPDATE Shifts SET Date = @DateTime, StartTime = @StartTime, EndTime = @EndTime WHERE ShiftId = @ShiftId";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@DateTime", shift.DateTime);
                 command.Parameters.AddWithValue("@StartTime", shift.StartTime);

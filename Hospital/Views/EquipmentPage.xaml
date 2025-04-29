@@ -1,5 +1,4 @@
 <Page
-<<<<<<< HEAD
     x:Class="Hospital.Views.EquipmentPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,15 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Hospital.Models"
-=======
-    x:Class="Project.Gui.EquipmentPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Project.Gui"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:Project.Models"
->>>>>>> dbf29defeda16dddeaad4741dab9f7dd8d0a692e
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -40,11 +30,7 @@
         <ListView ItemsSource="{x:Bind Equipments, Mode=OneWay}" BorderThickness="1" BorderBrush="Gray" Grid.Row="2"
                   ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListView.ItemTemplate>
-<<<<<<< HEAD
                 <DataTemplate x:DataType="models:EquipmentModel">
-=======
-                <DataTemplate x:DataType="models:Equipment">
->>>>>>> dbf29defeda16dddeaad4741dab9f7dd8d0a692e
                     <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="10">
                         <Grid ColumnDefinitions="2*, 1*, 2*, 1*, 2*">
                             <TextBlock Text="{x:Bind EquipmentID}" Grid.Column="0" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>

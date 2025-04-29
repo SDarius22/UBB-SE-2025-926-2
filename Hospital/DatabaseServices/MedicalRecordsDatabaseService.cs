@@ -4,6 +4,7 @@ using Hospital.Models;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Hospital.DatabaseServices
@@ -65,7 +66,7 @@ namespace Hospital.DatabaseServices
               "     mr.DoctorId, " +
               "     d.Name AS DoctorName, " +
               "     pr.DepartmentId, " +
-              "     dept.DepartmentName, " +
+              "     dept.Name, " +
               "     mr.ProcedureId, " +
               "     pr.ProcedureName, " +
               "     mr.DateAndTime, " +
@@ -82,7 +83,7 @@ namespace Hospital.DatabaseServices
 
                 // Open the database connection asynchronously
                 await sqlConnection.OpenAsync().ConfigureAwait(false);
-                Console.WriteLine("Connection established successfully.");
+                Debug.WriteLine("Connection established successfully.");
 
                 // Create a command to execute the SQL query
                 using var selectMedicalRecordsForPatientCommand = new SqlCommand(selectMedicalRecordForPatientQuery, sqlConnection);
@@ -139,7 +140,7 @@ namespace Hospital.DatabaseServices
               "     mr.DoctorId, " +
               "     d.Name AS DoctorName, " +
               "     pr.DepartmentId, " +
-              "     dept.DepartmentName, " +
+              "     dept.Name, " +
               "     mr.ProcedureId, " +
               "     pr.ProcedureName, " +
               "     mr.DateAndTime, " +
@@ -211,7 +212,7 @@ namespace Hospital.DatabaseServices
               "     mr.DoctorId, " +
               "     d.Name AS DoctorName, " +
               "     pr.DepartmentId, " +
-              "     dept.DepartmentName, " +
+              "     dept.Name, " +
               "     mr.ProcedureId, " +
               "     pr.ProcedureName, " +
               "     mr.DateAndTime, " +

@@ -23,7 +23,7 @@ namespace Hospital.Views
         {
             this.InitializeComponent();
 
-            _viewModel = new MedicalRecordsHistoryViewModel(1,new MedicalRecordManager(new DatabaseServices.MedicalRecordsDatabaseService()),new DocumentManager(new DatabaseServices.DocumentDatabaseService(),new FileService()));
+            _viewModel = new MedicalRecordsHistoryViewModel(1, new MedicalRecordManager(new DatabaseServices.MedicalRecordsDatabaseService()), new DocumentManager(new DatabaseServices.DocumentDatabaseService(), new FileService()));
             this.MedicalRecordsPanel.DataContext = _viewModel;
         }
 

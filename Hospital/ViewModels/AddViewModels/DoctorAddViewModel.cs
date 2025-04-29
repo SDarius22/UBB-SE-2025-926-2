@@ -26,7 +26,7 @@ namespace Hospital.ViewModels.AddViewModels
         private readonly DoctorsDatabaseService doctorModel = new DoctorsDatabaseService();
         private int userID;
         private int departmentID;
-        private float experience;
+        private int rating;
         private string licenseNumber = string.Empty;
         private string errorMessage = string.Empty;
 
@@ -75,10 +75,10 @@ namespace Hospital.ViewModels.AddViewModels
         /// </summary>
         public int Rating
         {
-            get => this.Rating;
+            get => this.rating;
             set
             {
-                this.Rating = value;
+                this.rating = value;
                 this.OnPropertyChanged(nameof(this.Rating));
             }
         }

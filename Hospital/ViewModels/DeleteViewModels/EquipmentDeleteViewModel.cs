@@ -1,4 +1,4 @@
-namespace Hospital.ViewModels.DeleteViewModels
+﻿namespace Hospital.ViewModels.DeleteViewModels
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -25,7 +25,7 @@ namespace Hospital.ViewModels.DeleteViewModels
         public EquipmentDeleteViewModel()
         {
             // Load equipment for the DataGrid
-            this.Equipments = new ObservableCollection<EquipmentModel>(this.equipmentModel.GetEquipments());
+            this.Equipments = new ObservableCollection<EquipmentModel>(this.equipmentModel.GetEquipments().Result);
             this.DeleteEquipmentCommand = new RelayCommand(this.RemoveEquipment);
         }
 
@@ -126,7 +126,7 @@ namespace Hospital.ViewModels.DeleteViewModels
 
             if (success)
             {
-                this.Equipments = new ObservableCollection<EquipmentModel>(this.equipmentModel.GetEquipments());
+                this.Equipments = new ObservableCollection<EquipmentModel>(this.equipmentModel.GetEquipments().Result);
             }
         }
 
