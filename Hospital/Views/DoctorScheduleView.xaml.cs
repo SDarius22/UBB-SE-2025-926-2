@@ -213,12 +213,7 @@ namespace Hospital.Views
         private void ShowMedicalRecordForm(AppointmentJointModel appointment)
         {
             var viewModel = new MedicalRecordCreationFormViewModel(_medicalRecordManager, _documentManager);
-<<<<<<< Updated upstream
-            var medicalRecordCreateView = new CreateMedicalRecordForm(viewModel, appointment);
-            medicalRecordCreateView.Activate();
-=======
             var medicalRecordCreateView = new CreateMedicalRecordForm();
->>>>>>> Stashed changes
         }
 
         private void ShowMedicalRecordsHistory(int patientId)

@@ -81,8 +81,6 @@ namespace Hospital.Views.AddViews
                     case "Shifts":
                         ContentFrame.Navigate(typeof(AddShiftView));
                         break;
-<<<<<<< Updated upstream
-=======
                     case "Patients":
                         {
                             try
@@ -114,7 +112,6 @@ namespace Hospital.Views.AddViews
                     case "MedicalRecords":
                         ContentFrame.Navigate(typeof(CreateMedicalRecordForm));
                         break;
->>>>>>> Stashed changes
                     default:
                         break;
                 }

@@ -12,29 +12,12 @@ using Hospital.DatabaseServices;
 
 namespace Hospital.Views
 {
-    public sealed partial class CreateMedicalRecordForm : Window
+    public sealed partial class CreateMedicalRecordForm : Page
     {
 
         private MedicalRecordCreationFormViewModel _viewModel;
         private AppointmentJointModel _appointment;
         private MedicalRecordManager _medicalRecordManager;
-
-        //public CreateMedicalRecordForm(MedicalRecordCreationFormViewModel viewModel, AppointmentJointModel appointment)
-        //{
-        //    this.InitializeComponent();
-        //    _viewModel = viewModel;
-        //    _appointment = appointment;
-
-        //    // Populate ViewModel from the Appointment
-        //    _viewModel.PatientName = appointment.PatientName;
-        //    _viewModel.DoctorName = appointment.DoctorName;
-        //    _viewModel.AppointmentDate = appointment.DateAndTime;
-        //    _viewModel.AppointmentTime = appointment.DateAndTime.ToString("hh:mm tt");
-        //    _viewModel.Department = appointment.DepartmentName;
-
-        //    // Set the data context for binding
-        //    this.rootGrid.DataContext = _viewModel;
-        //}
 
         public CreateMedicalRecordForm()
         {
@@ -93,7 +76,6 @@ namespace Hospital.Views
                 if (createdRecordId > 0)
                 {
                     await ShowSuccessDialog("Medical record created successfully!");
-                    this.Close();
                 }
                 else
                 {
@@ -112,17 +94,12 @@ namespace Hospital.Views
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-<<<<<<< Updated upstream
-            this.Close();
-        }
-=======
             if (this.Frame.CanGoBack)
             {
                 this.Frame.GoBack();
             }
         }
 
->>>>>>> Stashed changes
         private async Task ShowSuccessDialog(string message)
         {
             ContentDialog successDialog = new ContentDialog
@@ -130,7 +107,6 @@ namespace Hospital.Views
                 Title = "Success",
                 Content = message,
                 CloseButtonText = "OK",
-                XamlRoot = this.Content.XamlRoot,
             };
             await successDialog.ShowAsync();
         }
@@ -141,7 +117,6 @@ namespace Hospital.Views
                 Title = "Error",
                 Content = message,
                 CloseButtonText = "OK",
-                XamlRoot = this.Content.XamlRoot,
             };
             await errorDialog.ShowAsync();
         }
