@@ -1,4 +1,5 @@
 ﻿using Hospital.Configs;
+using Hospital.DbContext;
 using Hospital.Models;
 using Microsoft.Data.SqlClient;
 using System;
@@ -9,18 +10,11 @@ namespace Hospital.DatabaseServices
 {
     public class DepartmentsDatabaseService : IDepartmentsDatabaseService
     {
-        private readonly ApplicationConfiguration _configuration;
-        private readonly IDepartmentsDatabaseService _databaseService;
+        private readonly AppDbContext _context;
 
-        public DepartmentsDatabaseService(IDepartmentsDatabaseService? databaseService = null)
+        public DepartmentsDatabaseService()
         {
             _configuration = ApplicationConfiguration.GetInstance();
-            _databaseService = databaseService ?? this;
-        }
-
-        public string GetConnectionString()
-        {
-            return _configuration.DatabaseConnection;
         }
 
         // This method will be used to get the departments from the database
