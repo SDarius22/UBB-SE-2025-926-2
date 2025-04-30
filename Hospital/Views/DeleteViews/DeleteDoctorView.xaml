@@ -33,7 +33,7 @@
                         <controls:DataGridTextColumn Header="Doctor ID" Binding="{Binding DoctorId}" Width="*" />
                         <controls:DataGridTextColumn Header="User ID" Binding="{Binding UserId}" Width="*" />
                         <controls:DataGridTextColumn Header="'DepartmentID" Binding="{Binding DepartmentId}" Width="*" />
-                        <controls:DataGridTextColumn Header="Rating" Binding="{Binding Rating}" Width="*" />
+                        <controls:DataGridTextColumn Header="Rating" Binding="{Binding DoctorRating}" Width="*" />
                         <controls:DataGridTextColumn Header="License Number" Binding="{Binding LicenseNumber}" Width="*"/>
                     </controls:DataGrid.Columns>
                 </controls:DataGrid>

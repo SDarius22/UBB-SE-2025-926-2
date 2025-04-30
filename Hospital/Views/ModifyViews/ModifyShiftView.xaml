@@ -6,7 +6,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     mc:Ignorable="d"
+    xmlns:utils="using:Hospital.Utils"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <utils:DateOnlyToStringConverter x:Key="DateOnlyToStringConverter" />
+        <utils:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter" />
+    </Page.Resources>
 
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -15,7 +21,7 @@
 
                 <controls:DataGrid ItemsSource="{Binding Shifts}" AutoGenerateColumns="False" IsReadOnly="False" HorizontalAlignment="Stretch" Width="Auto" Height="400">
                     <controls:DataGrid.Columns>
-                        <controls:DataGridTextColumn Header="Shift ID" Binding="{Binding ShiftID}" Width="*" IsReadOnly="True"/>
+                        <controls:DataGridTextColumn Header="Shift ID" Binding="{Binding ShiftId}" Width="*" IsReadOnly="True"/>
                         <controls:DataGridTextColumn Header="Date" Binding="{Binding Path=Date, Converter={StaticResource DateOnlyToStringConverter},UpdateSourceTrigger=PropertyChanged}" IsReadOnly="False" Width="*"/>
                         <controls:DataGridTextColumn Header="Start Time" Binding="{Binding Path=StartTime, Converter={StaticResource TimeSpanToStringConverter},UpdateSourceTrigger=PropertyChanged}" IsReadOnly="False" Width="*"/>
                         <controls:DataGridTextColumn Header="End Time" Binding="{Binding Path=EndTime, Converter={StaticResource TimeSpanToStringConverter},UpdateSourceTrigger=PropertyChanged}" IsReadOnly="False" Width="*"/>
