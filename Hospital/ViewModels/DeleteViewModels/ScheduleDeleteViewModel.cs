@@ -52,9 +52,8 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// </summary>
         public ScheduleDeleteViewModel()
         {
-            // Load schedules for the DataGrid
-            LoadSchedules();
             this.DeleteScheduleCommand = new RelayCommand(this.RemoveSchedule);
+            this.LoadSchedules();
         }
 
         /// <summary>
