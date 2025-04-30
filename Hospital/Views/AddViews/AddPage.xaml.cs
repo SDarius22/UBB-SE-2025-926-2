@@ -13,6 +13,10 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Hospital.Views.AddViews;
+using Hospital.Managers;
+using Hospital.DatabaseServices;
+using Hospital.ViewModels;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI Hospital structure,
 // and more about our Hospital templates, see: http://aka.ms/winui-Hospital-info.
@@ -24,13 +28,32 @@ namespace Hospital.Views.AddViews
     /// </summary>
     public sealed partial class AddPage : Page
     {
+
+        private readonly DepartmentManager _departmentManager;
+        private readonly MedicalProcedureManager _procedureManager;
+        private readonly DoctorManager _doctorManager;
+        private readonly ShiftManager _shiftManager;
+        private readonly AppointmentManager _appointmentManager;
+
         public AddPage()
         {
             this.InitializeComponent();
+
+            var departmentsDatabaseService = new DepartmentsDatabaseService();
+            var proceduresDatabaseService = new MedicalProceduresDatabaseService();
+            var doctorsDatabaseService = new DoctorsDatabaseService();
+            var shiftsDatabaseService = new ShiftsDatabaseService();
+            var appointmentsDatabaseService = new AppointmentsDatabaseService();
+
+            _departmentManager = new DepartmentManager(departmentsDatabaseService);
+            _procedureManager = new MedicalProcedureManager(proceduresDatabaseService);
+            _doctorManager = new DoctorManager(doctorsDatabaseService);
+            _shiftManager = new ShiftManager(shiftsDatabaseService);
+            _appointmentManager = new AppointmentManager(appointmentsDatabaseService);
             ContentFrame.Navigate(typeof(AddDoctorView));
         }
 
-        private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        private async void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.SelectedItemContainer != null)
             {
@@ -52,9 +75,37 @@ namespace Hospital.Views.AddViews
                     case "Schedules":
                         ContentFrame.Navigate(typeof(AddScheduleAndShifts));
                         break;
-                    case "Patients":
-                        ContentFrame.Navigate(typeof(AppointmentCreationForm));
+                    case "Shifts":
+                        ContentFrame.Navigate(typeof(AddShiftView));
                         break;
+                    case "Patients":
+                        {
+                            try
+                            {
+                                var viewModel = await AppointmentCreationFormViewModel.CreateViewModel(
+                                    _departmentManager,
+                                    _procedureManager,
+                                    _doctorManager,
+                                    _shiftManager,
+                                    _appointmentManager);
+
+                                ContentFrame.Navigate(typeof(AppointmentCreationForm), viewModel);
+                            }
+                            catch (Exception ex)
+                            {
+                                ContentDialog contentDialog = new ContentDialog
+                                {
+                                    Title = "Error",
+                                    Content = ex.Message,
+                                    CloseButtonText = "Ok",
+                                    XamlRoot = this.Content.XamlRoot
+                                };
+                                await contentDialog.ShowAsync();
+                            }
+
+                            break;
+                        }
+
                     case "MedicalRecords":
                         ContentFrame.Navigate(typeof(CreateMedicalRecordForm));
                         break;

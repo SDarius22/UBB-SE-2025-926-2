@@ -48,7 +48,7 @@ namespace Hospital.ViewModels
             HighlightedDates.Clear();
             foreach (var appointment in _appointmentManager.Appointments)
             {
-                HighlightedDates.Add(new DateTimeOffset(appointment.DateAndTime.Date));
+                HighlightedDates.Add(new DateTimeOffset(appointment.DateAndTime));
             }
         }
 

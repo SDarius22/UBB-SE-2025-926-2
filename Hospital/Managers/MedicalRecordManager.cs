@@ -65,25 +65,13 @@ namespace Hospital.Managers
             }
         }
 
-        public async Task<int> CreateMedicalRecord(AppointmentJointModel detailedAppointment, string conclusion)
+        public async Task<int> CreateMedicalRecord(MedicalRecordModel medicalRecord)
         {
             try
             {
-                // Placeholder MedicalRecordId, will be replaced by DB-generated ID
-                int placeholderMedicalRecordId = 0;
-
-                // Create a new MedicalRecord instance with the provided conclusion.
-                MedicalRecordModel medicalRecord = new MedicalRecordModel(
-                    placeholderMedicalRecordId,
-                    detailedAppointment.PatientId,
-                    detailedAppointment.DoctorId,
-                    detailedAppointment.ProcedureId,
-                    conclusion,
-                    DateTime.Now);
-
                 // Insert the new record into the database and get the generated ID.
                 int newMedicalRecordId = await _medicalRecordsDatabaseService.AddMedicalRecord(medicalRecord)
-                                                          .ConfigureAwait(false);
+                                                             .ConfigureAwait(false);
 
                 // If the record was successfully added, update the in-memory list.
                 if (newMedicalRecordId > 0)
@@ -131,21 +119,6 @@ namespace Hospital.Managers
         public bool ValidateConclusion(string conclusion)
         {
             return !string.IsNullOrWhiteSpace(conclusion) && conclusion.Length <= 255;
-        }
-
-        public async Task<int> CreateMedicalRecordWithAppointment(AppointmentJointModel appointment, string conclusion)
-        {
-            if (!ValidateConclusion(conclusion))
-            {
-                throw new ValidationException("Conclusion must not be empty and cannot exceed 255 characters.");
-            }
-
-            // Update appointment status
-            appointment.Finished = true;
-            appointment.DateAndTime = DateTime.Now;
-
-            // Create medical record
-            return await CreateMedicalRecord(appointment, conclusion);
         }
     }
 }

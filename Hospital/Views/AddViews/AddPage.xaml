@@ -20,7 +20,7 @@
                 <NavigationViewItem Content="Drugs" Tag="Drugs" />
                 <NavigationViewItem Content="Schedule and Shifts" Tag="Schedules" />
                 <NavigationViewItem Content="Rooms and Departments" Tag="Rooms" />
-                <NavigationViewItem Content="Patient" Tag="Patient" />
+                <NavigationViewItem Content="Patient" Tag="Patients" />
                 <NavigationViewItem Content="Medical Records" Tag="MedicalRecords" />
             </NavigationView.MenuItems>
 
