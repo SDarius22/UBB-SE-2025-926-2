@@ -181,7 +181,7 @@ namespace Hospital.DatabaseServices
                             RoomID = reader.GetInt32(0),
                             Capacity = reader.GetInt32(1),
                             DepartmentID = reader.GetInt32(2),
-                            EquipmentID = reader.GetInt32(3),
+                            EquipmentID = reader.IsDBNull(3) ? -1 : reader.GetInt32(3),
 
                             // DepartmentID = reader.GetGuid(2),
                             // EquipmentID = reader.GetGuid(3)
