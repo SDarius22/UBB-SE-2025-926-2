@@ -159,7 +159,7 @@ namespace Hospital.ViewModels.AddViewModels
         {
             if (!this.doctorModel.DoesUserExist(doctor.UserId))
             {
-                this.ErrorMessage = "UserID doesn’t exist in the Users Records.";
+                this.ErrorMessage = "UserID doesn't exist in the Users Records.";
                 return false;
             }
 
@@ -177,7 +177,7 @@ namespace Hospital.ViewModels.AddViewModels
 
             if (!this.doctorModel.DoesDepartmentExist(doctor.DepartmentId))
             {
-                this.ErrorMessage = "DepartmentID doesn’t exist in the Departments Records.";
+                this.ErrorMessage = "DepartmentID doesn't exist in the Departments Records.";
                 return false;
             }
 

@@ -129,19 +129,20 @@ namespace Hospital.ViewModels
                 ShiftDates.Clear();
                 foreach (var shift in Shifts)
                 {
-                    var shiftStartDate = shift.DateTime.Date;
-                    var shiftEndDate = shift.DateTime.Date;
+                    var shiftStartDate = shift.Date;
+                    var shiftEndDate = shift.Date;
 
+                    ShiftDates.Add(new DateTimeOffset(shiftStartDate.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero));
                     if (shift.EndTime <= shift.StartTime)
                     {
                         shiftEndDate = shiftEndDate.AddDays(1);
                     }
 
-                    ShiftDates.Add(new DateTimeOffset(shiftStartDate, TimeSpan.Zero));
+                    ShiftDates.Add(new DateTimeOffset(shiftStartDate.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero));
 
                     if (shiftEndDate > shiftStartDate)
                     {
-                        ShiftDates.Add(new DateTimeOffset(shiftEndDate, TimeSpan.Zero));
+                        ShiftDates.Add(new DateTimeOffset(shiftEndDate.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero));
                     }
                 }
 

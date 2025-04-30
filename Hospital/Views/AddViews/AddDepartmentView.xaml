@@ -35,7 +35,7 @@
         <ScrollViewer Grid.Row="4" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
             <controls:DataGrid ItemsSource="{Binding Departments}" AutoGenerateColumns="False" IsReadOnly="True" HorizontalAlignment="Stretch" Width="Auto">
                 <controls:DataGrid.Columns>
-                    <controls:DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                    <controls:DataGridTextColumn Header="Name" Binding="{Binding DepartmentName}" Width="*"/>
                 </controls:DataGrid.Columns>
             </controls:DataGrid>
         </ScrollViewer>

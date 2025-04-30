@@ -1,5 +1,4 @@
-﻿
-using Hospital.Configs;
+﻿using Hospital.Configs;
 using Hospital.DatabaseServices;
 using Hospital.Exceptions;
 using Hospital.Helpers;
@@ -209,8 +208,8 @@ namespace Hospital.ViewModels
                 DoctorsList?.Add(doctor);
             }
 
-            // Enable controls only if we have both procedures and doctors
-            AreProceduresAndDoctorsEnabled = ProceduresList?.Count > 0 && DoctorsList?.Count > 0;
+            // Enable controls if either procedures or doctors are available
+            AreProceduresAndDoctorsEnabled = ProceduresList?.Count > 0 || DoctorsList?.Count > 0;
             IsDateEnabled = true;
             IsTimeEnabled = true;
         }
@@ -241,7 +240,7 @@ namespace Hospital.ViewModels
 
             foreach (ShiftModel shift in _shiftsList)
             {
-                HighlightedDates.Add(new DateTimeOffset(shift.DateTime));
+                HighlightedDates.Add(new DateTimeOffset(shift.Date.ToDateTime(TimeOnly.MinValue)));
             }
 
             IsDateEnabled = true;

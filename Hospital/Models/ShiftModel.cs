@@ -9,16 +9,16 @@ namespace Hospital.Models
     public class ShiftModel
     {
         public int ShiftId { get; set; }
-        public DateTime DateTime { get; set; }
+        public DateOnly Date { get; set; }
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
 
-        public ShiftModel(int shiftId, DateTime dateTime, TimeSpan startTime, TimeSpan endtime)
+        public ShiftModel(int shiftId, DateOnly date, TimeSpan startTime, TimeSpan endTime)
         {
             ShiftId = shiftId;
-            DateTime = dateTime;
+            Date = date;
             StartTime = startTime;
-            EndTime = endtime;
+            EndTime = endTime;
         }
     }
 }

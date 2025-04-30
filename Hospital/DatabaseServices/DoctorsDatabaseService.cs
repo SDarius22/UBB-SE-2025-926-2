@@ -194,7 +194,7 @@
         {
             using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
             {
-                string query = "SELECT COUNT(*) FROM Doctors WHERE UserID = @UserID";
+                string query = "SELECT COUNT(*) FROM Doctors d JOIN Users u ON d.UserID = u.UserID WHERE u.UserID = @UserID AND u.Role = 'Doctor'";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@UserID", userID);
 
@@ -237,8 +237,8 @@
                 command.Parameters.AddWithValue("@UserID", userID);
 
                 connection.Open();
-                string role = (string)command.ExecuteScalar();
-                return role == "Doctor";
+                object result = command.ExecuteScalar();
+                return result != null && result.ToString() == "Doctor";
             }
         }
 
@@ -306,7 +306,7 @@
                 {
                     shifts.Add(new ShiftModel(
                         reader.GetInt32(0),
-                        reader.GetDateTime(1),
+                        DateOnly.FromDateTime(reader.GetDateTime(1)), // Convert DateTime to DateOnly
                         reader.GetTimeSpan(2),
                         reader.GetTimeSpan(3)));
                 }

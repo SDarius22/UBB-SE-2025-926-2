@@ -34,7 +34,7 @@ namespace Hospital.Managers
 
         public ShiftModel GetShiftByDay(DateTime day)
         {
-            ShiftModel? shiftByDate = _shifts.FirstOrDefault(shift => shift.DateTime.Date == day.Date);
+            ShiftModel? shiftByDate = _shifts.FirstOrDefault(shift => shift.Date == DateOnly.FromDateTime(day));
             if (shiftByDate == null)
                 throw new ShiftNotFoundException(string.Format("Shift not found for date {0}", day.ToString()));
             return shiftByDate;
@@ -55,70 +55,38 @@ namespace Hospital.Managers
 
         public List<TimeSlotModel> GenerateTimeSlots(DateTime date, List<ShiftModel> shifts, List<AppointmentJointModel> appointments)
         {
-            List<TimeSlotModel> slots = new();
-            DateTime startTime = date.Date;
-            DateTime endTime = startTime.AddDays(1);
-            const string TimeFormat = "hh:mm tt";
-            const int TimeSlotIntervalInMinutes = 30;
+            var timeSlots = new List<TimeSlotModel>();
+            var shift = shifts.FirstOrDefault(s => s.Date == DateOnly.FromDateTime(date));
 
-            var selectedAppointments = appointments
-                .Where(a => a.DateAndTime.Date == date.Date)
-                .ToList();
+            if (shift == null)
+                return timeSlots;
 
-            var selectedShifts = shifts
-                .Where(shift =>
-                {
-                    var shiftStart = shift.DateTime.Date + shift.StartTime;
-                    var shiftEnd = shift.DateTime.Date + shift.EndTime;
+            var currentTime = shift.StartTime;
+            var endTime = shift.EndTime;
 
-                    if (shift.EndTime <= shift.StartTime)
-                        shiftEnd = shiftEnd.AddDays(1);
+            if (endTime < currentTime)
+                endTime = endTime.Add(TimeSpan.FromDays(1));
 
-                    return shiftStart < endTime && shiftEnd > startTime;
-                })
-                .ToList();
-
-            while (startTime < endTime)
+            while (currentTime < endTime)
             {
-                var slot = new TimeSlotModel
+                var slotEndTime = currentTime.Add(TimeSpan.FromMinutes(30));
+                if (slotEndTime > endTime)
+                    slotEndTime = endTime;
+
+                var appointment = appointments.FirstOrDefault(a => 
+                    a.DateAndTime.TimeOfDay >= currentTime && 
+                    a.DateAndTime.TimeOfDay < slotEndTime);
+
+                timeSlots.Add(new TimeSlotModel
                 {
-                    TimeSlot = startTime,
-                    Time = startTime.ToString(TimeFormat),
-                    Appointment = "",
-                    HighlightStatus = "None",
-                };
-
-                String highlightStatus = "None";
-
-                bool isInShift = selectedShifts.Any(shift =>
-                {
-                    DateTime shiftStart = shift.DateTime.Date + shift.StartTime;
-                    DateTime shiftEnd = shift.DateTime.Date + shift.EndTime;
-                    if (shift.EndTime <= shift.StartTime)
-                        shiftEnd = shiftEnd.AddDays(1);
-
-                    return startTime >= shiftStart && startTime < shiftEnd;
+                    Appointment = appointment != null ? $"{appointment.PatientName} - {appointment.ProcedureName}" : string.Empty,
+                    HighlightStatus = appointment != null ? "Appointment" : "None"
                 });
 
-                var matchingAppointment = selectedAppointments.FirstOrDefault(appointment =>
-                    appointment.DateAndTime == startTime && isInShift);
-
-                if (matchingAppointment != null)
-                {
-                    slot.Appointment = matchingAppointment.ProcedureName;
-                    highlightStatus = "Booked";
-                }
-                else if (isInShift)
-                {
-                    highlightStatus = "Available";
-                }
-
-                slot.HighlightStatus = highlightStatus;
-                slots.Add(slot);
-                startTime = startTime.AddMinutes(TimeSlotIntervalInMinutes);
+                currentTime = slotEndTime;
             }
 
-            return slots;
+            return timeSlots;
         }
     }
 }
