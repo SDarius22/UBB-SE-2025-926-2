@@ -65,7 +65,7 @@ namespace Hospital.DatabaseServices
         {
             using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
             {
-                string query = "INSERT INTO Departments (DepartmentName) VALUES (@Name)";
+                string query = "INSERT INTO Departments (Name) VALUES (@Name)";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@Name", department.DepartmentName);
 
@@ -86,7 +86,7 @@ namespace Hospital.DatabaseServices
             {
                 using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
                 {
-                    string query = "UPDATE Departments SET DepartmentName = @Name WHERE DepartmentId = @DepartmentID";
+                    string query = "UPDATE Departments SET Name = @Name WHERE DepartmentId = @DepartmentID";
                     SqlCommand command = new SqlCommand(query, connection);
                     command.Parameters.AddWithValue("@Name", department.DepartmentName);
                     command.Parameters.AddWithValue("@DepartmentID", department.DepartmentId);
@@ -160,7 +160,7 @@ namespace Hospital.DatabaseServices
             List<DepartmentModel> departments = new List<DepartmentModel>();
             using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
             {
-                string query = "SELECT * FROM DepartmentModels";
+                string query = "SELECT * FROM Departments";
                 SqlCommand command = new SqlCommand(query, connection);
                 connection.Open();
                 SqlDataReader reader = command.ExecuteReader();

@@ -28,7 +28,6 @@ namespace Hospital.Managers
             return Departments;
         }
 
-
         // This method will be used to load the departments from the database into the in memory repository
         public async Task LoadDepartments()
         {

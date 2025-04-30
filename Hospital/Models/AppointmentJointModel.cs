@@ -32,7 +32,6 @@ namespace Hospital.Models
 
         public TimeSpan ProcedureDuration { get; set; }
 
-
         public AppointmentJointModel(int appointmentId, bool finished, DateTime dateAndTime, int departmentId, string departmentName, int doctorId, string doctorName, int patientId, string patientName, int procedureId, string procedureName, TimeSpan procedureDuration)
         {
             AppointmentId = appointmentId;

@@ -18,4 +18,4 @@ namespace Hospital.Managers
 
         public bool CanCancelAppointment(AppointmentJointModel appointment);
     }
-} 
+}

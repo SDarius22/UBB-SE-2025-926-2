@@ -4,6 +4,7 @@ using Hospital.Models;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Hospital.DatabaseServices
@@ -42,7 +43,6 @@ namespace Hospital.DatabaseServices
 
                 object result = await insertMedicalRecordCommand.ExecuteScalarAsync().ConfigureAwait(false);
 
-
                 int medicalRecordId = result != null ? Convert.ToInt32(result) : -1;
                 return medicalRecordId;
             }
@@ -66,7 +66,7 @@ namespace Hospital.DatabaseServices
               "     mr.DoctorId, " +
               "     d.Name AS DoctorName, " +
               "     pr.DepartmentId, " +
-              "     dept.DepartmentName, " +
+              "     dept.Name, " +
               "     mr.ProcedureId, " +
               "     pr.ProcedureName, " +
               "     mr.DateAndTime, " +
@@ -83,7 +83,7 @@ namespace Hospital.DatabaseServices
 
                 // Open the database connection asynchronously
                 await sqlConnection.OpenAsync().ConfigureAwait(false);
-                Console.WriteLine("Connection established successfully.");
+                Debug.WriteLine("Connection established successfully.");
 
                 // Create a command to execute the SQL query
                 using var selectMedicalRecordsForPatientCommand = new SqlCommand(selectMedicalRecordForPatientQuery, sqlConnection);
@@ -109,11 +109,9 @@ namespace Hospital.DatabaseServices
                         reader.GetInt32(7),     // ProcedureId
                         reader.GetString(8),    // ProcedureName
                         reader.GetDateTime(9),  // Date
-                        reader.GetString(10)    // Conclusion
-                    ));
+                        reader.GetString(10))    // Conclusion
+                    );
                 }
-
-
 
                 if (medicalRecords.Count == 0)
                 {
@@ -142,7 +140,7 @@ namespace Hospital.DatabaseServices
               "     mr.DoctorId, " +
               "     d.Name AS DoctorName, " +
               "     pr.DepartmentId, " +
-              "     dept.DepartmentName, " +
+              "     dept.Name, " +
               "     mr.ProcedureId, " +
               "     pr.ProcedureName, " +
               "     mr.DateAndTime, " +
@@ -184,8 +182,7 @@ namespace Hospital.DatabaseServices
                         reader.GetInt32(7),     // ProcedureId
                         reader.GetString(8),    // ProcedureName
                         reader.GetDateTime(9),  // Date
-                        reader.GetString(10)     // Conclusion
-                    );
+                        reader.GetString(10));     // Conclusion
                 }
 
                 if (medicalRecord == null)
@@ -215,7 +212,7 @@ namespace Hospital.DatabaseServices
               "     mr.DoctorId, " +
               "     d.Name AS DoctorName, " +
               "     pr.DepartmentId, " +
-              "     dept.DepartmentName, " +
+              "     dept.Name, " +
               "     mr.ProcedureId, " +
               "     pr.ProcedureName, " +
               "     mr.DateAndTime, " +
@@ -257,8 +254,8 @@ namespace Hospital.DatabaseServices
                         reader.GetInt32(7),     // ProcedureId
                         reader.GetString(8),    // ProcedureName
                         reader.GetDateTime(9),  // Date
-                        reader.GetString(10)    // Conclusion
-                    ));
+                        reader.GetString(10))    // Conclusion
+                    );
                 }
 
                 if (medicalRecords.Count == 0)

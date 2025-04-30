@@ -1,4 +1,4 @@
-namespace Hospital.ViewModels.AddViewModels
+﻿namespace Hospital.ViewModels.AddViewModels
 {
     using System.Collections.ObjectModel;
     using System.ComponentModel;
@@ -120,10 +120,11 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Loads the equipment from the database.
         /// </summary>
-        private void LoadEquipments()
+        private async void LoadEquipments()
         {
             this.Equipments.Clear();
-            foreach (EquipmentModel equipment in this.equipmentModel.GetEquipments())
+            var equipments = await this.equipmentModel.GetEquipments();
+            foreach (EquipmentModel equipment in equipments)
             {
                 this.Equipments.Add(equipment);
             }

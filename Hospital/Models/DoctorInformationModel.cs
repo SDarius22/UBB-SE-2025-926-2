@@ -76,7 +76,6 @@ namespace Hospital.Models
         /// </summary>
         public string LicenseNumber { get; set; }
 
-
         /// <summary>
         /// Gets or sets the rating of the doctor.
         /// </summary>

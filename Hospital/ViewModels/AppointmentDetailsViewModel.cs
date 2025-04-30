@@ -3,7 +3,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Hospital.Managers;
 using Hospital.Models;
-using Hospital.Commands;
+using Hospital.Utils;
+
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Hospital.Exceptions;
@@ -28,7 +29,6 @@ namespace Hospital.ViewModels
         public string ProcedureName { get; private set; }
 
         public string ProcedureDuration { get; private set; }
-
 
         private bool _canCancelAppointment;
 
@@ -68,9 +68,8 @@ namespace Hospital.ViewModels
             CanCancelAppointment = _appointmentManager.CanCancelAppointment(_appointment);
 
             CancelAppointmentCommand = new RelayCommand(
-                async _ => await CancelAppointment(),
-                _ => CanCancelAppointment
-            );
+                async () => await CancelAppointment(),
+                () => CanCancelAppointment);
         }
 
         public DateTime AppointmentDateTime => _appointment.DateAndTime;

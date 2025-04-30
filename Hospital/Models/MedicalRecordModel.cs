@@ -20,8 +20,6 @@ namespace Hospital.Models
 
         public string Conclusion { get; set; }
 
-
-
         public MedicalRecordModel(int medicalRecordId, int patientId, int doctorId, int procedureId, string conclusion, DateTime dateAndTime)
         {
             MedicalRecordId = medicalRecordId;
