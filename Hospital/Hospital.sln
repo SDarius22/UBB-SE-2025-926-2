@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend", "..\Backend\Backend.csproj", "{F2D6CD97-EF3A-4253-B0B1-CCD70566455A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -52,6 +54,18 @@ Global
 		{38C660C5-9A83-4B38-8228-4EFA8BB70D4C}.Release|x64.Build.0 = Release|Any CPU
 		{38C660C5-9A83-4B38-8228-4EFA8BB70D4C}.Release|x86.ActiveCfg = Release|Any CPU
 		{38C660C5-9A83-4B38-8228-4EFA8BB70D4C}.Release|x86.Build.0 = Release|Any CPU
+		{F2D6CD97-EF3A-4253-B0B1-CCD70566455A}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{F2D6CD97-EF3A-4253-B0B1-CCD70566455A}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{F2D6CD97-EF3A-4253-B0B1-CCD70566455A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F2D6CD97-EF3A-4253-B0B1-CCD70566455A}.Debug|x64.Build.0 = Debug|Any CPU
+		{F2D6CD97-EF3A-4253-B0B1-CCD70566455A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F2D6CD97-EF3A-4253-B0B1-CCD70566455A}.Debug|x86.Build.0 = Debug|Any CPU
+		{F2D6CD97-EF3A-4253-B0B1-CCD70566455A}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{F2D6CD97-EF3A-4253-B0B1-CCD70566455A}.Release|ARM64.Build.0 = Release|Any CPU
+		{F2D6CD97-EF3A-4253-B0B1-CCD70566455A}.Release|x64.ActiveCfg = Release|Any CPU
+		{F2D6CD97-EF3A-4253-B0B1-CCD70566455A}.Release|x64.Build.0 = Release|Any CPU
+		{F2D6CD97-EF3A-4253-B0B1-CCD70566455A}.Release|x86.ActiveCfg = Release|Any CPU
+		{F2D6CD97-EF3A-4253-B0B1-CCD70566455A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
