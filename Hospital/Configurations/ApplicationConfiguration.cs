@@ -21,11 +21,7 @@ namespace Hospital.Configs
 
         private static ApplicationConfiguration? _instance;
 
-<<<<<<< Updated upstream
-        private string _databaseConnection = "Data Source=Sala-s-TUF-A15;Initial Catalog=HospitalManagement;Integrated Security=True;TrustServerCertificate=True";
-=======
         private string _databaseConnection = "Data Source=DESKTOP-VKGKF7I\\SQLEXPRESS;Initial Catalog=HospitalManagement; Integrated Security=True; TrustServerCertificate=True;";
->>>>>>> Stashed changes
 
         public int patientId = 1;
         public int doctorId = 1;
