@@ -12,21 +12,6 @@
     <EnableMsixTooling>true</EnableMsixTooling>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="Views\AdminMainPage.xaml" />
-    <None Remove="Views\AppointmentCreationForm.xaml" />
-    <None Remove="Views\DoctorInfoPage.xaml" />
-    <None Remove="Views\DoctorsPage.xaml" />
-    <None Remove="Views\DrugsPage.xaml" />
-    <None Remove="Views\EquipmentPage.xaml" />
-    <None Remove="Views\HomePage.xaml" />
-    <None Remove="Views\LoginPage.xaml" />
-    <None Remove="Views\MedicalRecordDetailsView.xaml" />
-    <None Remove="Views\MedicalRecordsHistoryView.xaml" />
-    <None Remove="Views\RoomAndDepartments.xaml" />
-    <None Remove="Views\ScheduleAndShifts.xaml" />
-    <None Remove="Views\TestPage.xaml" />
-  </ItemGroup>
 
   <ItemGroup>
     <Content Include="Assets\SplashScreen.scale-200.png" />

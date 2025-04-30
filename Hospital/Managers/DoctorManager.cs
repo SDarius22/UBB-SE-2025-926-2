@@ -4,6 +4,7 @@ using Hospital.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,14 +25,16 @@ namespace Hospital.Managers
 
         public async Task LoadDoctors(int departmentId)
         {
+            Debug.WriteLine("→ DoctorManager.LoadDoctors(" + departmentId + ")");
             try
             {
                 Doctors.Clear();
-                List<DoctorJointModel> doctorsList = await _doctorDatabaseService.GetDoctorsByDepartment(departmentId).ConfigureAwait(false);
+                List<DoctorJointModel> doctorsList = await _doctorDatabaseService.GetDoctorsByDepartment(departmentId);
                 foreach (DoctorJointModel doctor in doctorsList)
                 {
                     Doctors.Add(doctor);
                 }
+                Debug.WriteLine("→ DoctorsDatabaseService.GetDoctorsByDepartment returned: " + doctorsList.Count);
             }
             catch (Exception exception)
             {

@@ -38,13 +38,13 @@
         /// <summary>
         /// Gets or sets the name of the department.
         /// </summary>
-        public string Name
+        public string DepartmentName
         {
             get => this.name;
             set
             {
                 this.name = value;
-                this.OnPropertyChanged(nameof(this.Name));
+                this.OnPropertyChanged(nameof(this.DepartmentName));
             }
         }
 
@@ -92,7 +92,7 @@
         /// </summary>
         private void SaveDepartment()
         {
-            var department = new DepartmentModel(0, this.Name);
+            var department = new DepartmentModel(0, this.DepartmentName);
 
             if (this.ValidateDepartment(department))
             {

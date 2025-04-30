@@ -24,22 +24,12 @@
     /// </summary>
     public partial class App : Application
     {
-        public App()
-        {
-            this.InitializeComponent();
-        }
+        public static Window MainWindow { get; private set; }
 
-        /// <summary>
-        /// Invoked when the application is launched.
-        /// </summary>
-        /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            this.window = new LoginPage();
-            this.window.Activate();
+            MainWindow = new LoginPage();
+            MainWindow.Activate();
         }
-
-
-        private Window? window;
     }
 }

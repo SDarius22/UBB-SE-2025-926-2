@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Numerics;
     using System.Reflection;
@@ -30,20 +31,22 @@
         // This method will be used to get the doctors from the database
         public async Task<List<DoctorJointModel>> GetDoctorsByDepartment(int departmentId)
         {
-            const string selectDoctorsByDepartmentQuery = @"SELECT
-                d.DoctorId,
-                d.UserId,
-                u.Username,
-                d.DepartmentId,
-                d.DoctorRating,
-                d.LicenseNumber
-                FROM Doctors d
-                INNER JOIN Users u
-                ON d.UserId = u.UserId
-                WHERE DepartmentId = @departmentId";
+            const string selectDoctorsByDepartmentQuery = @"
+                    SELECT
+                        d.DoctorId,
+                        d.UserId,
+                        u.Username,
+                        d.DepartmentId,
+                        d.Rating,
+                        d.LicenseNumber
+                    FROM Doctors d
+                    INNER JOIN Users u ON d.UserId = u.UserId
+                    WHERE d.DepartmentId = @departmentId";
 
             try
             {
+                Debug.WriteLine("→ Entered GetDoctorsByDepartment with departmentId = " + departmentId);
+
                 using SqlConnection sqlConnection = new SqlConnection(_configuration.DatabaseConnection);
                 await sqlConnection.OpenAsync().ConfigureAwait(false);
 
@@ -70,17 +73,20 @@
                     string licenseNumber = reader.GetString(5);
                     DoctorJointModel doctor = new DoctorJointModel(doctorId, userId, doctorName, departmentId, rating, licenseNumber);
                     doctorsList.Add(doctor);
+                    Debug.WriteLine($"→ Row: doctorId={reader.GetInt32(0)}, userId={reader.GetInt32(1)}, deptId={reader.GetInt32(3)}");
+
                 }
+                Debug.WriteLine("doctors count from database: " + doctorsList.Count);
                 return doctorsList;
             }
             catch (SqlException sqlException)
             {
-                Console.WriteLine($"SQL Exception: {sqlException.Message}");
+                Debug.WriteLine($"SQL Exception: {sqlException.Message}");
                 return new List<DoctorJointModel>();
             }
             catch (Exception exception)
             {
-                Console.WriteLine($"General Exception: {exception.Message}");
+                Debug.WriteLine($"General Exception: {exception.Message}");
                 return new List<DoctorJointModel>();
             }
         }

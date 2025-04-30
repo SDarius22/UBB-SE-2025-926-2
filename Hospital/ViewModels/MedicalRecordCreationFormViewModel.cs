@@ -1,118 +1,141 @@
-﻿using Hospital.Models;
+﻿using Hospital.Managers;
+using Hospital.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Hospital.Managers;
-
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Hospital.ViewModels
 {
-    public class MedicalRecordCreationFormViewModel
+    public class MedicalRecordCreationFormViewModel : INotifyPropertyChanged
     {
-        private readonly IMedicalRecordManager _medicalRecordManager;
-        private readonly IDocumentManager _documentManager;
+        // Dependencies
+        private readonly IDoctorManager _doctorManager;
+        private readonly IMedicalProcedureManager _procedureManager;
 
-        private string _patientName;
-        private string _doctorName;
-        private string _appointmentTime;
-        private string _department;
-        private string _conclusion;
-        public ObservableCollection<string> DocumentPaths { get; private set; } = new ObservableCollection<string>();
+        // Lists
+        public ObservableCollection<DoctorJointModel> DoctorsList { get; set; } = new();
+        public ObservableCollection<DepartmentModel> DepartmentsList { get; set; } = new();
+        public ObservableCollection<PatientJointModel> PatientsList { get; set; } = new();
+        public ObservableCollection<ProcedureModel> ProceduresList { get; set; } = new();
 
-        public void AddDocument(string path)
+        private int _patientId;
+        public int PatientId
         {
-            DocumentPaths.Add(path);
+            get => _patientId;
+            set { _patientId = value; OnPropertyChanged(nameof(PatientId)); }
         }
 
-        private DateTime _appointmentDate;
-        public DateTimeOffset? AppointmentDateOffset
+        // Selections
+        private DoctorJointModel _selectedDoctor;
+        public DoctorJointModel SelectedDoctor
         {
-            get => new DateTimeOffset(_appointmentDate);
+            get => _selectedDoctor;
+            set { _selectedDoctor = value; OnPropertyChanged(nameof(SelectedDoctor)); }
+        }
+
+        private PatientJointModel _selectedPatient;
+        public PatientJointModel SelectedPatient
+        {
+            get => _selectedPatient;
+            set { _selectedPatient = value; OnPropertyChanged(nameof(SelectedPatient)); }
+        }
+
+        private ProcedureModel _selectedProcedure;
+        public ProcedureModel SelectedProcedure
+        {
+            get => _selectedProcedure;
+            set { _selectedProcedure = value; OnPropertyChanged(nameof(SelectedProcedure)); }
+        }
+
+        private DepartmentModel _selectedDepartment;
+        public DepartmentModel SelectedDepartment
+        {
+            get => _selectedDepartment;
             set
             {
-                if (value.HasValue)
-                {
-                    _appointmentDate = value.Value.DateTime;
-                    OnPropertyChanged(nameof(AppointmentDateOffset));
-                }
+                _selectedDepartment = value;
+                OnPropertyChanged(nameof(SelectedDepartment));
+
+                // Trigger loading of dependent data
+                _ = LoadDoctorsAndProceduresAsync(_selectedDepartment?.DepartmentId ?? 0);
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public ObservableCollection<string> Documents { get; private set; }
-
-        public MedicalRecordCreationFormViewModel(IMedicalRecordManager medicalRecordManager, IDocumentManager documentManagerModel)
+        // Inputs
+        private DateTimeOffset _appointmentDateOffset = DateTimeOffset.Now;
+        public DateTimeOffset AppointmentDateOffset
         {
-            _medicalRecordManager = medicalRecordManager;
-            _documentManager = documentManagerModel;
-            Documents = new ObservableCollection<string>();
+            get => _appointmentDateOffset;
+            set { _appointmentDateOffset = value; OnPropertyChanged(nameof(AppointmentDateOffset)); }
         }
 
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public async Task<int> CreateMedicalRecord(AppointmentJointModel appointment, string conclusion)
-        {
-            try
-            {
-                return await _medicalRecordManager.CreateMedicalRecordWithAppointment(appointment, conclusion);
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine($"Error creating medical record: {exception.Message}");
-                throw;
-            }
-        }
-
-        public async Task AddDocument(int medicalRecordId, string path)
-        {
-            var document = new DocumentModel(0, medicalRecordId, path);
-            await _documentManager.AddDocumentToMedicalRecord(document);
-            Documents.Add(path);
-        }
-
-        public string PatientName
-        {
-            get => _patientName;
-            set { _patientName = value; OnPropertyChanged(nameof(PatientName)); }
-        }
-
-        public string DoctorName
-        {
-            get => _doctorName;
-            set { _doctorName = value; OnPropertyChanged(nameof(DoctorName)); }
-        }
-
-        public DateTime AppointmentDate
-        {
-            get => _appointmentDate;
-            set { _appointmentDate = value; OnPropertyChanged(nameof(AppointmentDate)); }
-        }
-
+        private string _appointmentTime;
         public string AppointmentTime
         {
             get => _appointmentTime;
             set { _appointmentTime = value; OnPropertyChanged(nameof(AppointmentTime)); }
         }
 
-        public string Department
-        {
-            get => _department;
-            set { _department = value; OnPropertyChanged(nameof(Department)); }
-        }
-
+        private string _conclusion;
         public string Conclusion
         {
             get => _conclusion;
             set { _conclusion = value; OnPropertyChanged(nameof(Conclusion)); }
         }
+
+        public ObservableCollection<string> DocumentPaths { get; set; } = new();
+
+        public void AddDocument(string path)
+        {
+            if (!string.IsNullOrWhiteSpace(path))
+                DocumentPaths.Add(path);
+        }
+
+        public DateTime AppointmentDate
+        {
+            get
+            {
+                if (TimeSpan.TryParse(AppointmentTime, out var time))
+                    return AppointmentDateOffset.Date + time;
+
+                return AppointmentDateOffset.Date;
+            }
+        }
+
+        // Load doctors and procedures by department
+        private async Task LoadDoctorsAndProceduresAsync(int departmentId)
+        {
+            DoctorsList.Clear();
+            ProceduresList.Clear();
+
+            if (departmentId == 0) return;
+
+            await _doctorManager.LoadDoctors(departmentId);
+            foreach (var doctor in _doctorManager.GetDoctorsWithRatings())
+                DoctorsList.Add(doctor);
+
+            await _procedureManager.LoadProceduresByDepartmentId(departmentId);
+            foreach (var proc in _procedureManager.GetProcedures())
+                ProceduresList.Add(proc);
+
+            SelectedDoctor = null;
+            SelectedProcedure = null;
+
+            Debug.WriteLine($"Loaded {DoctorsList.Count} doctors and {ProceduresList.Count} procedures.");
+        }
+
+        // Constructor
+        public MedicalRecordCreationFormViewModel(IDoctorManager doctorManager, IMedicalProcedureManager procedureManager)
+        {
+            _doctorManager = doctorManager;
+            _procedureManager = procedureManager;
+        }
+
+        // INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

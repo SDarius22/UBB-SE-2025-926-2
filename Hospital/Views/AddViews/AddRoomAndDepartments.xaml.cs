@@ -24,12 +24,20 @@ namespace Hospital.Views.AddViews
                     if (pivotItem.Header.ToString() == "Add Room" &&
                         this.RoomFrame.SourcePageType != typeof(AddRoomView))
                     {
+<<<<<<< Updated upstream
                         this.DepartmentFrame.Navigate(typeof(AddDepartmentView));
+=======
+                        this.DepartmentFrame.Navigate(typeof(AddRoomView));
+>>>>>>> Stashed changes
                     }
                     else if (pivotItem.Header.ToString() == "Add Department" &&
                              this.DepartmentFrame.SourcePageType != typeof(AddDepartmentView))
                     {
+<<<<<<< Updated upstream
                         this.DepartmentFrame.Navigate(typeof(AddShiftView));
+=======
+                        this.DepartmentFrame.Navigate(typeof(AddDepartmentView));
+>>>>>>> Stashed changes
                     }
                 }
             }

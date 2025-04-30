@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 ﻿
+=======
+
+>>>>>>> Stashed changes
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +22,5 @@ namespace Hospital.DatabaseServices
         public bool AddRating(RatingModel rating);
 
         public bool RemoveRating(int ratingId);
-
-
     }
 }

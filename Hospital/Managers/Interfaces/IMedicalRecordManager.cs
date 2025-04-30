@@ -8,9 +8,8 @@ namespace Hospital.Managers
     {
         Task LoadMedicalRecordsForPatient(int patientId);
         Task<MedicalRecordJointModel> GetMedicalRecordById(int medicalRecordId);
-        Task<int> CreateMedicalRecord(AppointmentJointModel detailedAppointment, string conclusion);
+        Task<int> CreateMedicalRecord(MedicalRecordModel medicalRecord);
         Task LoadMedicalRecordsForDoctor(int doctorId);
         Task<List<MedicalRecordJointModel>> GetMedicalRecords();
-        Task<int> CreateMedicalRecordWithAppointment(AppointmentJointModel appointment, string conclusion);
     }
 }

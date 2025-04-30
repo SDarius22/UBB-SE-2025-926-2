@@ -27,6 +27,9 @@ namespace Hospital.ViewModels.AddViewModels
         /// </summary>
         public ShiftAddViewModel()
         {
+            this.Date = DateTime.Today;
+            this.StartTime = new TimeSpan(8, 0, 0);
+            this.EndTime = new TimeSpan(20, 0, 0);
             this.SaveShiftCommand = new RelayCommand(this.SaveShift);
             this.LoadShifts();
         }
