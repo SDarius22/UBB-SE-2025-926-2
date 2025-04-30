@@ -10,12 +10,12 @@ namespace Hospital.DatabaseServices.Interfaces
 {
     public interface IScheduleDatabaseService
     {
-        public bool AddSchedule(ScheduleModel schedule);
-        public bool UpdateSchedule(ScheduleModel schedule);
-        public bool DeleteSchedule(int scheduleID);
-        public bool DoesScheduleExist(int scheduleID);
-        public bool DoesDoctorExist(int doctorID);
-        public bool DoesShiftExist(int shiftID);
+        public Task<bool> AddSchedule(ScheduleModel schedule);
+        public Task<bool> UpdateSchedule(ScheduleModel schedule);
+        public Task<bool> DeleteSchedule(int scheduleID);
+        public Task<bool> DoesScheduleExist(int scheduleID);
+        public Task<bool> DoesDoctorExist(int doctorID);
+        public Task<bool> DoesShiftExist(int shiftID);
         public Task<List<ScheduleModel>> GetSchedules();
     }
 }

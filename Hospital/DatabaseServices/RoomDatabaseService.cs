@@ -1,6 +1,8 @@
 ﻿using Hospital.Configs;
 using Hospital.DatabaseServices.Interfaces;
+using Hospital.DbContext;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +14,11 @@ namespace Hospital.DatabaseServices
 {
     public class RoomDatabaseService : IRoomDatabaseService
     {
-        private readonly ApplicationConfiguration _configuration;
+        private readonly AppDbContext _context;
 
-        public RoomDatabaseService()
+        public RoomDatabaseService(AppDbContext context)
         {
-            _configuration = ApplicationConfiguration.GetInstance();
+            _context = context;
         }
 
         /// <summary>
@@ -24,22 +26,23 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="room">The room object to be added.</param>
         /// <returns><c>true</c> if the room was successfully added; otherwise, <c>false</c>.</returns>
-        public bool AddRoom(RoomModel room)
+        public async Task<bool> AddRoom(RoomModel room)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                // string query = "INSERT INTO Rooms (RoomID, Capacity, DepartmentID, EquipmentID) VALUES (@RoomID, @Capacity, @DepartmentID, @EquipmentID)";
-                string query = "INSERT INTO Rooms (Capacity, DepartmentID, EquipmentID) VALUES (@Capacity, @DepartmentID, @EquipmentID)";
-                SqlCommand command = new SqlCommand(query, connection);
+                var entity = new RoomModel(room.RoomID, room.Capacity, room.DepartmentID, room.EquipmentID);
 
-                // command.Parameters.AddWithValue("@RoomID", room.RoomID);
-                command.Parameters.AddWithValue("@Capacity", room.Capacity);
-                command.Parameters.AddWithValue("@DepartmentID", room.DepartmentID);
-                command.Parameters.AddWithValue("@EquipmentID", room.EquipmentID);
+                await _context.Rooms.AddAsync(entity);
+                await _context.SaveChangesAsync();
 
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
+                // Update the model with generated ID if needed
+                room.RoomID = entity.RoomID;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding room: {ex.Message}");
+                return false;
             }
         }
 
@@ -48,36 +51,23 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="room">The room object containing updated values.</param>
         /// <returns><c>true</c> if the update was successful; otherwise, <c>false</c>.</returns>
-        public bool UpdateRoom(RoomModel room)
+        public async Task<bool> UpdateRoom(RoomModel room)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
-                {
-                    string query = "UPDATE Rooms SET Capacity = @Capacity, DepartmentID = @DepartmentID, EquipmentID = @EquipmentID WHERE RoomID = @RoomID";
-                    SqlCommand command = new SqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@Capacity", room.Capacity);
-                    command.Parameters.AddWithValue("@DepartmentID", room.DepartmentID);
-                    command.Parameters.AddWithValue("@EquipmentID", room.EquipmentID);
-                    command.Parameters.AddWithValue("@RoomID", room.RoomID);
-                    connection.Open();
-                    int rowsAffected = command.ExecuteNonQuery();
-                    return rowsAffected > 0;
-                }
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine($"SQL Error: {ex.Message}");
-                return false;
-            }
-            catch (InvalidOperationException ex)
-            {
-                Console.WriteLine($"Invalid Operation: {ex.Message}");
-                return false;
+                var existingRoom = await _context.Rooms.FindAsync(room.RoomID);
+                if (existingRoom == null) return false;
+
+                existingRoom.Capacity = room.Capacity;
+                existingRoom.DepartmentID = room.DepartmentID;
+                existingRoom.EquipmentID = room.EquipmentID;
+
+                await _context.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine($"Error updating room: {ex.Message}");
                 return false;
             }
         }
@@ -87,37 +77,34 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="roomID">The ID of the room to delete.</param>
         /// <returns><c>true</c> if the room was deleted; otherwise, <c>false</c>.</returns>
-        public bool DeleteRoom(int roomID)
+        public async Task<bool> DeleteRoom(int roomId)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "DELETE FROM Rooms WHERE RoomID = @RoomID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@RoomID", roomID);
+                var room = await _context.Rooms.FindAsync(roomId);
+                if (room == null) return false;
 
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
+                _context.Rooms.Remove(room);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting room: {ex.Message}");
+                return false;
             }
         }
+
 
         /// <summary>
         /// Checks whether a room with the specified ID exists in the database.
         /// </summary>
         /// <param name="roomID">The room ID to check for existence.</param>
         /// <returns><c>true</c> if the room exists; otherwise, <c>false</c>.</returns>
-        public bool DoesRoomExist(int roomID)
+        public async Task<bool> DoesRoomExist(int roomId)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
-            {
-                string query = "SELECT COUNT(*) FROM Rooms WHERE RoomID = @RoomID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@RoomID", roomID);
-
-                connection.Open();
-                int count = (int)command.ExecuteScalar();
-                return count > 0;
-            }
+            return await _context.Rooms
+                .AnyAsync(r => r.RoomID == roomId);
         }
 
         /// <summary>
@@ -125,18 +112,10 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="equipmentID">The equipment ID to check.</param>
         /// <returns><c>true</c> if the equipment exists; otherwise, <c>false</c>.</returns>
-        public bool DoesEquipmentExist(int equipmentID)
+        public async Task<bool> DoesEquipmentExist(int equipmentId)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
-            {
-                string query = "SELECT COUNT(*) FROM Equipments WHERE EquipmentID = @EquipmentID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@EquipmentID", equipmentID);
-
-                connection.Open();
-                int count = (int)command.ExecuteScalar();
-                return count > 0;
-            }
+            return await _context.Equipments
+                .AnyAsync(e => e.EquipmentID == equipmentId);
         }
 
         /// <summary>
@@ -144,66 +123,33 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="departmentID">The department ID to check.</param>
         /// <returns><c>true</c> if the department exists; otherwise, <c>false</c>.</returns>
-        public bool DoesDepartmentExist(int departmentID)
+        public async Task<bool> DoesDepartmentExist(int departmentId)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
-            {
-                string query = "SELECT COUNT(*) FROM Departments WHERE DepartmentID = @DepartmentID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@DepartmentID", departmentID);
-
-                connection.Open();
-                int count = (int)command.ExecuteScalar();
-                return count > 0;
-            }
+            return await _context.Departments
+                .AnyAsync(d => d.DepartmentId == departmentId);
         }
 
         /// <summary>
         /// Retrieves a list of all rooms from the database.
         /// </summary>
         /// <returns>A list of <see cref="Room"/> objects, or <c>null</c> if an error occurred.</returns>
-        public List<RoomModel>? GetRooms()
+        public async Task<List<RoomModel>?> GetRooms()
         {
             try
             {
-                List<RoomModel> rooms = new List<RoomModel>();
-                using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
-                {
-                    string query = "SELECT * FROM Rooms";
-                    SqlCommand command = new SqlCommand(query, connection);
-                    connection.Open();
-                    SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
+                return await _context.Rooms
+                    .Select(r => new RoomModel
                     {
-                        rooms.Add(new RoomModel
-                        {
-                            // RoomID = reader.GetGuid(0),
-                            RoomID = reader.GetInt32(0),
-                            Capacity = reader.GetInt32(1),
-                            DepartmentID = reader.GetInt32(2),
-                            EquipmentID = reader.IsDBNull(3) ? -1 : reader.GetInt32(3),
-
-                            // DepartmentID = reader.GetGuid(2),
-                            // EquipmentID = reader.GetGuid(3)
-                        });
-                    }
-                }
-
-                return rooms;
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine($"SQL Error: {ex.Message}");
-                return null;
-            }
-            catch (InvalidOperationException ex)
-            {
-                Console.WriteLine($"Invalid Operation: {ex.Message}");
-                return null;
+                        RoomID = r.RoomID,
+                        Capacity = r.Capacity,
+                        DepartmentID = r.DepartmentID,
+                        EquipmentID = r.EquipmentID,
+                    })
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine($"Error getting rooms: {ex.Message}");
                 return null;
             }
         }

@@ -1,7 +1,9 @@
 ﻿using Hospital.Configs;
 using Hospital.DatabaseServices.Interfaces;
+using Hospital.DbContext;
 using Hospital.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,14 +16,14 @@ namespace Hospital.DatabaseServices
     public class ScheduleDatabaseService : IScheduleDatabaseService
     {
 
-        private readonly ApplicationConfiguration _configuration;
+        private readonly AppDbContext _context;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleDatabaseService"/> class.
         /// </summary>
-        public ScheduleDatabaseService()
+        public ScheduleDatabaseService(AppDbContext context)
         {
-            this._configuration = ApplicationConfiguration.GetInstance();
+            _context = context;
         }
 
         /// <summary>
@@ -29,19 +31,22 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="schedule">The schedule to add.</param>
         /// <returns>True if the schedule was added successfully, false otherwise.</returns>
-        public bool AddSchedule(ScheduleModel schedule)
+        public async Task<bool> AddSchedule(ScheduleModel schedule)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "INSERT INTO Schedules (DoctorId, ShiftId) VALUES (@DoctorID, @ShiftID)";
-                SqlCommand command = new SqlCommand(query, connection);
+                var entity = new ScheduleModel(schedule.ScheduleId, schedule.DoctorId, schedule.ShiftId);
 
-                command.Parameters.AddWithValue("@DoctorID", schedule.DoctorId);
-                command.Parameters.AddWithValue("@ShiftID", schedule.ShiftId);
+                await _context.Schedules.AddAsync(entity);
+                await _context.SaveChangesAsync();
 
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
+                schedule.ScheduleId = entity.ScheduleId;
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
@@ -50,33 +55,24 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="schedule">The schedule to update.</param>
         /// <returns>True if the schedule was updated successfully, false otherwise.</returns>
-        public bool UpdateSchedule(ScheduleModel schedule)
+        public async Task<bool> UpdateSchedule(ScheduleModel schedule)
         {
             try
             {
-                using SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection);
-                string query = "UPDATE Schedules SET DoctorId = @DoctorID, ShiftId = @ShiftID WHERE ScheduleId = @ScheduleID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@DoctorID", schedule.DoctorId);
-                command.Parameters.AddWithValue("@ShiftID", schedule.ShiftId);
-                command.Parameters.AddWithValue("@ScheduleID", schedule.ScheduleId);
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
+                var existingSchedule = await _context.Schedules.FindAsync(schedule.ScheduleId);
+                if (existingSchedule == null)
+                {
+                    return false;
+                }
+
+                existingSchedule.DoctorId = schedule.DoctorId;
+                existingSchedule.ShiftId = schedule.ShiftId;
+
+                await _context.SaveChangesAsync();
+                return true;
             }
-            catch (SqlException exception)
+            catch (Exception)
             {
-                Console.WriteLine($"SQL Error: {exception.Message}");
-                return false;
-            }
-            catch (InvalidOperationException exception)
-            {
-                Console.WriteLine($"Invalid Operation: {exception.Message}");
-                return false;
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine($"Unexpected Error: {exception.Message}");
                 return false;
             }
         }
@@ -86,17 +82,20 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="scheduleID">The ID of the schedule to delete.</param>
         /// <returns>True if the schedule was deleted successfully, false otherwise.</returns>
-        public bool DeleteSchedule(int scheduleID)
+        public async Task<bool> DeleteSchedule(int scheduleId)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "DELETE FROM Schedules WHERE ScheduleId = @ScheduleID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@ScheduleID", scheduleID);
+                var schedule = await _context.Schedules.FindAsync(scheduleId);
+                if (schedule == null) return false;
 
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
+                _context.Schedules.Remove(schedule);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
@@ -105,37 +104,22 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="scheduleID">The ID of the schedule to check.</param>
         /// <returns>True if the schedule exists, false otherwise.</returns>
-        public bool DoesScheduleExist(int scheduleID)
+        public async Task<bool> DoesScheduleExist(int scheduleId)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
-            {
-                string query = "SELECT COUNT(*) FROM Schedules WHERE ScheduleId = @ScheduleID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@ScheduleID", scheduleID);
-
-                connection.Open();
-                int count = (int)command.ExecuteScalar();
-                return count > 0;
-            }
+            return await _context.Schedules
+                .AnyAsync(s => s.ScheduleId == scheduleId);
         }
+
 
         /// <summary>
         /// Function to check if a doctor exists in the database.
         /// </summary>
         /// <param name="doctorID">The ID of the doctor to check.</param>
         /// <returns>True if the doctor exists, false otherwise.</returns>
-        public bool DoesDoctorExist(int doctorID)
+        public async Task<bool> DoesDoctorExist(int doctorId)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
-            {
-                string query = "SELECT COUNT(*) FROM Doctors WHERE DoctorId = @DoctorID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@DoctorID", doctorID);
-
-                connection.Open();
-                int count = (int)command.ExecuteScalar();
-                return count > 0;
-            }
+            return await _context.DoctorJoints
+                .AnyAsync(d => d.DoctorId == doctorId);
         }
 
         /// <summary>
@@ -143,18 +127,10 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="shiftID">The ID of the shift to check.</param>
         /// <returns>True if the shift exists, false otherwise.</returns>
-        public bool DoesShiftExist(int shiftID)
+        public async Task<bool> DoesShiftExist(int shiftId)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
-            {
-                string query = "SELECT COUNT(*) FROM Shifts WHERE ShiftId = @ShiftID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@ShiftID", shiftID);
-
-                connection.Open();
-                int count = (int)command.ExecuteScalar();
-                return count > 0;
-            }
+            return await _context.Shifts
+                .AnyAsync(s => s.ShiftId == shiftId);
         }
 
         /// <summary>
@@ -163,32 +139,20 @@ namespace Hospital.DatabaseServices
         /// <returns>A list of schedules from the database.</returns>
         public async Task<List<ScheduleModel>> GetSchedules()
         {
-            const string selectSchedulesQuery = "SELECT ScheduleId, DoctorId, ShiftId FROM Schedules";
-            List<ScheduleModel> schedules = new List<ScheduleModel>();
-
             try
             {
-                using SqlConnection sqlConnection = new SqlConnection(_configuration.DatabaseConnection);
-                await sqlConnection.OpenAsync();
-
-                using SqlCommand selectSchedulesCommand = new SqlCommand(selectSchedulesQuery, sqlConnection);
-
-                using SqlDataReader reader = await selectSchedulesCommand.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
-                {
-                    schedules.Add(new ScheduleModel(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2)));
-                }
+                return await _context.Schedules
+                    .Select(s => new ScheduleModel(
+                        s.ScheduleId,
+                        s.DoctorId,
+                        s.ShiftId
+                    ))
+                    .ToListAsync();
             }
-            catch (SqlException sqlException)
+            catch (Exception ex)
             {
-                throw new ShiftNotFoundException($"SQL Error: {sqlException.Message}");
+                throw new ShiftNotFoundException($"Error loading schedules: {ex.Message}");
             }
-            catch (Exception exception)
-            {
-                throw new ShiftNotFoundException($"General Error: {exception.Message}");
-            }
-
-            return schedules;
         }
     }
 }
