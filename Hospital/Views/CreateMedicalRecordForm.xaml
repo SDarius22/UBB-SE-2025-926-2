@@ -46,62 +46,55 @@
                    HorizontalAlignment="Center"
                    Margin="0,0,0,20"/>
 
-        <!-- Patient -->
+        <!-- Patient ID -->
         <TextBlock Grid.Row="1" Grid.Column="0"
-                   Text="Patient:"
+                   Text="Patient ID:"
                    VerticalAlignment="Center"
                    FontWeight="Bold"
                    Margin="0,0,10,10"/>
         <TextBox Grid.Row="1" Grid.Column="1"
-                 Text="{Binding PatientName}"
-                 Margin="0,0,0,10"
-                 IsReadOnly="True"/>
+                Text="{Binding PatientId, Mode=TwoWay}"
+                Margin="0,0,0,10"/>
 
-        <!-- Doctor -->
-        <TextBlock Grid.Row="2" Grid.Column="0"
-                   Text="Doctor:"
-                   VerticalAlignment="Center"
-                   FontWeight="Bold"
-                   Margin="0,0,10,10"/>
-        <TextBox Grid.Row="2" Grid.Column="1"
-                 Text="{Binding DoctorName}"
-                 Margin="0,0,0,10"
-                 IsReadOnly="True"/>
-
-        <!-- Date -->
-        <TextBlock Grid.Row="3" Grid.Column="0"
-                   Text="Date:"
-                   VerticalAlignment="Center"
-                   FontWeight="Bold"
-                   Margin="0,0,10,10"/>
-        <DatePicker Grid.Row="3" Grid.Column="1"
-                    SelectedDate="{Binding AppointmentDateOffset, Mode=TwoWay}"
-                    IsEnabled="False"
-                    Margin="0,0,0,10"/>
-
-        <!-- Time -->
-        <TextBlock Grid.Row="4" Grid.Column="0"
-                   Text="Time:"
-                   VerticalAlignment="Center"
-                   FontWeight="Bold"
-                   Margin="0,0,10,10"/>
-        <TextBox Grid.Row="4" Grid.Column="1"
-                 Text="{Binding AppointmentTime}"
-                 Margin="0,0,0,10"
-                 IsReadOnly="True"/>
 
         <!-- Department -->
-        <TextBlock Grid.Row="5" Grid.Column="0"
-                   Text="Department:"
-                   VerticalAlignment="Center"
-                   FontWeight="Bold"
-                   Margin="0,0,10,10"/>
-        <TextBox Grid.Row="5" Grid.Column="1"
-                 Text="{Binding Department}"
-                 Margin="0,0,0,10"
-                 IsReadOnly="True"/>
+        <ComboBox Grid.Row="2" Grid.Column="1"
+                  ItemsSource="{Binding DepartmentsList}"
+                  SelectedItem="{Binding SelectedDepartment, Mode=TwoWay}"
+                  DisplayMemberPath="DepartmentName"
+                  PlaceholderText="Select department"
+                  Margin="0,0,0,10"/>
+
+        <!-- Doctor -->
+        <ComboBox Grid.Row="3" Grid.Column="1"
+          ItemsSource="{Binding DoctorsList}"
+          SelectedItem="{Binding SelectedDoctor, Mode=TwoWay}"
+          DisplayMemberPath="DoctorName"
+          PlaceholderText="Select doctor"
+          Margin="0,0,0,10"/>
+
+        <!-- Procedure -->
+        <TextBlock Grid.Row="4" Grid.Column="0"
+           Text="Procedure:"
+           VerticalAlignment="Center"
+           FontWeight="Bold"
+           Margin="0,0,10,10"/>
+        <ComboBox Grid.Row="4" Grid.Column="1"
+          ItemsSource="{Binding ProceduresList}"
+          SelectedItem="{Binding SelectedProcedure, Mode=TwoWay}"
+          DisplayMemberPath="ProcedureName"
+          PlaceholderText="Select procedure"
+          Margin="0,0,0,10"/>
+
+
+        <!-- Date -->
+        <DatePicker Grid.Row="5" Grid.Column="1"
+            SelectedDate="{Binding AppointmentDateOffset, Mode=TwoWay}"
+            IsEnabled="True"
+            Margin="0,0,0,10"/>
 
         <!-- Upload Files Section -->
+        <!--
         <StackPanel Grid.Row="6" Grid.Column="0"
             Orientation="Vertical"
             Margin="0,0,10,10">
@@ -126,7 +119,7 @@
                        Margin="5"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-        </ListBox>
+        </ListBox>-->
 
         <!-- Conclusions label -->
         <TextBlock Grid.Row="7" Grid.Column="0"
@@ -143,5 +136,21 @@
          VerticalAlignment="Top"
          Height="120"
          Margin="0,0,0,10"/>
+
+        <StackPanel Grid.Row="8" Grid.ColumnSpan="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Content="Cancel"
+                    Click="CancelButton_Click"
+                    Background="Red"
+                    Foreground="White"
+                    Width="80"
+                    Margin="0,0,10,0"/>
+            <Button Content="Confirm"
+                    Click="SubmitButton_Click"
+                    Background="Green"
+                    Foreground="White"
+                    Width="80"/>
+        </StackPanel>
     </Grid>
 </Page>

@@ -16,8 +16,8 @@
 
                 <controls:DataGrid ItemsSource="{Binding Departments}" AutoGenerateColumns="False" IsReadOnly="False" HorizontalAlignment="Stretch" Width="Auto" Height="400">
                     <controls:DataGrid.Columns>
-                        <controls:DataGridTextColumn Header="Department ID" Binding="{Binding DepartmentID}" Width="*" IsReadOnly="True"/>
-                        <controls:DataGridTextColumn Header="Name" Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                        <controls:DataGridTextColumn Header="Department ID" Binding="{Binding DepartmentId}" Width="*" IsReadOnly="True"/>
+                        <controls:DataGridTextColumn Header="Name" Binding="{Binding DepartmentName, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
                     </controls:DataGrid.Columns>
                 </controls:DataGrid>
 

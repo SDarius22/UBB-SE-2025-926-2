@@ -1,88 +1,129 @@
 using System;
+using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using Hospital.ViewModels;
 using Hospital.Models;
-using System.Threading.Tasks;
+using Hospital.Managers;
+using Hospital.DatabaseServices;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 
 namespace Hospital.Views
 {
     public sealed partial class CreateMedicalRecordForm : Page
     {
+        private MedicalRecordCreationFormViewModel _viewModel;
+        private MedicalRecordManager _medicalRecordManager;
 
-        private readonly MedicalRecordCreationFormViewModel _viewModel;
-        private readonly AppointmentJointModel _appointment;
-
-        public CreateMedicalRecordForm(MedicalRecordCreationFormViewModel viewModel, AppointmentJointModel appointment)
+        public CreateMedicalRecordForm()
         {
             this.InitializeComponent();
-            _viewModel = viewModel;
-            _appointment = appointment;
+        }
 
-            // Populate ViewModel from the Appointment
-            _viewModel.PatientName = appointment.PatientName;
-            _viewModel.DoctorName = appointment.DoctorName;
-            _viewModel.AppointmentDate = appointment.DateAndTime;
-            _viewModel.AppointmentTime = appointment.DateAndTime.ToString("hh:mm tt");
-            _viewModel.Department = appointment.DepartmentName;
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
 
-            // Set the data context for binding
+            var doctorManager = new DoctorManager(new DoctorsDatabaseService());
+            var procedureManager = new MedicalProcedureManager(new MedicalProceduresDatabaseService());
+            var departmentManager = new DepartmentManager(new DepartmentsDatabaseService());
+
+            _medicalRecordManager = new MedicalRecordManager(new MedicalRecordsDatabaseService());
+
+            _viewModel = new MedicalRecordCreationFormViewModel(doctorManager, procedureManager);
+
+            await departmentManager.LoadDepartments();
+            foreach (var d in departmentManager.GetDepartments())
+                _viewModel.DepartmentsList.Add(d);
+
             this.rootGrid.DataContext = _viewModel;
         }
 
-        private async void UploadFiles_Click(object sender, RoutedEventArgs e)
-        {
-            var picker = new FileOpenPicker
-            {
-                ViewMode = PickerViewMode.Thumbnail,
-                FileTypeFilter = { ".jpg", ".png", ".pdf", ".docx" },
-            };
+        //private async void UploadFiles_Click(object sender, RoutedEventArgs e)
+        //{
+        //    var picker = new FileOpenPicker
+        //    {
+        //        ViewMode = PickerViewMode.Thumbnail,
+        //        FileTypeFilter = { ".jpg", ".png", ".pdf", ".docx" },
+        //    };
 
-            // Get the window's HWND
-            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+        //    var window = Microsoft.UI.Xaml.Window.GetWindowForXamlRoot(this.Content.XamlRoot);
+        //    var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
 
-            // Initialize the picker with the window handle
-            WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+        //    WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
 
-            var files = await picker.PickMultipleFilesAsync();
-            if (files != null && files.Count > 0)
-            {
-                foreach (var file in files)
-                {
+        //    var files = await picker.PickMultipleFilesAsync();
+        //    if (files is not null)
+        //    {
+        //        foreach (var file in files)
+        //        {
+        //            _viewModel.AddDocument(file.Path);
+        //        }
+        //    }
+        //}
 
-                    _viewModel.AddDocument(file.Path);
-                }
-            }
-        }
         private async void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                int recordId = await _viewModel.CreateMedicalRecord(_appointment, _viewModel.Conclusion);
-
-                if (recordId > 0)
+                if (_viewModel.PatientId <= 0 ||
+                    _viewModel.SelectedDoctor == null ||
+                    _viewModel.SelectedProcedure == null ||
+                    string.IsNullOrWhiteSpace(_viewModel.Conclusion) ||
+                    _viewModel.AppointmentDate == null)
                 {
-                    // Add documents with the new MedicalRecordId
-                    foreach (var documentPath in _viewModel.DocumentPaths)
-                    {
-                        await _viewModel.AddDocument(recordId, documentPath);
-                    }
+                    await ShowErrorDialog("Please complete all fields before submitting.");
+                    return;
+                }
 
+                if (_viewModel.SelectedProcedure == null)
+                {
+                    await ShowErrorDialog("Please select a procedure.");
+                    return;
+                }
+
+                var newMedicalRecord = new MedicalRecordModel(
+                    medicalRecordId: 0,
+                    patientId: _viewModel.PatientId,
+                    doctorId: _viewModel.SelectedDoctor.DoctorId,
+                    procedureId: _viewModel.SelectedProcedure.ProcedureId,
+                    conclusion: _viewModel.Conclusion,
+                    dateAndTime: _viewModel.AppointmentDate
+                );
+
+                int createdId = await _medicalRecordManager.CreateMedicalRecord(newMedicalRecord);
+
+                if (createdId > 0)
+                {
                     await ShowSuccessDialog("Medical record created successfully!");
+                    if (this.Frame.CanGoBack)
+                        this.Frame.GoBack();
+                }
+                else
+                {
+                    await ShowErrorDialog("Failed to create medical record.");
                 }
             }
             catch (ValidationException ex)
             {
-                await ShowErrorDialog(ex.Message);
+                await ShowErrorDialog("Validation error: " + ex.Message);
             }
             catch (Exception ex)
             {
-                await ShowErrorDialog("Failed to create medical record: " + ex.Message);
+                await ShowErrorDialog("Unexpected error: " + ex.Message);
             }
         }
 
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.Frame.CanGoBack)
+            {
+                this.Frame.GoBack();
+            }
+        }
 
         private async Task ShowSuccessDialog(string message)
         {
@@ -91,9 +132,11 @@ namespace Hospital.Views
                 Title = "Success",
                 Content = message,
                 CloseButtonText = "OK",
+                XamlRoot = this.Content.XamlRoot
             };
             await successDialog.ShowAsync();
         }
+
         private async Task ShowErrorDialog(string message)
         {
             ContentDialog errorDialog = new ContentDialog
@@ -101,6 +144,7 @@ namespace Hospital.Views
                 Title = "Error",
                 Content = message,
                 CloseButtonText = "OK",
+                XamlRoot = this.Content.XamlRoot
             };
             await errorDialog.ShowAsync();
         }

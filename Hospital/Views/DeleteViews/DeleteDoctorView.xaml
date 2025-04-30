@@ -30,10 +30,9 @@
                 SelectedItem="{Binding SelectedDoctor}">
 
                     <controls:DataGrid.Columns>
-                        <controls:DataGridTextColumn Header="Doctor ID" Binding="{Binding DoctorID}" Width="*" />
-                        <controls:DataGridTextColumn Header="User ID" Binding="{Binding UserID}" Width="*" />
-                        <controls:DataGridTextColumn Header="'DepartmentID" Binding="{Binding DepartmentID}" Width="*" />
-                        <controls:DataGridTextColumn Header="Experience" Binding="{Binding Experience}" Width="*" />
+                        <controls:DataGridTextColumn Header="Doctor ID" Binding="{Binding DoctorId}" Width="*" />
+                        <controls:DataGridTextColumn Header="User ID" Binding="{Binding UserId}" Width="*" />
+                        <controls:DataGridTextColumn Header="'DepartmentID" Binding="{Binding DepartmentId}" Width="*" />
                         <controls:DataGridTextColumn Header="Rating" Binding="{Binding Rating}" Width="*" />
                         <controls:DataGridTextColumn Header="License Number" Binding="{Binding LicenseNumber}" Width="*"/>
                     </controls:DataGrid.Columns>

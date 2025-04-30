@@ -1,5 +1,4 @@
-﻿
-using Hospital.Configs;
+﻿using Hospital.Configs;
 using Hospital.DatabaseServices;
 using Hospital.Exceptions;
 using Hospital.Helpers;
@@ -169,6 +168,19 @@ namespace Hospital.ViewModels
             MaximumDate = MinimumDate.AddMonths(MaxAppointmentBookingRangeInMonths);
         }
 
+        public AppointmentCreationFormViewModel()
+        {
+
+            // initialize lists
+            DepartmentsList = new ObservableCollection<DepartmentModel>();
+            ProceduresList = new ObservableCollection<ProcedureModel>();
+            DoctorsList = new ObservableCollection<DoctorJointModel>();
+
+            // set calendar dates
+            MinimumDate = DateTimeOffset.Now;
+            MaximumDate = MinimumDate.AddMonths(MaxAppointmentBookingRangeInMonths);
+        }
+
         public static async Task<AppointmentCreationFormViewModel> CreateViewModel(DepartmentManager departmentManagerModel, MedicalProcedureManager procedureManagerModel, DoctorManager doctorManagerModel, ShiftManager shiftManagerModel, Managers.AppointmentManager appointmentManagerModel)
         {
             var appointmentCreationViewModel = new AppointmentCreationFormViewModel(departmentManagerModel, procedureManagerModel, doctorManagerModel, shiftManagerModel, appointmentManagerModel);
@@ -189,28 +201,34 @@ namespace Hospital.ViewModels
 
         public async Task LoadProceduresAndDoctorsOfSelectedDepartment()
         {
-            // clear the list
-            if (ProceduresList != null)
-                ProceduresList.Clear();
-            if (DoctorsList != null)
-                DoctorsList.Clear();
+            if (SelectedDepartment == null)
+            {
+                AreProceduresAndDoctorsEnabled = false;
+                return;
+            }
 
-            // load the procedures
+            ProceduresList?.Clear();
+            DoctorsList?.Clear();
+
             await _procedureManager.LoadProceduresByDepartmentId(SelectedDepartment.DepartmentId);
             foreach (ProcedureModel procedure in _procedureManager.GetProcedures())
             {
                 ProceduresList?.Add(procedure);
             }
 
-            // load the doctors
             await _doctorManager.LoadDoctors(SelectedDepartment.DepartmentId);
             foreach (DoctorJointModel doctor in _doctorManager.GetDoctorsWithRatings())
             {
                 DoctorsList?.Add(doctor);
             }
 
-            // Enable controls only if we have both procedures and doctors
-            AreProceduresAndDoctorsEnabled = ProceduresList?.Count > 0 && DoctorsList?.Count > 0;
+            Debug.WriteLine($"Loaded {ProceduresList.Count} procedures");
+            Debug.WriteLine($"Loaded {DoctorsList.Count} doctors");
+
+            await _doctorManager.LoadDoctors(SelectedDepartment.DepartmentId);
+            Debug.WriteLine("Doctors in manager after LoadDoctors: " + _doctorManager.GetDoctorsWithRatings().Count);
+
+            AreProceduresAndDoctorsEnabled = ProceduresList.Count > 0 && DoctorsList.Count > 0;
             IsDateEnabled = true;
             IsTimeEnabled = true;
         }
@@ -241,7 +259,7 @@ namespace Hospital.ViewModels
 
             foreach (ShiftModel shift in _shiftsList)
             {
-                HighlightedDates.Add(new DateTimeOffset(shift.DateTime));
+                HighlightedDates.Add(new DateTimeOffset(shift.Date));
             }
 
             IsDateEnabled = true;

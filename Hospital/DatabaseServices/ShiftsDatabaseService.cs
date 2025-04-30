@@ -178,7 +178,7 @@ namespace Hospital.DatabaseServices
             using SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection);
             string query = "INSERT INTO Shifts (Date, StartTime, EndTime) VALUES (@DateTime, @StartTime, @EndTime)";
             SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@DateTime", shift.DateTime);
+            command.Parameters.AddWithValue("@DateTime", shift.Date);
             command.Parameters.AddWithValue("@StartTime", shift.StartTime);
             command.Parameters.AddWithValue("@EndTime", shift.EndTime);
 
@@ -194,7 +194,7 @@ namespace Hospital.DatabaseServices
                 using SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection);
                 string query = "UPDATE Shifts SET Date = @DateTime, StartTime = @StartTime, EndTime = @EndTime WHERE ShiftId = @ShiftId";
                 SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@DateTime", shift.DateTime);
+                command.Parameters.AddWithValue("@DateTime", shift.Date);
                 command.Parameters.AddWithValue("@StartTime", shift.StartTime);
                 command.Parameters.AddWithValue("@EndTime", shift.EndTime);
                 command.Parameters.AddWithValue("@ShiftId", shift.ShiftId);

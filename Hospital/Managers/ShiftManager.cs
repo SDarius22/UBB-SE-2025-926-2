@@ -34,7 +34,7 @@ namespace Hospital.Managers
 
         public ShiftModel GetShiftByDay(DateTime day)
         {
-            ShiftModel? shiftByDate = _shifts.FirstOrDefault(shift => shift.DateTime.Date == day.Date);
+            ShiftModel? shiftByDate = _shifts.FirstOrDefault(shift => shift.Date.Date == day.Date);
             if (shiftByDate == null)
                 throw new ShiftNotFoundException(string.Format("Shift not found for date {0}", day.ToString()));
             return shiftByDate;
@@ -68,8 +68,8 @@ namespace Hospital.Managers
             var selectedShifts = shifts
                 .Where(shift =>
                 {
-                    var shiftStart = shift.DateTime.Date + shift.StartTime;
-                    var shiftEnd = shift.DateTime.Date + shift.EndTime;
+                    var shiftStart = shift.Date.Date + shift.StartTime;
+                    var shiftEnd = shift.Date.Date + shift.EndTime;
 
                     if (shift.EndTime <= shift.StartTime)
                         shiftEnd = shiftEnd.AddDays(1);
@@ -92,8 +92,8 @@ namespace Hospital.Managers
 
                 bool isInShift = selectedShifts.Any(shift =>
                 {
-                    DateTime shiftStart = shift.DateTime.Date + shift.StartTime;
-                    DateTime shiftEnd = shift.DateTime.Date + shift.EndTime;
+                    DateTime shiftStart = shift.Date.Date + shift.StartTime;
+                    DateTime shiftEnd = shift.Date.Date + shift.EndTime;
                     if (shift.EndTime <= shift.StartTime)
                         shiftEnd = shiftEnd.AddDays(1);
 

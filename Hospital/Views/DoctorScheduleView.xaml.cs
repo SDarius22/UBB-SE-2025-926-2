@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Appointments;
 using Hospital.Models;
 using Microsoft.UI.Xaml.Input;
+using Hospital.DatabaseServices;
 
 namespace Hospital.Views
 {
@@ -212,8 +213,14 @@ namespace Hospital.Views
 
         private void ShowMedicalRecordForm(AppointmentJointModel appointment)
         {
-            var viewModel = new MedicalRecordCreationFormViewModel(_medicalRecordManager, _documentManager);
-            var medicalRecordCreateView = new CreateMedicalRecordForm(viewModel, appointment);
+            var doctorManager = new DoctorManager(new DoctorsDatabaseService());
+            var procedureManager = new MedicalProcedureManager(new MedicalProceduresDatabaseService());
+
+            var viewModel = new MedicalRecordCreationFormViewModel(doctorManager, procedureManager);
+
+            var medicalRecordCreateView = new CreateMedicalRecordForm();
+
+            medicalRecordCreateView.DataContext = viewModel;
         }
 
         private void ShowMedicalRecordsHistory(int patientId)
