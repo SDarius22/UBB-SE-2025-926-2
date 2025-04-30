@@ -129,19 +129,19 @@ namespace Hospital.ViewModels
                 ShiftDates.Clear();
                 foreach (var shift in Shifts)
                 {
-                    var shiftStartDate = shift.Date.Date;
-                    var shiftEndDate = shift.Date.Date;
+                    var shiftStartDate = shift.Date;
+                    var shiftEndDate = shift.Date;
 
                     if (shift.EndTime <= shift.StartTime)
                     {
                         shiftEndDate = shiftEndDate.AddDays(1);
                     }
 
-                    ShiftDates.Add(new DateTimeOffset(shiftStartDate, TimeSpan.Zero));
+                    ShiftDates.Add(new DateTimeOffset(shiftStartDate.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero));
 
                     if (shiftEndDate > shiftStartDate)
                     {
-                        ShiftDates.Add(new DateTimeOffset(shiftEndDate, TimeSpan.Zero));
+                        ShiftDates.Add(new DateTimeOffset(shiftEndDate.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero));
                     }
                 }
 
@@ -153,12 +153,12 @@ namespace Hospital.ViewModels
             }
         }
 
-        public async Task OnDateSelected(DateTime date)
+        public async Task OnDateSelected(DateOnly date)
         {
             DailySchedule.Clear();
             try
             {
-                await _appointmentManager.LoadDoctorAppointmentsOnDate(DoctorId, date);
+                await _appointmentManager.LoadDoctorAppointmentsOnDate(DoctorId, date.ToDateTime(TimeOnly.MinValue));
                 Appointments = _appointmentManager.Appointments;
                 await _shiftManager.LoadShifts(DoctorId);
                 Shifts = _shiftManager.GetShifts();

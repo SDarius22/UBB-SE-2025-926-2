@@ -27,9 +27,6 @@ namespace Hospital.ViewModels.AddViewModels
         /// </summary>
         public ShiftAddViewModel()
         {
-            this.Date = DateTime.Today;
-            this.StartTime = new TimeSpan(8, 0, 0);
-            this.EndTime = new TimeSpan(20, 0, 0);
             this.SaveShiftCommand = new RelayCommand(this.SaveShift);
             this.LoadShifts();
         }
@@ -42,7 +39,7 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Gets or sets the ID of the shift to be deleted.
         /// </summary>
-        public DateTime Date
+        public DateOnly Date
         {
             get => this.date;
             set
@@ -104,7 +101,7 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Gets or sets the model for managing doctors.
         /// </summary>
-        private DateTime date;
+        private DateOnly date = DateOnly.FromDateTime(DateTime.Now);
 
         /// <summary>
         /// Gets or sets the start time of the shift.

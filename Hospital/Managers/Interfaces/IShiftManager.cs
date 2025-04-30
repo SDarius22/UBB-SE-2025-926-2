@@ -9,9 +9,9 @@ namespace Hospital.Managers
     {
         Task LoadShifts(int doctorID);
         List<ShiftModel> GetShifts();
-        ShiftModel GetShiftByDay(DateTime day);
+        ShiftModel GetShiftByDay(DateOnly day);
         Task LoadUpcomingDoctorDayshifts(int doctorID);
-        List<TimeSlotModel> GenerateTimeSlots(DateTime date, List<ShiftModel> shifts, List<AppointmentJointModel> appointments);
+        List<TimeSlotModel> GenerateTimeSlots(DateOnly date, List<ShiftModel> shifts, List<AppointmentJointModel> appointments);
         (DateTimeOffset start, DateTimeOffset end) GetMonthlyCalendarRange();
     }
 }

@@ -259,7 +259,7 @@ namespace Hospital.ViewModels
 
             foreach (ShiftModel shift in _shiftsList)
             {
-                HighlightedDates.Add(new DateTimeOffset(shift.Date));
+                HighlightedDates.Add(new DateTimeOffset(shift.Date.ToDateTime(TimeOnly.MinValue)));
             }
 
             IsDateEnabled = true;
@@ -288,7 +288,7 @@ namespace Hospital.ViewModels
             ShiftModel shift;
             try
             {
-                shift = _shiftManager.GetShiftByDay(SelectedCalendarDate.Value.Date);
+                shift = _shiftManager.GetShiftByDay(DateOnly.FromDateTime(SelectedCalendarDate.Value.Date));
             }
             catch (ShiftNotFoundException exception)
             {
@@ -346,7 +346,7 @@ namespace Hospital.ViewModels
 
             foreach (var appointment in this.AppointmentsList)
             {
-                TimeSpan appointmentStartTime = appointment.DateAndTime.TimeOfDay;
+                TimeSpan appointmentStartTime = TimeOnly.MinValue.ToTimeSpan();
                 TimeSpan appointmentEndTime = appointmentStartTime.Add(appointment.ProcedureDuration);
 
                 // Round the appointment start time to the nearest 30-minute multiple after the current time
@@ -396,9 +396,8 @@ namespace Hospital.ViewModels
 
         public async Task BookAppointment()
         {
-            var date = SelectedCalendarDate.Value.Date; // e.g. 2025-04-01
-            var time = TimeSpan.Parse(SelectedHour); // e.g. 14:00:00
-            DateTime actualDateTime = date + time; // e.g. 2025-04-01 14:00:00
+            DateTime actualDate = SelectedCalendarDate.Value.Date;
+
 
             // bool appointmentIsFinished = false;
 
@@ -407,7 +406,7 @@ namespace Hospital.ViewModels
                 DefaultAppointmentId, // Appointment ID (0 so SQL Server auto-generates it)
                 SelectedDoctor.DoctorId,
                 ApplicationConfiguration.GetInstance().patientId, // Patient ID (adjust as needed)
-                actualDateTime,
+                actualDate,
                 DefaultAppointmentIsFinished,   // Finished (initially false)
                 SelectedProcedure.ProcedureId);
 

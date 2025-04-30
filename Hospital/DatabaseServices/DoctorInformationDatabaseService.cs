@@ -29,7 +29,7 @@ namespace Hospital.DatabaseServices
                 string query = @"
                             SELECT 
                                 UserID, Username, Mail, Role, Name, Birthdate, Cnp, Address, PhoneNumber, RegistrationDate, 
-                                DoctorID, LicenseNumber, Experience, Rating, DepartmentID, DepartmentName
+                                DoctorID, LicenseNumber, Experience, Rating, DepartmentID, Name
                             FROM UserDoctorDepartmentView
                             WHERE DoctorID = @DoctorID";
 

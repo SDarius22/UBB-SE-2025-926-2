@@ -312,7 +312,7 @@
                 {
                     shifts.Add(new ShiftModel(
                         reader.GetInt32(0),
-                        reader.GetDateTime(1),
+                        DateOnly.FromDateTime(reader.GetDateTime(1)), // Convert DateTime to DateOnly
                         reader.GetTimeSpan(2),
                         reader.GetTimeSpan(3)));
                 }

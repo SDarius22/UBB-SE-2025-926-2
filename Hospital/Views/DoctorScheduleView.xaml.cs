@@ -100,7 +100,7 @@ namespace Hospital.Views
                 if (args.AddedDates.Count > 0)
                 {
                     DateTime selectedDate = args.AddedDates[0].DateTime.Date;
-                    await _viewModel.OnDateSelected(selectedDate);
+                    await _viewModel.OnDateSelected(DateOnly.FromDateTime(selectedDate));
                 }
             }
             catch (Exception e)

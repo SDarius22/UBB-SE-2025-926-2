@@ -34,7 +34,7 @@ namespace Hospital.DatabaseServices
                 {
                     shifts.Add(new ShiftModel(
                         reader.GetInt32(0),
-                        reader.GetDateTime(1),
+                        DateOnly.FromDateTime(reader.GetDateTime(1)),
                         reader.GetTimeSpan(2),
                         reader.GetTimeSpan(3)
                     ));
@@ -109,7 +109,7 @@ namespace Hospital.DatabaseServices
                 {
                     shifts.Add(new ShiftModel(
                         reader.GetInt32(0),
-                        reader.GetDateTime(1),
+                        DateOnly.FromDateTime(reader.GetDateTime(1)),
                         reader.GetTimeSpan(2),
                         reader.GetTimeSpan(3)
                     ));
@@ -138,7 +138,7 @@ namespace Hospital.DatabaseServices
             FROM Shifts s
             JOIN Schedules sch ON s.ShiftId = sch.ShiftId
             WHERE sch.DoctorId = @DoctorId AND s.StartTime < '20:00:00'
-            AND CAST(s.DateTime AS DATE) >= CAST(GETDATE() AS DATE)";
+            AND CAST(s.Date AS DATE) >= CAST(GETDATE() AS DATE)";
 
             List<ShiftModel> shifts = new List<ShiftModel>();
 
@@ -155,7 +155,7 @@ namespace Hospital.DatabaseServices
                 {
                     shifts.Add(new ShiftModel(
                         reader.GetInt32(0),
-                        reader.GetDateTime(1),
+                        DateOnly.FromDateTime(reader.GetDateTime(1)),
                         reader.GetTimeSpan(2),
                         reader.GetTimeSpan(3)
                     ));
@@ -176,9 +176,9 @@ namespace Hospital.DatabaseServices
         public bool AddShift(ShiftModel shift)
         {
             using SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection);
-            string query = "INSERT INTO Shifts (Date, StartTime, EndTime) VALUES (@DateTime, @StartTime, @EndTime)";
+            string query = "INSERT INTO Shifts (Date, StartTime, EndTime) VALUES (@Date, @StartTime, @EndTime)";
             SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@DateTime", shift.Date);
+            command.Parameters.AddWithValue("@Date", shift.Date.ToDateTime(TimeOnly.MinValue));
             command.Parameters.AddWithValue("@StartTime", shift.StartTime);
             command.Parameters.AddWithValue("@EndTime", shift.EndTime);
 
@@ -192,9 +192,9 @@ namespace Hospital.DatabaseServices
             try
             {
                 using SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection);
-                string query = "UPDATE Shifts SET Date = @DateTime, StartTime = @StartTime, EndTime = @EndTime WHERE ShiftId = @ShiftId";
+                string query = "UPDATE Shifts SET Date = @Date, StartTime = @StartTime, EndTime = @EndTime WHERE ShiftId = @ShiftId";
                 SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@DateTime", shift.Date);
+                command.Parameters.AddWithValue("@Date", shift.Date.ToDateTime(TimeOnly.MinValue));
                 command.Parameters.AddWithValue("@StartTime", shift.StartTime);
                 command.Parameters.AddWithValue("@EndTime", shift.EndTime);
                 command.Parameters.AddWithValue("@ShiftId", shift.ShiftId);
@@ -247,6 +247,4 @@ namespace Hospital.DatabaseServices
             }
         }
     }
-
-
 }
