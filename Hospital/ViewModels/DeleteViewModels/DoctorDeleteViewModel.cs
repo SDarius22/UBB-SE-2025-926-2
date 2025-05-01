@@ -21,7 +21,7 @@ namespace Hospital.ViewModels.DeleteViewModels
     /// </summary>
     public class DoctorDeleteViewModel : INotifyPropertyChanged
     {
-        private readonly DoctorsDatabaseService doctorModel = new DoctorsDatabaseService();
+        private readonly IDoctorsDatabaseService doctorModel;
         private ObservableCollection<DoctorJointModel> doctors;
         private int doctorID;
         private string errorMessage;
@@ -30,8 +30,10 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="DoctorDeleteViewModel"/> class.
         /// </summary>
-        public DoctorDeleteViewModel()
+        public DoctorDeleteViewModel(IDoctorsDatabaseService doctorModel)
         {
+            this.doctorModel = doctorModel;
+
             // Initialize non-nullable fields
             this.doctors = new ObservableCollection<DoctorJointModel>();
             this.errorMessage = string.Empty;
@@ -149,7 +151,7 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// <summary>
         /// Removes the doctor with the specified ID from the database.
         /// </summary>
-        private void RemoveDoctor()
+        private async void RemoveDoctor()
         {
             if (this.DoctorID == 0)
             {
@@ -157,13 +159,13 @@ namespace Hospital.ViewModels.DeleteViewModels
                 return;
             }
 
-            if (!this.doctorModel.DoesDoctorExist(this.DoctorID))
+            if (!await this.doctorModel.DoesDoctorExist(this.DoctorID))
             {
                 this.ErrorMessage = "DoctorID doesn't exist in the records";
                 return;
             }
 
-            bool success = this.doctorModel.DeleteDoctor(this.DoctorID);
+            bool success = await this.doctorModel.DeleteDoctor(this.DoctorID);
             this.ErrorMessage = success ? "Doctor deleted successfully" : "Failed to delete doctor";
 
             if (success)

@@ -8,8 +8,16 @@ namespace Hospital
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices.WindowsRuntime;
+    using Hospital.DatabaseServices;
+    using Hospital.DatabaseServices.Interfaces;
     using Hospital.DbContext;
+    using Hospital.ViewModel;
+    using Hospital.ViewModels;
+    using Hospital.ViewModels.AddViewModels;
+    using Hospital.ViewModels.DeleteViewModels;
+    using Hospital.ViewModels.UpdateViewModels;
     using Hospital.Views;
+    using Hospital.Views.AddViews;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
@@ -38,6 +46,54 @@ namespace Hospital
             {
                 options.UseSqlServer(ApplicationConfiguration.GetInstance().DatabaseConnection);
             });
+
+            services.AddTransient<IAppointmentsDatabaseService, AppointmentsDatabaseService>();
+            services.AddTransient<IDepartmentsDatabaseService, DepartmentsDatabaseService>();
+            services.AddTransient<IDoctorInformationDatabaseService, DoctorInformationDatabaseService>();
+            services.AddTransient<IDoctorsDatabaseService, DoctorsDatabaseService>();
+            services.AddTransient<IDocumentDatabaseService, DocumentDatabaseService>();
+            services.AddTransient<IDrugsDatabaseService, DrugsDatabaseService>();
+            services.AddTransient<IEquipmentDatabaseService, EquipmentDatabaseService>();
+            services.AddTransient<IMedicalProceduresDatabaseService, MedicalProceduresDatabaseService>();
+            services.AddTransient<IMedicalRecordsDatabaseService, MedicalRecordsDatabaseService>();
+            services.AddTransient<IRatingDatabaseService, RatingDatabaseService>();
+            services.AddTransient<IRoomDatabaseService, RoomDatabaseService>();
+            services.AddTransient<IScheduleDatabaseService, ScheduleDatabaseService>();
+            services.AddTransient<IShiftsDatabaseService, ShiftsDatabaseService>();
+            services.AddTransient<IUserDatabaseService, UserDatabaseService>();
+
+            services.AddTransient<DepartmentAddViewModel>();
+            services.AddTransient<DoctorAddViewModel>();
+            services.AddTransient<DrugAddViewModel>();
+            services.AddTransient<EquipmentAddViewModel>();
+            services.AddTransient<RoomAddViewModel>();
+            services.AddTransient<ScheduleAddViewModel>();
+            services.AddTransient<ShiftAddViewModel>();
+
+            services.AddTransient<DepartmentDeleteViewModel>();
+            services.AddTransient<DoctorDeleteViewModel>();
+            services.AddTransient<DrugDeleteViewModel>();
+            services.AddTransient<EquipmentDeleteViewModel>();
+            services.AddTransient<RoomDeleteViewModel>();
+            services.AddTransient<ScheduleDeleteViewModel>();
+            services.AddTransient<ShiftDeleteViewModel>();
+
+            services.AddTransient<DepartmentUpdateViewModel>();
+            services.AddTransient<DoctorUpdateViewModel>();
+            services.AddTransient<DrugUpdateViewModel>();
+            services.AddTransient<EquipmentUpdateViewModel>();
+            services.AddTransient<RoomUpdateViewModel>();
+            services.AddTransient<ScheduleUpdateViewModel>();
+            services.AddTransient<ShiftUpdateViewModel>();
+
+            services.AddTransient<AppointmentCreationFormViewModel>();
+            services.AddTransient<AppointmentDetailsViewModel>();
+            services.AddTransient<DoctorInformationViewModel>();
+            services.AddTransient<DoctorScheduleViewModel>();
+            services.AddTransient<MedicalRecordCreationFormViewModel>();
+            services.AddTransient<MedicalRecordDetailsViewModel>();
+            services.AddTransient<MedicalRecordsHistoryViewModel>();
+            services.AddTransient<PatientScheduleViewModel>();
         }
 
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)

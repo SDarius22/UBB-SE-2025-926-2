@@ -10,8 +10,8 @@ namespace Hospital.DatabaseServices.Interfaces
 {
     public interface IDoctorInformationDatabaseService
     {
-        public DoctorInformationModel GetDoctorInformation(int doctorId);
+        public Task<DoctorInformationModel> GetDoctorInformation(int doctorId);
 
-        public decimal ComputeSalary(int doctorId);
+        public Task<decimal> ComputeSalary(int doctorId);
     }
 }

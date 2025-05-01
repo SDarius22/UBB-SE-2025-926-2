@@ -19,6 +19,7 @@ namespace Hospital.ViewModel
     using System.Threading.Tasks;
     using System.Windows.Input;
     using Hospital.DatabaseServices;
+    using Hospital.DatabaseServices.Interfaces;
     using Hospital.Models;
     using Hospital.Utils;
 
@@ -27,15 +28,18 @@ namespace Hospital.ViewModel
     /// </summary>
     public class DoctorUpdateViewModel : INotifyPropertyChanged
     {
-        private readonly DoctorsDatabaseService doctorModel = new DoctorsDatabaseService();
-        private readonly UserDatabaseService userModel = new UserDatabaseService();
+        private readonly IDoctorsDatabaseService doctorModel;
+        private readonly IUserDatabaseService userModel;
         private string errorMessage = string.Empty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DoctorUpdateViewModel"/> class.
         /// </summary>
-        public DoctorUpdateViewModel()
+        public DoctorUpdateViewModel(IDoctorsDatabaseService doctorModel, IUserDatabaseService userModel)
         {
+            this.doctorModel = doctorModel;
+            this.userModel = userModel;
+
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadDoctors();
         }
@@ -79,21 +83,21 @@ namespace Hospital.ViewModel
         /// <summary>
         /// Saves the changes made to each doctor after validation.
         /// </summary>
-        private void SaveChanges()
+        private async void SaveChanges()
         {
             bool hasErrors = false;
             StringBuilder errorMessages = new StringBuilder();
 
             foreach (DoctorJointModel doctor in this.Doctors)
             {
-                if (!this.ValidateDoctor(doctor))
+                if (!await this.ValidateDoctor(doctor))
                 {
                     hasErrors = true;
                     errorMessages.AppendLine($"Doctor {doctor.DoctorId}: {this.ErrorMessage}");
                 }
                 else
                 {
-                    bool success = this.doctorModel.UpdateDoctor(doctor);
+                    bool success = await this.doctorModel.UpdateDoctor(doctor);
                     if (!success)
                     {
                         errorMessages.AppendLine($"Failed to save changes for doctor: {doctor.DoctorId}");
@@ -110,16 +114,16 @@ namespace Hospital.ViewModel
         /// </summary>
         /// <param name="doctor">The doctor to validate.</param>
         /// <returns><c>true</c> if valid; otherwise, <c>false</c>.</returns>
-        private bool ValidateDoctor(DoctorJointModel doctor)
+        private async Task<bool> ValidateDoctor(DoctorJointModel doctor)
         {
-            if (!this.userModel.UserExistsWithRole(doctor.UserId, "Doctor") ||
-                this.doctorModel.UserExistsInDoctors(doctor.UserId, doctor.DoctorId))
+            if (!await this.userModel.UserExistsWithRole(doctor.UserId, "Doctor") ||
+                await this.doctorModel.UserExistsInDoctors(doctor.UserId, doctor.DoctorId))
             {
                 this.ErrorMessage = "UserID doesn’t exist or has already been approved";
                 return false;
             }
 
-            if (!this.doctorModel.DoesDepartmentExist(doctor.DepartmentId))
+            if (!await this.doctorModel.DoesDepartmentExist(doctor.DepartmentId))
             {
                 this.ErrorMessage = "DepartmentID doesn’t exist in the Departments Records";
                 return false;

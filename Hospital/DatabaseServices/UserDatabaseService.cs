@@ -1,10 +1,11 @@
-﻿using Hospital.DbContext;
+﻿using Hospital.DatabaseServices.Interfaces;
+using Hospital.DbContext;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace Hospital.DatabaseServices
 {
-    public class UserDatabaseService
+    public class UserDatabaseService : IUserDatabaseService
     {
         private readonly AppDbContext _context;
 
