@@ -17,6 +17,7 @@ namespace Hospital.ViewModels.DeleteViewModels
     using Hospital.DatabaseServices.Interfaces;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel for deleting schedules.
@@ -51,9 +52,9 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleDeleteViewModel"/> class.
         /// </summary>
-        public ScheduleDeleteViewModel( IScheduleDatabaseService scheduleModel )
+        public ScheduleDeleteViewModel(  )
         {
-            this.scheduleModel = scheduleModel;
+            this.scheduleModel = App.Services.GetRequiredService<IScheduleDatabaseService>();
             this.DeleteScheduleCommand = new RelayCommand(this.RemoveSchedule);
             this.LoadSchedules();
         }

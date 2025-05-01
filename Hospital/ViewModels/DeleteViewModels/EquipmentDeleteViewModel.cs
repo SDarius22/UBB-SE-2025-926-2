@@ -8,6 +8,7 @@
     using Hospital.DatabaseServices.Interfaces;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel for deleting equipment.
@@ -23,10 +24,10 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="EquipmentDeleteViewModel"/> class.
         /// </summary>
-        public EquipmentDeleteViewModel(IEquipmentDatabaseService equipmentModel)
+        public EquipmentDeleteViewModel()
         {
             // Load equipment for the DataGrid
-            this.equipmentModel = equipmentModel;
+            this.equipmentModel = App.Services.GetRequiredService<IEquipmentDatabaseService>();
             LoadEquipments();
             this.DeleteEquipmentCommand = new RelayCommand(this.RemoveEquipment);
         }

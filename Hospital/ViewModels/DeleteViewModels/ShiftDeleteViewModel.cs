@@ -20,6 +20,7 @@ namespace Hospital.ViewModels.DeleteViewModels
     using Hospital.DatabaseServices;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.Extensions.DependencyInjection;
     using Windows.ApplicationModel.VoiceCommands;
 
     /// <summary>
@@ -30,7 +31,7 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// <summary>
         /// The model for managing shifts.
         /// </summary>
-        private readonly ShiftsDatabaseService shiftModel;
+        private readonly IShiftsDatabaseService shiftModel;
 
         /// <summary>
         /// The collection of shifts displayed in the view.
@@ -57,6 +58,7 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// </summary>
         public ShiftDeleteViewModel()
         {
+            this.shiftModel = App.Services.GetRequiredService<IShiftsDatabaseService>();
             this.DeleteShiftCommand = new RelayCommand(this.RemoveShift);
             this.LoadShifts();
         }

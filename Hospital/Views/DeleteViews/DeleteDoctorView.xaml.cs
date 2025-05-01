@@ -30,7 +30,7 @@ namespace Hospital.Views.DeleteViews
         public DeleteDoctorView()
         {
             this.InitializeComponent();
-            _viewmodel = new DoctorDeleteViewModel(_doctorModel);
+            _viewmodel = new DoctorDeleteViewModel();
             this.DataContext = _viewmodel;
         }
     }
