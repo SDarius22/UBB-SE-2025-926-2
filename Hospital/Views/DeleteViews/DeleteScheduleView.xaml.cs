@@ -10,7 +10,6 @@ namespace Hospital.Views.DeleteViews
     public sealed partial class DeleteScheduleView : Page
     {
         private ScheduleDeleteViewModel viewmodel;
-        private IScheduleDatabaseService _scheduleModel;
 
         public DeleteScheduleView()
         {

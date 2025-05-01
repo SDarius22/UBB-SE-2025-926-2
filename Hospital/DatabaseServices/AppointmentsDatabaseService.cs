@@ -45,13 +45,14 @@ namespace Hospital.DatabaseServices
 
             try
             {
-                var entity = new AppointmentModel(
-                    appointment.AppointmentId,
-                    appointment.DoctorId,
-                    appointment.PatientId,
-                    appointment.DateAndTime,
-                    appointment.Finished,
-                    appointment.ProcedureId);
+                var entity = new AppointmentModel
+                {
+                    DoctorId = appointment.DoctorId,
+                    PatientId = appointment.PatientId,
+                    DateAndTime = appointment.DateAndTime,
+                    Finished = appointment.Finished,
+                    ProcedureId = appointment.ProcedureId
+                };
 
                 await _context.Appointments.AddAsync(entity);
                 await _context.SaveChangesAsync();

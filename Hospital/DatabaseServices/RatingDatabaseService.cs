@@ -35,7 +35,12 @@ namespace Hospital.DatabaseServices
         {
             try
             {
-                var entity = new RatingModel(rating.RatingId, rating.MedicalRecordId, rating.NumberStars, rating.Motivation);
+                var entity = new RatingModel
+                {
+                    MedicalRecordId = rating.MedicalRecordId,
+                    NumberStars = rating.NumberStars,
+                    Motivation = rating.Motivation
+                };
 
                 await _context.Ratings.AddAsync(entity);
                 await _context.SaveChangesAsync();

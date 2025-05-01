@@ -61,7 +61,7 @@
         <ComboBox Grid.Row="2" Grid.Column="1"
                   ItemsSource="{Binding DepartmentsList}"
                   SelectedItem="{Binding SelectedDepartment, Mode=TwoWay}"
-                  DisplayMemberPath="DepartmentName"
+                  DisplayMemberPath="Name"
                   PlaceholderText="Select department"
                   Margin="0,0,0,10"/>
 
@@ -69,7 +69,7 @@
         <ComboBox Grid.Row="3" Grid.Column="1"
           ItemsSource="{Binding DoctorsList}"
           SelectedItem="{Binding SelectedDoctor, Mode=TwoWay}"
-          DisplayMemberPath="DoctorName"
+          DisplayMemberPath="DoctorId"
           PlaceholderText="Select doctor"
           Margin="0,0,0,10"/>
 

@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,9 +34,14 @@ namespace Hospital.DatabaseServices
         /// <returns>True if the schedule was added successfully, false otherwise.</returns>
         public async Task<bool> AddSchedule(ScheduleModel schedule)
         {
+
             try
             {
-                var entity = new ScheduleModel(schedule.ScheduleId, schedule.DoctorId, schedule.ShiftId);
+                var entity = new ScheduleModel
+                {
+                    DoctorId = schedule.DoctorId,
+                    ShiftId = schedule.ShiftId,
+                };
 
                 await _context.Schedules.AddAsync(entity);
                 await _context.SaveChangesAsync();
@@ -44,8 +50,9 @@ namespace Hospital.DatabaseServices
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine("Error adding schedule to the database." + e.Message);
                 return false;
             }
         }

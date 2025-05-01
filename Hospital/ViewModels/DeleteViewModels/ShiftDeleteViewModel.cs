@@ -151,7 +151,8 @@ namespace Hospital.ViewModels.DeleteViewModels
             this.ErrorMessage = succes ? "Shift was successfully deleted" : "Shift was not deleted";
             if (succes)
             {
-                this.Shifts = new ObservableCollection<ShiftModel>(this.shiftModel.GetShifts().Result);
+                var list = await this.shiftModel.GetShifts();
+                this.Shifts = new ObservableCollection<ShiftModel>(list);
             }
         }
 
