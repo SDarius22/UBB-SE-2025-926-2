@@ -7,6 +7,7 @@
     using Hospital.DatabaseServices;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel for deleting departments.
@@ -22,10 +23,10 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="DepartmentDeleteViewModel"/> class.
         /// </summary>
-        public DepartmentDeleteViewModel(IDepartmentsDatabaseService departmentModel)
+        public DepartmentDeleteViewModel()
         {
             // Load departments for the DataGrid
-            this.departmentModel = departmentModel;
+            this.departmentModel = App.Services.GetRequiredService<IDepartmentsDatabaseService>();
             LoadDepartments();
             this.DeleteDepartmentCommand = new RelayCommand(this.RemoveDepartment);
         }

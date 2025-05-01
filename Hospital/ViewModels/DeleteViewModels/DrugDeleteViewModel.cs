@@ -16,6 +16,7 @@ using Hospital.DatabaseServices.Interfaces;
 using Hospital.Models;
 using Hospital.Utils;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Hospital.ViewModels.DeleteViewModels
 {
@@ -94,10 +95,11 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="DrugDeleteViewModel"/> class.
         /// </summary>
-        public DrugDeleteViewModel(IDrugsDatabaseService drugModel)
+        public DrugDeleteViewModel()
         {
             // Initialize non-nullable fields
-            this.drugModel = drugModel;
+            this.drugModel = App.Services.GetRequiredService<IDrugsDatabaseService>();
+            ;
             this.errorMessage = string.Empty;
 
             // Load drugs for the DataGrid
