@@ -12,7 +12,7 @@ namespace Hospital.ApiClients
     public class DoctorApiService
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "https://localhost:9999/api/";
+        private const string BaseUrl = "https://localhost:5035/api/";
 
         public DoctorApiService()
         {
@@ -21,7 +21,7 @@ namespace Hospital.ApiClients
 
         public async Task<List<DoctorJointModel>> GetDoctorsAsync()
         {
-            var response = await _httpClient.GetAsync("doctors");
+            var response = await _httpClient.GetAsync("Doctors");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<DoctorJointModel>>();
         }
