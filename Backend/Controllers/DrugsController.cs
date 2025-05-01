@@ -66,5 +66,11 @@ namespace Backend.API.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("exists/{drugId}")]
+        public async Task<bool> DoesDrugExist(int drugId)
+        {
+            return await _drugsService.DoesDrugExist(drugId);
+        }
     }
 }

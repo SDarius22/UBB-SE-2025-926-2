@@ -41,6 +41,14 @@ namespace Hospital.ApiClients
             return await response.Content.ReadFromJsonAsync<List<AppointmentJointModel>>();
         }
 
+        // Get appointments for a specific doctor
+        public async Task<List<AppointmentJointModel>> GetAppointmentsForDoctorAsync(int doctorId)
+        {
+            var response = await _httpClient.GetAsync($"Appointments/doctor/{doctorId}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<AppointmentJointModel>>();
+        }
+
         // Get appointments for a patient
         public async Task<List<AppointmentJointModel>> GetAppointmentsForPatientAsync(int patientId)
         {

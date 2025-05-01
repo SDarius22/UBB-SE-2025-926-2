@@ -66,5 +66,17 @@ namespace Backend.API.Controllers
 
             return NoContent();
         }
+
+        // GET: api/equipment/exists/{equipmentId}
+        [HttpGet("exists/{equipmentId}")]
+        public async Task<IActionResult> DoesEquipmentExist(int equipmentId)
+        {
+            var exists = await _equipmentService.DoesEquipmentExist(equipmentId);
+            if (!exists)
+            {
+                return NotFound($"Equipment with ID {equipmentId} does not exist.");
+            }
+            return Ok(exists);  // It will return true if exists, false if not
+        }
     }
 }

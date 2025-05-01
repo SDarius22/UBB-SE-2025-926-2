@@ -44,5 +44,27 @@ namespace Hospital.ApiClients
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
         }
+
+        public async Task<bool> DoesScheduleExistAsync(int doctorId, int shiftId)
+        {
+            var response = await _httpClient.GetAsync($"Schedule/does-schedule-exist/{doctorId}/{shiftId}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<bool>();
+        }
+
+        public async Task<bool> DoesDoctorExistAsync(int doctorId)
+        {
+            var response = await _httpClient.GetAsync($"Schedule/does-doctor-exist/{doctorId}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<bool>();
+        }
+
+        public async Task<bool> DoesShiftExistAsync(int shiftId)
+        {
+            var response = await _httpClient.GetAsync($"Schedule/does-shift-exist/{shiftId}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<bool>();
+        }
+
     }
 }

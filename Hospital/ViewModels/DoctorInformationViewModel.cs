@@ -10,9 +10,8 @@ namespace Hospital.ViewModels
 {
     using System;
     using System.ComponentModel;
+    using Hospital.ApiClients;
     using Hospital.Models;
-    using Hospital.DatabaseServices;
-    using Hospital.DatabaseServices.Interfaces;
     using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
@@ -20,7 +19,7 @@ namespace Hospital.ViewModels
     /// </summary>
     public class DoctorInformationViewModel : INotifyPropertyChanged
     {
-        private readonly IDoctorInformationDatabaseService doctorModel;
+        private readonly DoctorInformationApiService doctorModel;
 
         // Fields
         private int userID;
@@ -246,7 +245,7 @@ namespace Hospital.ViewModels
         /// <exception cref="Exception">Thrown if the doctor is not found.</exception>
         public async void LoadDoctorInformation(int doctorID)
         {
-            var doctorInfo = await this.doctorModel.GetDoctorInformation(doctorID);
+            var doctorInfo = await this.doctorModel.GetDoctorInformationAsync(doctorID);
             if (doctorInfo != null)
             {
                 this.UserID = doctorInfo.UserID;
