@@ -15,7 +15,6 @@
     using Backend.Models;
     using Microsoft.Data.SqlClient;
     using Microsoft.EntityFrameworkCore;
-    using Windows.System;
     using DoctorJointModel = Backend.Models.DoctorJointModel;
 
     public class DoctorsDatabaseService : IDoctorsDatabaseService

@@ -1,13 +1,6 @@
 ﻿using Backend.DatabaseServices;
-using System;
 using Backend.Exceptions;
 using Backend.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI;
 
 namespace Backend.Managers
 {

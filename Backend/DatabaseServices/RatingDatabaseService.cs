@@ -10,7 +10,6 @@ using Backend.Exceptions;
 using Backend.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.UI.Xaml.Controls;
 
 namespace Backend.DatabaseServices
 {
