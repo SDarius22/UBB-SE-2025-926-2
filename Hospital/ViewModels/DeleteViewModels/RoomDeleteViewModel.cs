@@ -10,6 +10,7 @@ namespace Hospital.ViewModels.DeleteViewModels
     using Hospital.DatabaseServices.Interfaces;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel for deleting rooms. Handles room selection, validation, deletion, and feedback messages.
@@ -25,9 +26,9 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="RoomDeleteViewModel"/> class.
         /// </summary>
-        public RoomDeleteViewModel( IRoomDatabaseService roomModel )
+        public RoomDeleteViewModel()
         {
-            this.roomModel = roomModel;
+            this.roomModel = App.Services.GetRequiredService<IRoomDatabaseService>();
             LoadRooms();
             this.DeleteRoomCommand = new RelayCommand(this.RemoveRoom);
         }

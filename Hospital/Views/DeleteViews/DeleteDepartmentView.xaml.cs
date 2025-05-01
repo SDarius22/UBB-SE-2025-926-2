@@ -18,7 +18,7 @@ namespace Hospital.Views.DeleteViews
         public DeleteDepartmentView()
         {
             this.InitializeComponent();
-            this.viewModel = new DepartmentDeleteViewModel(_departmentModel);
+            this.viewModel = new DepartmentDeleteViewModel();
             this.DataContext = this.viewModel;
         }
     }

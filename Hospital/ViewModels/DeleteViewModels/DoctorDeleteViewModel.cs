@@ -15,6 +15,7 @@ namespace Hospital.ViewModels.DeleteViewModels
     using Hospital.DatabaseServices;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel for deleting doctors.
@@ -30,9 +31,9 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="DoctorDeleteViewModel"/> class.
         /// </summary>
-        public DoctorDeleteViewModel(IDoctorsDatabaseService doctorModel)
+        public DoctorDeleteViewModel()
         {
-            this.doctorModel = doctorModel;
+            this.doctorModel = App.Services.GetRequiredService<IDoctorsDatabaseService>();
 
             // Initialize non-nullable fields
             this.doctors = new ObservableCollection<DoctorJointModel>();
