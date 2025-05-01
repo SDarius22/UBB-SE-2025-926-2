@@ -231,7 +231,7 @@
             try
             {
                 return await _context.Users
-                    .AnyAsync(u => u.UserId == userID);
+                    .AnyAsync(u => u.UserID == userID);
             }
             catch (Exception ex)
             {
@@ -248,13 +248,11 @@
         {
             try
             {
-                var query = FormattableStringFactory.Create(
-                    "SELECT Role FROM Users WHERE UserID = {0}",
-                    userID);
 
-                // Using Task.Run to wrap the synchronous operation
-                var role = await Task.Run(() =>
-                    _context.Database.SqlQuery<string>(query).FirstOrDefault());
+                var role = await _context.Users
+                    .Where(u => u.UserID == userID)
+                    .Select(u => u.Role)
+                    .FirstOrDefaultAsync();
 
                 return role == "Doctor";
             }

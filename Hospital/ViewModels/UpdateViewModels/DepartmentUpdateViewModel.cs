@@ -105,7 +105,7 @@
         /// <returns>True if the department is valid, otherwise false.</returns>
         private bool ValidateDepartment(DepartmentModel department)
         {
-            if (!System.Text.RegularExpressions.Regex.IsMatch(department.DepartmentName, @"^[a-zA-Z0-9 ]*$"))
+            if (!System.Text.RegularExpressions.Regex.IsMatch(department.Name, @"^[a-zA-Z0-9 ]*$"))
             {
                 this.ErrorMessage = "Department Name should contain only alphanumeric characters";
                 return false;

@@ -14,6 +14,14 @@ namespace Hospital.Models
 
         public int ScheduleId { get; set; }
 
+        public virtual DoctorJointModel Doctor { get; set; }
+
+        public virtual ShiftModel Shift { get; set; }
+
+        public ScheduleModel()
+        {
+        }
+
         public ScheduleModel(int doctorId, int shiftId, int scheduleId)
         {
             DoctorId = doctorId;

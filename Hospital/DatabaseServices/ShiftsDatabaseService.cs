@@ -26,7 +26,7 @@ namespace Hospital.DatabaseServices
             {
                 return await _context.Shifts
                     .Select(s => new ShiftModel(
-                        s.ShiftId,
+                        s.ShiftID,
                         s.Date,
                         s.StartTime,
                         s.EndTime
@@ -69,9 +69,9 @@ namespace Hospital.DatabaseServices
                     .Where(s => s.DoctorId == doctorId)
                     .Join(_context.Shifts,
                         schedule => schedule.ShiftId,
-                        shift => shift.ShiftId,
+                        shift => shift.ShiftID,
                         (schedule, shift) => new ShiftModel(
-                            shift.ShiftId,
+                            shift.ShiftID,
                             shift.Date,
                             shift.StartTime,
                             shift.EndTime
@@ -99,12 +99,12 @@ namespace Hospital.DatabaseServices
                     .Where(s => s.DoctorId == doctorId)
                     .Join(_context.Shifts,
                         schedule => schedule.ShiftId,
-                        shift => shift.ShiftId,
+                        shift => shift.ShiftID,
                         (schedule, shift) => new { schedule, shift })
                     .Where(x => x.shift.StartTime < TimeSpan.FromHours(20) &&
                                 x.shift.Date >= today)
                     .Select(x => new ShiftModel(
-                        x.shift.ShiftId,
+                        x.shift.ShiftID,
                         x.shift.Date,
                         x.shift.StartTime,
                         x.shift.EndTime
@@ -121,12 +121,12 @@ namespace Hospital.DatabaseServices
         {
             try
             {
-                var entity = new ShiftModel(shift.ShiftId, shift.Date, shift.StartTime, shift.EndTime);
+                var entity = new ShiftModel(shift.ShiftID, shift.Date, shift.StartTime, shift.EndTime);
 
                 _context.Shifts.Add(entity);
                 await _context.SaveChangesAsync();
 
-                shift.ShiftId = entity.ShiftId;
+                shift.ShiftID = entity.ShiftID;
                 return true;
             }
             catch (Exception)
@@ -139,7 +139,7 @@ namespace Hospital.DatabaseServices
         {
             try
             {
-                var existingShift = await this._context.Shifts.FindAsync(shift.ShiftId);
+                var existingShift = await this._context.Shifts.FindAsync(shift.ShiftID);
                 if (existingShift == null)
                 {
                     return false;
@@ -161,7 +161,7 @@ namespace Hospital.DatabaseServices
         public async Task<bool> DoesShiftExist(int shiftId)
         {
             return await _context.Shifts
-                .AnyAsync(s => s.ShiftId == shiftId);
+                .AnyAsync(s => s.ShiftID == shiftId);
         }
 
         public async Task<bool> DeleteShift(int shiftId)

@@ -47,8 +47,7 @@ namespace Hospital.Views
             }
 
             this.Rooms.Clear();
-
-            List<RoomModel>? rooms = this.roomModel.GetRooms().Result;
+            List<RoomModel>? rooms = await this.roomModel.GetRooms();
             if (rooms != null)
             {
                 foreach (RoomModel room in rooms)

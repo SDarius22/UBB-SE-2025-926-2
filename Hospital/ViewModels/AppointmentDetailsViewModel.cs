@@ -60,7 +60,7 @@ namespace Hospital.ViewModels
 
             AppointmentDate = appointment.DateAndTime.ToString("f");
             DoctorName = $"Dr. {appointment.DoctorName}";
-            Department = appointment.DepartmentName;
+            Department = appointment.Name;
             ProcedureName = appointment.ProcedureName;
             ProcedureDuration = $"{appointment.ProcedureDuration.TotalMinutes} minutes";
 

@@ -10,9 +10,6 @@
         /// </summary>
         public EquipmentModel()
         {
-            this.Name = "Unspecified";
-            this.Type = "Unspecified";
-            this.Specification = "Unspecified";
         }
 
         /// <summary>

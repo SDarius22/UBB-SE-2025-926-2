@@ -8,7 +8,7 @@ namespace Hospital.Models
 {
     public class UserModel
     {
-        public int UserId { get; set; }
+        public int UserID { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public string Mail { get; set; }
@@ -20,9 +20,13 @@ namespace Hospital.Models
         public string PhoneNumber { get; set; }
         public DateTime RegistrationDate { get; set; }
 
+        public UserModel()
+        {
+        }
+
         public UserModel(int userId, string username, string password, string mail, string role, string name, DateOnly birthDate, string cnp, string address, string phoneNumber, DateTime registrationDate)
         {
-            UserId = userId;
+            UserID = userId;
             Username = username;
             Password = password;
             Mail = mail;

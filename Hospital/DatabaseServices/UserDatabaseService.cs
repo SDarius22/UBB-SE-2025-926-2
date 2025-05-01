@@ -22,7 +22,7 @@ namespace Hospital.DatabaseServices
         /// <returns>The joined names.</returns>
         public async Task<bool> UserExistsWithRole(int userID, string role)
         {
-            return await _context.Users.AnyAsync(u => u.UserId == userID && u.Role == role);
+            return await _context.Users.AnyAsync(u => u.UserID == userID && u.Role == role);
         }
     }
 }

@@ -34,7 +34,7 @@
                 <DataTemplate x:DataType="model:ShiftModel">
                     <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="10">
                         <Grid ColumnDefinitions="1*, 1*, 1*, 1*">
-                            <TextBlock Text="{x:Bind ShiftId}" Grid.Column="0" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{x:Bind ShiftID}" Grid.Column="0" HorizontalAlignment="Center"/>
                             <TextBlock Text="{x:Bind Date}" Grid.Column="1" HorizontalAlignment="Center"/>
                             <TextBlock Text="{x:Bind StartTime}" Grid.Column="2" HorizontalAlignment="Center"/>
                             <TextBlock Text="{x:Bind EndTime}" Grid.Column="3" HorizontalAlignment="Center"/>

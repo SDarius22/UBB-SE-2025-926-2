@@ -116,7 +116,7 @@
         /// <returns>True if the department is valid, otherwise false.</returns>
         private bool ValidateDepartment(DepartmentModel department)
         {
-            if (string.IsNullOrWhiteSpace(department.DepartmentName))
+            if (string.IsNullOrWhiteSpace(department.Name))
             {
                 this.ErrorMessage = "Please enter the name of the department.";
                 return false;

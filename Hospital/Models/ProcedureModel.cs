@@ -17,6 +17,8 @@ namespace Hospital.Models
 
         public TimeSpan ProcedureDuration { get; set; }
 
+        public ProcedureModel() { }
+
         public ProcedureModel(int procedureId, int departmentId, string name, TimeSpan duration)
         {
             this.ProcedureId = procedureId;

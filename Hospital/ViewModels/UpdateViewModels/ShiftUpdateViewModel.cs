@@ -100,14 +100,14 @@ namespace Hospital.ViewModels.UpdateViewModels
                 if (!this.ValidateShift(shift))
                 {
                     hasErrors = true;
-                    errorMessages.AppendLine("Shift " + shift.ShiftId + ": " + this.ErrorMessage);
+                    errorMessages.AppendLine("Shift " + shift.ShiftID + ": " + this.ErrorMessage);
                 }
                 else
                 {
                     bool success = await this.shiftModel.UpdateShift(shift);
                     if (!success)
                     {
-                        errorMessages.AppendLine("Failed to save changes for shift: " + shift.ShiftId);
+                        errorMessages.AppendLine("Failed to save changes for shift: " + shift.ShiftID);
                         hasErrors = true;
                     }
                 }

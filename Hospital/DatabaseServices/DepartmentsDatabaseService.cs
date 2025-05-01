@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -28,7 +29,7 @@ namespace Hospital.DatabaseServices
                 return await _context.Departments
                     .Select(d => new DepartmentModel(
                             d.DepartmentId,
-                            d.DepartmentName
+                            d.Name
                         )).ToListAsync();
             }
             catch (Exception exception)
@@ -41,7 +42,7 @@ namespace Hospital.DatabaseServices
         {
             try
             {
-                var entity = new DepartmentModel(department.DepartmentId, department.DepartmentName);
+                var entity = new DepartmentModel(department.DepartmentId, department.Name);
 
                 await _context.Departments.AddAsync(entity);
                 await _context.SaveChangesAsync();
@@ -72,7 +73,7 @@ namespace Hospital.DatabaseServices
                 }
 
                 existingDepartment.DepartmentId = department.DepartmentId;
-                existingDepartment.DepartmentName = department.DepartmentName;
+                existingDepartment.Name = department.Name;
 
                 await _context.SaveChangesAsync();
                 return true;
@@ -123,10 +124,20 @@ namespace Hospital.DatabaseServices
         {
             try
             {
+                //var list = await _context.Procedures
+                //    .Select(p => new ProcedureModel(
+                //        p.ProcedureId,
+                //        p.DepartmentId,
+                //        p.ProcedureName,
+                //        p.ProcedureDuration)).ToListAsync();
+                //for (int i = 0; i < list.Count; i++)
+                //{
+                //    Debug.WriteLine($"Procedure ID: {list[i].ProcedureId}, Department ID: {list[i].DepartmentId}, Procedure Name: {list[i].ProcedureName}, Procedure Duration: {list[i].ProcedureDuration}");
+                //}
                 return await _context.Departments
                     .Select(d => new DepartmentModel(
                         d.DepartmentId,
-                        d.DepartmentName
+                        d.Name
                     )).ToListAsync();
             }
             catch (Exception exception)

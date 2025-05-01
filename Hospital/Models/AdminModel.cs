@@ -8,9 +8,19 @@ namespace Hospital.Models
 {
     public class AdminModel
     {
+        // Primary key
         public int AdminId { get; set; }
+
+        // Foreign key to User
         public int UserId { get; set; }
 
+        // Navigation property (optional but recommended)
+        public virtual UserModel User { get; set; }
+
+        // Parameterless constructor required by EF Core
+        public AdminModel() { }
+
+        // Convenience constructor for application code
         public AdminModel(int adminId, int userId)
         {
             AdminId = adminId;

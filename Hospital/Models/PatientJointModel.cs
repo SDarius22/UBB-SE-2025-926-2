@@ -27,6 +27,12 @@ namespace Hospital.Models
         // Height in cm
         public int Height { get; set; }
 
+        public virtual UserModel User { get; set; }
+
+        // Parameterless constructor for EF Core
+        public PatientJointModel() { }
+
+
         public PatientJointModel(int userId, int patientId, string patientName, string bloodType, string emergencyContact, string allergies, float weight, int height)
         {
             UserId = userId;

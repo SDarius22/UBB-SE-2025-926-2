@@ -91,7 +91,7 @@ public sealed partial class PatientScheduleView : Page
         {
             string message = $"Date and Time: {appointment.DateAndTime:f}\n" +
                            $"Doctor: {appointment.DoctorName}\n" +
-                           $"Department: {appointment.DepartmentName}\n" +
+                           $"Department: {appointment.Name}\n" +
                            $"Procedure: {appointment.ProcedureName}\n" +
                            $"Procedure Duration: {appointment.ProcedureDuration.TotalMinutes} minutes";
 
