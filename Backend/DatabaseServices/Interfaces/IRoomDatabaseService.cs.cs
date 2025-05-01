@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Backend.Models;
-using Microsoft.Data.SqlClient;
-using Microsoft.UI.Xaml.Controls;
+﻿using Backend.Models;
 
 namespace Backend.DatabaseServices.Interfaces
 {

@@ -33,22 +33,6 @@ namespace Backend.API.Controllers
             return Ok(doctors);
         }
 
-        // GET: api/doctors/5/shifts
-        [HttpGet("{doctorId}/shifts")]
-        public ActionResult<IEnumerable<ShiftModel>> GetShiftsForCurrentMonth(int doctorId)
-        {
-            var shifts = _doctorsService.GetShiftsForCurrentMonth(doctorId);
-            return Ok(shifts);
-        }
-
-        // GET: api/doctors/5/salary
-        [HttpGet("{doctorId}/salary")]
-        public async Task<ActionResult<double>> ComputeDoctorSalary(int doctorId)
-        {
-            var salary = await _doctorsService.ComputeDoctorSalary(doctorId);
-            return Ok(salary);
-        }
-
         // POST: api/doctors
         [HttpPost]
         public async Task<ActionResult<DoctorJointModel>> AddDoctor([FromBody] DoctorJointModel doctor)
