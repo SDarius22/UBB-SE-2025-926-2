@@ -4,8 +4,10 @@
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Linq;
+    using System.Threading.Tasks;
     using System.Windows.Input;
     using Hospital.DatabaseServices;
+    using Hospital.DatabaseServices.Interfaces;
     using Hospital.Models;
     using Hospital.Utils;
 
@@ -14,7 +16,7 @@
     /// </summary>
     public class RoomAddViewModel : INotifyPropertyChanged
     {
-        private readonly RoomDatabaseService roomModel = new RoomDatabaseService();
+        private readonly IRoomDatabaseService roomModel;
         private int capacity;
         private int departmentID;
         private string errorMessage = string.Empty;
@@ -23,8 +25,9 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="RoomAddViewModel"/> class.
         /// </summary>
-        public RoomAddViewModel()
+        public RoomAddViewModel( IRoomDatabaseService roomModel )
         {
+            this.roomModel = roomModel;
             this.SaveRoomCommand = new RelayCommand(this.SaveRoom);
             this.LoadRooms();
         }
@@ -108,19 +111,23 @@
         /// <summary>
         /// Loads rooms from the model into the observable collection.
         /// </summary>
-        private void LoadRooms()
+        private async void LoadRooms()
         {
             this.Rooms.Clear();
-            foreach (RoomModel room in this.roomModel?.GetRooms() ?? Enumerable.Empty<RoomModel>())
+
+            var list = await this.roomModel?.GetRooms();
+
+            foreach (RoomModel room in list ?? Enumerable.Empty<RoomModel>())
             {
                 this.Rooms.Add(room);
             }
+
         }
 
         /// <summary>
         /// Saves a new room to the model after validating it.
         /// </summary>
-        private void SaveRoom()
+        private async void SaveRoom()
         {
             var room = new RoomModel
             {
@@ -130,9 +137,9 @@
                 EquipmentID = this.EquipmentID,
             };
 
-            if (this.ValidateRoom(room))
+            if (await this.ValidateRoom(room))
             {
-                bool success = this.roomModel.AddRoom(room);
+                bool success = await this.roomModel.AddRoom(room);
                 this.ErrorMessage = success ? "Room added successfully" : "Failed to add room";
                 if (success)
                 {
@@ -146,7 +153,7 @@
         /// </summary>
         /// <param name="room">The room to validate.</param>
         /// <returns>True if the room is valid; otherwise, false.</returns>
-        private bool ValidateRoom(RoomModel room)
+        private async Task<bool> ValidateRoom(RoomModel room)
         {
             if (room.Capacity <= 0)
             {
@@ -154,13 +161,13 @@
                 return false;
             }
 
-            if (!this.roomModel.DoesDepartmentExist(room.DepartmentID))
+            if (!await this.roomModel.DoesDepartmentExist(room.DepartmentID))
             {
                 this.ErrorMessage = "DepartmentID doesn’t exist in the Departments Records.";
                 return false;
             }
 
-            if (!this.roomModel.DoesEquipmentExist(room.EquipmentID))
+            if (!await this.roomModel.DoesEquipmentExist(room.EquipmentID))
             {
                 this.ErrorMessage = "EquipmentID doesn’t exist in the Equipments Records.";
                 return false;

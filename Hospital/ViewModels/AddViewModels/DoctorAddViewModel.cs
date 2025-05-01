@@ -140,7 +140,7 @@ namespace Hospital.ViewModels.AddViewModels
                 this.Rating,
                 this.LicenseNumber);
 
-            if (this.ValidateDoctor(doctor))
+            if (await this.ValidateDoctor(doctor))
             {
                 bool success = await this.doctorModel.AddDoctor(doctor);
                 this.ErrorMessage = success ? "Doctor added successfully" : "Failed to add doctor";

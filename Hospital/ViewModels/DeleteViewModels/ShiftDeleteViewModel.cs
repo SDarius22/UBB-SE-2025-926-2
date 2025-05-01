@@ -30,12 +30,12 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// <summary>
         /// The model for managing shifts.
         /// </summary>
-        private readonly ShiftsDatabaseService shiftModel = new ShiftsDatabaseService();
+        private readonly ShiftsDatabaseService shiftModel;
 
         /// <summary>
         /// The collection of shifts displayed in the view.
         /// </summary>
-        private ObservableCollection<ShiftModel> shifts = new();
+        private ObservableCollection<ShiftModel> shifts;
 
         /// <summary>
         /// The ID of the shift to be deleted.
@@ -131,7 +131,7 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// <summary>
         /// Removes the selected shift.
         /// </summary>
-        private void RemoveShift()
+        private async void RemoveShift()
         {
             if (this.ShiftID == 0)
             {
@@ -139,13 +139,13 @@ namespace Hospital.ViewModels.DeleteViewModels
                 return;
             }
 
-            if (!this.shiftModel.DoesShiftExist(this.ShiftID))
+            if (!await this.shiftModel.DoesShiftExist(this.ShiftID))
             {
                 this.ErrorMessage = "ShiftID doesn't exist in the records";
                 return;
             }
 
-            bool succes = this.shiftModel.DeleteShift(this.ShiftID);
+            bool succes = await this.shiftModel.DeleteShift(this.ShiftID);
             this.ErrorMessage = succes ? "Shift was successfully deleted" : "Shift was not deleted";
             if (succes)
             {

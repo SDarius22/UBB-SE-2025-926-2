@@ -7,28 +7,36 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Input;
+using Hospital.DatabaseServices;
+using Hospital.Models;
+using Hospital.Utils;
+
 namespace Hospital.ViewModels.AddViewModels
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel;
-    using System.Windows.Input;
-    using Hospital.DatabaseServices;
-    using Hospital.Models;
-    using Hospital.Utils;
-
     /// <summary>
     /// ViewModel for adding shifts.
     /// </summary>
     public class ShiftAddViewModel : INotifyPropertyChanged
     {
+
+        /// <summary>
+        /// Gets or sets the model for managing shifts.
+        /// </summary>
+        private readonly IShiftsDatabaseService shiftModel;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ShiftAddViewModel"/> class.
         /// </summary>
-        public ShiftAddViewModel()
+        public ShiftAddViewModel(IShiftsDatabaseService shiftModel)
         {
+
             this.SaveShiftCommand = new RelayCommand(this.SaveShift);
             this.LoadShifts();
+            this.shiftModel = shiftModel;
         }
 
         /// <summary>
@@ -94,11 +102,6 @@ namespace Hospital.ViewModels.AddViewModels
         public ICommand SaveShiftCommand { get; }
 
         /// <summary>
-        /// Gets or sets the model for managing shifts.
-        /// </summary>
-        private readonly ShiftsDatabaseService shiftModel = new ShiftsDatabaseService();
-
-        /// <summary>
         /// Gets or sets the model for managing doctors.
         /// </summary>
         private DateOnly date = DateOnly.FromDateTime(DateTime.Now);
@@ -134,7 +137,7 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Saves the shift to the database.
         /// </summary>
-        private void SaveShift()
+        private async void SaveShift()
         {
             var shift = new ShiftModel(
                 0,
@@ -144,7 +147,7 @@ namespace Hospital.ViewModels.AddViewModels
 
             if (this.ValidateShift(shift))
             {
-                bool success = this.shiftModel.AddShift(shift);
+                bool success = await this.shiftModel.AddShift(shift);
                 this.ErrorMessage = success ? "Shift added successfully" : "Failed to add shift";
                 if (success)
                 {
