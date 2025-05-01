@@ -29,7 +29,14 @@ namespace Backend.DatabaseServices
             {
                 medicalRecord.DateAndTime = DateTime.Now;
 
-                var entity = new MedicalRecordModel(medicalRecord.MedicalRecordId, medicalRecord.PatientId, medicalRecord.DoctorId, medicalRecord.ProcedureId, medicalRecord.Conclusion, medicalRecord.DateAndTime);
+                var entity = new MedicalRecordModel
+                {
+                    PatientId = medicalRecord.PatientId,
+                    DoctorId = medicalRecord.DoctorId,
+                    ProcedureId = medicalRecord.ProcedureId,
+                    Conclusion = medicalRecord.Conclusion,
+                    DateAndTime = medicalRecord.DateAndTime
+                };
 
                 await _context.MedicalRecords.AddAsync(entity);
                 await _context.SaveChangesAsync();

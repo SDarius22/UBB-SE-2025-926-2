@@ -31,7 +31,13 @@ namespace Backend.DatabaseServices
         {
             try
             {
-                var entity = new DrugModel(drug.DrugID, drug.Name, drug.Administration, drug.Specification, drug.Supply);
+                var entity = new DrugModel
+                {
+                    Name = drug.Name,
+                    Administration = drug.Administration,
+                    Specification = drug.Specification,
+                    Supply = drug.Supply
+                };
 
                 await _context.Drugs.AddAsync(entity);
                 await _context.SaveChangesAsync();

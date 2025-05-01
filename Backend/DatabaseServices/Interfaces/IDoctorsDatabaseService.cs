@@ -26,10 +26,6 @@ namespace Backend.DatabaseServices
 
         public Task<bool> UserExistsInDoctors(int userID, int doctorID);
 
-        public List<ShiftModel> GetShiftsForCurrentMonth(int doctorID);
-
-        public Task<double> ComputeDoctorSalary(int doctorID);
-
         public Task<List<DoctorJointModel>> GetDoctors();
     }
 }

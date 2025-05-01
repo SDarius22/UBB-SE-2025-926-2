@@ -13,7 +13,6 @@ namespace Backend.Managers
     {
         public static List<DepartmentModel> Departments { get; private set; }
 
-        // IF ERROR THIS WAS PUBLIC BEFORE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         private readonly IDepartmentsDatabaseService _departmentDatabaseService;
 
         public DepartmentManager(IDepartmentsDatabaseService departmentDatabaseService)
