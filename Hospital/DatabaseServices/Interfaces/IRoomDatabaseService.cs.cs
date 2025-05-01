@@ -9,7 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Hospital.DatabaseServices.Interfaces
 {
-    internal interface IRoomDatabaseService
+    public interface IRoomDatabaseService
     {
         public Task<bool> AddRoom(RoomModel room);
 

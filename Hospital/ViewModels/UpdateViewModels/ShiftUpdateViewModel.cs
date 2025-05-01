@@ -29,7 +29,7 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// The model for managing shifts.
         /// </summary>
-        private readonly ShiftsDatabaseService shiftModel = new ShiftsDatabaseService();
+        private readonly IShiftsDatabaseService shiftModel;
 
         /// <summary>
         /// The collection of shifts displayed in the view.
@@ -39,8 +39,9 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ShiftUpdateViewModel"/> class.
         /// </summary>
-        public ShiftUpdateViewModel()
+        public ShiftUpdateViewModel(IShiftsDatabaseService shiftModel)
         {
+            this.shiftModel = shiftModel;
             this.errorMessage = string.Empty;
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadShifts();
@@ -87,7 +88,7 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// Saves the changes made to the shifts.
         /// </summary>
-        private void SaveChanges()
+        private async Task SaveChanges()
         {
             bool hasErrors = false;
 
@@ -102,7 +103,7 @@ namespace Hospital.ViewModels.UpdateViewModels
                 }
                 else
                 {
-                    bool success = this.shiftModel.UpdateShift(shift);
+                    bool success = await this.shiftModel.UpdateShift(shift);
                     if (!success)
                     {
                         errorMessages.AppendLine("Failed to save changes for shift: " + shift.ShiftId);
