@@ -4,7 +4,7 @@
     using System.ComponentModel;
     using System.Text;
     using System.Windows.Input;
-    using Hospital.DatabaseServices;
+    using Hospital.ApiClients;
     using Hospital.Models;
     using Hospital.Utils;
     using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +15,7 @@
     /// </summary>
     public class DepartmentUpdateViewModel : INotifyPropertyChanged
     {
-        private readonly IDepartmentsDatabaseService departmentModel;
+        private readonly DepartmentsApiService departmentModel;
         private string errorMessage = string.Empty;
 
         /// <summary>
@@ -23,7 +23,7 @@
         /// </summary>
         public DepartmentUpdateViewModel()
         {
-            this.departmentModel = App.Services.GetRequiredService<IDepartmentsDatabaseService>();
+            this.departmentModel = App.Services.GetRequiredService<DepartmentsApiService>();
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadDepartments();
         }
@@ -62,7 +62,7 @@
         private async void LoadDepartments()
         {
             this.Departments.Clear();
-            var list = await this.departmentModel.GetDepartments();
+            var list = await this.departmentModel.GetDepartmentsAsync();
             foreach (DepartmentModel department in list)
             {
                 this.Departments.Add(department);
@@ -86,7 +86,7 @@
                 }
                 else
                 {
-                    bool success = await this.departmentModel.UpdateDepartment(department);
+                    bool success = await this.departmentModel.UpdateDepartmentAsync(department.DepartmentID, department);
                     if (!success)
                     {
                         errorMessages.AppendLine("Failed to save changes for department: " + department.DepartmentID);

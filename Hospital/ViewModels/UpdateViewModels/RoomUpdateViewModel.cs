@@ -10,7 +10,7 @@ namespace Hospital.ViewModels.UpdateViewModels
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Hospital.DatabaseServices;
+    using Hospital.ApiClients;
     using Hospital.Models;
     using Hospital.Utils;
     using Hospital.ViewModel;
@@ -21,7 +21,7 @@ namespace Hospital.ViewModels.UpdateViewModels
     /// </summary>
     public class RoomUpdateViewModel : INotifyPropertyChanged
     {
-        private readonly IRoomDatabaseService roomModel;
+        private readonly RoomApiService roomModel;
         private string errorMessage;
 
         /// <summary>

@@ -7,7 +7,6 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using Hospital.DatabaseServices.Interfaces;
 
 namespace Hospital.ViewModels.UpdateViewModels
 {
@@ -19,7 +18,7 @@ namespace Hospital.ViewModels.UpdateViewModels
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Hospital.DatabaseServices;
+    using Hospital.ApiClients;
     using Hospital.Models;
     using Hospital.Utils;
     using Hospital.ViewModel;
@@ -33,7 +32,7 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// The model for managing schedules.
         /// </summary>
-        private readonly IScheduleDatabaseService scheduleModel;
+        private readonly ScheduleApiService scheduleModel;
 
         /// <summary>
         /// The collection of schedules displayed in the view.
@@ -45,7 +44,7 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// </summary>
         public ScheduleUpdateViewModel()
         {
-            this.scheduleModel = App.Services.GetRequiredService<IScheduleDatabaseService>();
+            this.scheduleModel = App.Services.GetRequiredService<ScheduleApiService>();
             this.errorMessage = string.Empty;
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadSchedules();
@@ -87,7 +86,7 @@ namespace Hospital.ViewModels.UpdateViewModels
         private async void LoadSchedules()
         {
             this.Schedules.Clear();
-            var list = await this.scheduleModel.GetSchedules();
+            var list = await this.scheduleModel.GetSchedulesAsync();
 
             foreach (ScheduleModel schedule in list)
             {
@@ -113,7 +112,7 @@ namespace Hospital.ViewModels.UpdateViewModels
                 }
                 else
                 {
-                    bool success = await this.scheduleModel.UpdateSchedule(schedule);
+                    bool success = await this.scheduleModel.UpdateScheduleAsync(schedule.ScheduleId, schedule);
 
                     if (!success)
                     {
