@@ -12,8 +12,8 @@ namespace Hospital.Views
     ///
     public sealed partial class ScheduleAndShifts : Page
     {
-        private readonly ShiftsDatabaseService shiftModel = new ();
-        private readonly ScheduleDatabaseService scheduleModel = new ();
+        private readonly ShiftsDatabaseService shiftModel;
+        private readonly ScheduleDatabaseService scheduleModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleAndShifts"/> class.

@@ -36,7 +36,7 @@ namespace Hospital.Views
         /// Gets the collection of drugs to be displayed.
         /// </summary>
         public ObservableCollection<DrugModel> DrugsList { get; set; } = new ();
-        private readonly DrugsDatabaseService drugModel = new ();
+        private readonly DrugsDatabaseService drugModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DrugsPage"/> class.
@@ -53,7 +53,7 @@ namespace Hospital.Views
         private void Load()
         {
             this.DrugsList.Clear();
-            foreach (DrugModel drug in this.drugModel.GetDrugs())
+            foreach (DrugModel drug in this.drugModel.GetDrugs().Result)
             {
                 this.DrugsList.Add(drug);
             }

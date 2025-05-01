@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Hospital.ViewModels.UpdateViewModels;
+using Hospital.DatabaseServices.Interfaces;
 
 // To learn more about WinUI, the WinUI Hospital structure,
 // and more about our Hospital templates, see: http://aka.ms/winui-Hospital-info.
@@ -25,10 +26,11 @@ namespace Hospital.Views.ModifyViews
     public sealed partial class ModifyDrugView : Page
     {
         private DrugUpdateViewModel _viewModel;
+        private IDrugsDatabaseService _drugModel;
         public ModifyDrugView()
         {
             this.InitializeComponent();
-            _viewModel = new DrugUpdateViewModel();
+            _viewModel = new DrugUpdateViewModel(_drugModel);
             this.DataContext = _viewModel;
         }
     }

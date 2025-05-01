@@ -1,3 +1,4 @@
+using Hospital.DbContext;
 using Hospital.Managers;
 using Hospital.Models;
 using Hospital.Services;
@@ -18,12 +19,12 @@ namespace Hospital.Views
     public sealed partial class MedicalRecordsHistoryView : Page
     {
         private MedicalRecordsHistoryViewModel _viewModel;
-
+        private readonly AppDbContext _context;
         public MedicalRecordsHistoryView()
         {
             this.InitializeComponent();
 
-            _viewModel = new MedicalRecordsHistoryViewModel(1, new MedicalRecordManager(new DatabaseServices.MedicalRecordsDatabaseService()), new DocumentManager(new DatabaseServices.DocumentDatabaseService(), new FileService()));
+            _viewModel = new MedicalRecordsHistoryViewModel(1, new MedicalRecordManager(new DatabaseServices.MedicalRecordsDatabaseService(_context)), new DocumentManager(new DatabaseServices.DocumentDatabaseService(_context), new FileService()));
             this.MedicalRecordsPanel.DataContext = _viewModel;
         }
 

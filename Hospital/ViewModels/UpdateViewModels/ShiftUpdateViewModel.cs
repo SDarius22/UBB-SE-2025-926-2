@@ -88,7 +88,7 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// Saves the changes made to the shifts.
         /// </summary>
-        private async Task SaveChanges()
+        private async void SaveChanges()
         {
             bool hasErrors = false;
 

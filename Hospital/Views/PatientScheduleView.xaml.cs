@@ -12,6 +12,7 @@ using Microsoft.UI;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using Hospital.ViewModels;
+using Hospital.DbContext;
 
 namespace Hospital.Views
 {
@@ -19,13 +20,14 @@ public sealed partial class PatientScheduleView : Page
     {
         private readonly PatientScheduleViewModel _viewModel;
         private readonly DispatcherQueue _dispatcherQueue;
+        private readonly AppDbContext _context;
 
         public PatientScheduleView()
         {
             this.InitializeComponent();
 
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-            _viewModel = new PatientScheduleViewModel(new AppointmentManager(new DatabaseServices.AppointmentsDatabaseService()));
+            _viewModel = new PatientScheduleViewModel(new AppointmentManager(new DatabaseServices.AppointmentsDatabaseService(_context)));
 
             DailyScheduleList.ItemsSource = _viewModel.DailyAppointments;
             AppointmentsCalendar.CalendarViewDayItemChanging += CalendarView_DayItemChanging;

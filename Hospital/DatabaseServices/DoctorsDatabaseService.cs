@@ -34,6 +34,7 @@
             _context = context;
         }
 
+
         // This method will be used to get the doctors from the database
         public async Task<List<DoctorJointModel>> GetDoctorsByDepartment(int departmentId)
         {

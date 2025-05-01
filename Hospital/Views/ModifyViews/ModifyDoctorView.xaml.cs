@@ -14,6 +14,8 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Hospital.ViewModel;
 using Hospital.Models;
+using Hospital.DatabaseServices.Interfaces;
+using Hospital.DatabaseServices;
 
 
 // To learn more about WinUI, the WinUI Hospital structure,
@@ -27,10 +29,12 @@ namespace Hospital.Views.ModifyViews
     public sealed partial class ModifyDoctorView : Page
     {
         private DoctorUpdateViewModel _viewModel;
+        private IDoctorsDatabaseService _doctorModel;
+        private IUserDatabaseService _userModel;
         public ModifyDoctorView()
         {
             this.InitializeComponent();
-            _viewModel = new DoctorUpdateViewModel();
+            _viewModel = new DoctorUpdateViewModel(_doctorModel, _userModel);
             this.DataContext = _viewModel;
         }
     }

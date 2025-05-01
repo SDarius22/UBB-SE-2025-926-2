@@ -15,6 +15,7 @@ namespace Hospital.Views.ModifyViews
     using Hospital.ViewModels.UpdateViewModels;
     using Windows.Foundation;
     using Windows.Foundation.Collections;
+    using Hospital.DatabaseServices.Interfaces;
 
     /// <summary>
     /// Represents a page for modifying an existing room. This page can be used either standalone or within a Frame navigation.
@@ -23,6 +24,7 @@ namespace Hospital.Views.ModifyViews
     public sealed partial class ModifyRoomView : Page
     {
         private RoomUpdateViewModel viewModel;
+        private IRoomDatabaseService _roomModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ModifyRoomView"/> class.
@@ -31,7 +33,7 @@ namespace Hospital.Views.ModifyViews
         public ModifyRoomView()
         {
             this.InitializeComponent();
-            this.viewModel = new RoomUpdateViewModel();
+            this.viewModel = new RoomUpdateViewModel(_roomModel);
             this.DataContext = this.viewModel;
         }
     }

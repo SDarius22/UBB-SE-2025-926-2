@@ -11,7 +11,7 @@ namespace Hospital.Views
     /// </summary>
     public sealed partial class EquipmentPage : Page
     {
-        private readonly EquipmentDatabaseService equipmentModel = new ();
+        private readonly EquipmentDatabaseService equipmentModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EquipmentPage"/> class.

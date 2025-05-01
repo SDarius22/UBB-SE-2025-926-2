@@ -10,6 +10,8 @@ using Hospital.Managers;
 using Hospital.DatabaseServices;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using Hospital.DbContext;
+using Hospital.DatabaseServices.Interfaces;
 
 namespace Hospital.Views
 {
@@ -17,6 +19,8 @@ namespace Hospital.Views
     {
         private MedicalRecordCreationFormViewModel _viewModel;
         private MedicalRecordManager _medicalRecordManager;
+        private readonly AppDbContext _context;
+        private IMedicalRecordsDatabaseService _medicalModel;
 
         public CreateMedicalRecordForm()
         {
@@ -27,13 +31,13 @@ namespace Hospital.Views
         {
             base.OnNavigatedTo(e);
 
-            var doctorManager = new DoctorManager(new DoctorsDatabaseService());
-            var procedureManager = new MedicalProcedureManager(new MedicalProceduresDatabaseService());
-            var departmentManager = new DepartmentManager(new DepartmentsDatabaseService());
+            var doctorManager = new DoctorManager(new DoctorsDatabaseService(_context));
+            var procedureManager = new MedicalProcedureManager(new MedicalProceduresDatabaseService(_context));
+            var departmentManager = new DepartmentManager(new DepartmentsDatabaseService(_context));
 
-            _medicalRecordManager = new MedicalRecordManager(new MedicalRecordsDatabaseService());
+            _medicalRecordManager = new MedicalRecordManager(new MedicalRecordsDatabaseService(_context));
 
-            _viewModel = new MedicalRecordCreationFormViewModel(doctorManager, procedureManager);
+            _viewModel = new MedicalRecordCreationFormViewModel(doctorManager, procedureManager, _medicalModel);
 
             await departmentManager.LoadDepartments();
             foreach (var d in departmentManager.GetDepartments())

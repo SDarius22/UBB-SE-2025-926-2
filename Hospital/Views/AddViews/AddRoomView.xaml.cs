@@ -15,6 +15,7 @@ namespace Hospital.Views.AddViews
     using Hospital.ViewModels.AddViewModels;
     using Windows.Foundation;
     using Windows.Foundation.Collections;
+    using Hospital.DatabaseServices.Interfaces;
 
     /// <summary>
     /// Represents a page for adding a room. This page can be used either standalone or within a Frame navigation.
@@ -23,7 +24,7 @@ namespace Hospital.Views.AddViews
     public sealed partial class AddRoomView : Page
     {
         private RoomAddViewModel viewModel;
-
+        private IRoomDatabaseService _roomModel;
         /// <summary>
         /// Initializes a new instance of the <see cref="AddRoomView"/> class.
         /// Sets up the view model and data context for the page.
@@ -31,7 +32,7 @@ namespace Hospital.Views.AddViews
         public AddRoomView()
         {
             this.InitializeComponent();
-            this.viewModel = new RoomAddViewModel();
+            this.viewModel = new RoomAddViewModel(_roomModel);
             this.DataContext = this.viewModel;
         }
     }

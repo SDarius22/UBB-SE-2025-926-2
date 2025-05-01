@@ -30,6 +30,7 @@ namespace Hospital.Views
     using Windows.Foundation;
     using Windows.Foundation.Collections;
     using Hospital.DatabaseServices;
+    using Hospital.DbContext;
 
     /// <summary>
     /// A page that displays a list of doctors with sorting and search functionality.
@@ -41,7 +42,9 @@ namespace Hospital.Views
         /// </summary>
         public ObservableCollection<DoctorJointModel> Doctors { get; set; } = new ();
 
-        private DoctorsDatabaseService doctorModel = new ();
+        private readonly AppDbContext _context;
+
+        private DoctorsDatabaseService doctorModel;
 
         private Dictionary<string, ListSortDirection> sortingStates = new ()
         {
@@ -95,10 +98,10 @@ namespace Hospital.Views
             if (sender is Button button && button.Tag is DoctorJointModel doctor)
             {
                 // Create instances of the required services
-                var appointmentsDatabaseService = new AppointmentsDatabaseService(); // Replace with actual implementation
-                var shiftsDatabaseService = new ShiftsDatabaseService(); // Replace with actual implementation
-                var medicalRecordsDatabaseService = new MedicalRecordsDatabaseService(); // Replace with actual implementation
-                var documentDatabaseService = new DocumentDatabaseService(); // Replace with actual implementation
+                var appointmentsDatabaseService = new AppointmentsDatabaseService(_context); // Replace with actual implementation
+                var shiftsDatabaseService = new ShiftsDatabaseService(_context); // Replace with actual implementation
+                var medicalRecordsDatabaseService = new MedicalRecordsDatabaseService(_context); // Replace with actual implementation
+                var documentDatabaseService = new DocumentDatabaseService(_context); // Replace with actual implementation
                 var fileService = new FileService(); // Replace with actual implementation
 
                 // Create instances of the required managers

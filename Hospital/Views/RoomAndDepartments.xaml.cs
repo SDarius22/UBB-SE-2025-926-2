@@ -11,8 +11,8 @@ namespace Hospital.Views
     /// </summary>
     public sealed partial class RoomAndDepartments : Page
     {
-        private readonly RoomDatabaseService roomModel = new ();
-        private readonly DepartmentsDatabaseService departmentModel = new ();
+        private readonly RoomDatabaseService roomModel;
+        private readonly DepartmentsDatabaseService departmentModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RoomAndDepartments"/> class.
@@ -36,14 +36,14 @@ namespace Hospital.Views
         private void Load()
         {
             this.Departments.Clear();
-            foreach (DepartmentModel department in this.departmentModel.GetDepartments())
+            foreach (DepartmentModel department in this.departmentModel.GetDepartments().Result)
             {
                 this.Departments.Add(department);
             }
 
             this.Rooms.Clear();
 
-            List<RoomModel>? rooms = this.roomModel.GetRooms();
+            List<RoomModel>? rooms = this.roomModel.GetRooms().Result;
             if (rooms != null)
             {
                 foreach (RoomModel room in rooms)

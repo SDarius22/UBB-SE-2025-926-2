@@ -5,6 +5,7 @@ namespace Hospital.Views
     using Microsoft.UI.Xaml.Navigation;
     using Hospital.Models;
     using Hospital.ViewModels;
+    using Hospital.DatabaseServices.Interfaces;
 
     /// <summary>
     /// DoctorInfoPage class.
@@ -12,6 +13,7 @@ namespace Hospital.Views
     public sealed partial class DoctorInfoPage : Page
     {
         private DoctorInformationViewModel viewModel;
+        private IDoctorInformationDatabaseService _doctorModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DoctorInfoPage"/> class.
@@ -19,7 +21,7 @@ namespace Hospital.Views
         public DoctorInfoPage()
         {
             this.InitializeComponent();
-            this.viewModel = new DoctorInformationViewModel();
+            this.viewModel = new DoctorInformationViewModel(_doctorModel);
             this.DataContext = this.viewModel;
         }
 
