@@ -179,8 +179,8 @@ namespace Hospital.Views
             else if (field == "Rating")
             {
                 sortedDoctors = direction == ListSortDirection.Ascending
-                    ? sortedDoctors.OrderBy(x => x.DoctorRating).ToList()
-                    : sortedDoctors.OrderByDescending(x => x.DoctorRating).ToList();
+                    ? sortedDoctors.OrderBy(x => x.Rating).ToList()
+                    : sortedDoctors.OrderByDescending(x => x.Rating).ToList();
             }
 
             return new ObservableCollection<DoctorJointModel>(sortedDoctors);

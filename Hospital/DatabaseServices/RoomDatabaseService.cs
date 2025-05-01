@@ -126,7 +126,7 @@ namespace Hospital.DatabaseServices
         public async Task<bool> DoesDepartmentExist(int departmentId)
         {
             return await _context.Departments
-                .AnyAsync(d => d.DepartmentId == departmentId);
+                .AnyAsync(d => d.DepartmentID == departmentId);
         }
 
         /// <summary>

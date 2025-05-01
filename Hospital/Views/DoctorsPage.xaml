@@ -37,7 +37,7 @@
                                     <TextBlock Text="{x:Bind DoctorId}" Grid.Column="1" TextTrimming="CharacterEllipsis" HorizontalAlignment="Center"/>
                                     <TextBlock Text="{x:Bind UserId}" Grid.Column="2"  HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                                     <TextBlock Text="{x:Bind DepartmentId}" Grid.Column="3"  HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-                                    <TextBlock Text="{x:Bind DoctorRating}" Grid.Column="4" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{x:Bind Rating}" Grid.Column="4" HorizontalAlignment="Center"/>
                                     <TextBlock Text="{x:Bind LicenseNumber}"  HorizontalAlignment="Center" Grid.Column="5"/>
                                     <Button Content="More Info" Click="MoreInfoClick" Tag="{x:Bind}" Grid.Column="7"
                                         Background="DodgerBlue" Foreground="White" Padding="5,2" FontSize="14"/>

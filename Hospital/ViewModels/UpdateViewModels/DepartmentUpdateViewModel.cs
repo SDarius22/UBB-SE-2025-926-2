@@ -82,14 +82,14 @@
                 if (!this.ValidateDepartment(department))
                 {
                     hasErrors = true;
-                    errorMessages.AppendLine("Department " + department.DepartmentId + ": " + this.ErrorMessage);
+                    errorMessages.AppendLine("Department " + department.DepartmentID + ": " + this.ErrorMessage);
                 }
                 else
                 {
                     bool success = await this.departmentModel.UpdateDepartment(department);
                     if (!success)
                     {
-                        errorMessages.AppendLine("Failed to save changes for department: " + department.DepartmentId);
+                        errorMessages.AppendLine("Failed to save changes for department: " + department.DepartmentID);
                         hasErrors = true;
                     }
                 }

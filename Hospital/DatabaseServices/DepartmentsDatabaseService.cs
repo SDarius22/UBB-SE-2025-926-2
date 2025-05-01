@@ -28,7 +28,7 @@ namespace Hospital.DatabaseServices
             {
                 return await _context.Departments
                     .Select(d => new DepartmentModel(
-                            d.DepartmentId,
+                            d.DepartmentID,
                             d.Name
                         )).ToListAsync();
             }
@@ -42,12 +42,12 @@ namespace Hospital.DatabaseServices
         {
             try
             {
-                var entity = new DepartmentModel(department.DepartmentId, department.Name);
+                var entity = new DepartmentModel(department.DepartmentID, department.Name);
 
                 await _context.Departments.AddAsync(entity);
                 await _context.SaveChangesAsync();
 
-                department.DepartmentId = entity.DepartmentId;
+                department.DepartmentID = entity.DepartmentID;
 
                 return true;
             }
@@ -66,13 +66,13 @@ namespace Hospital.DatabaseServices
         {
             try
             {
-                var existingDepartment = await _context.Departments.FindAsync(department.DepartmentId);
+                var existingDepartment = await _context.Departments.FindAsync(department.DepartmentID);
                 if (existingDepartment == null)
                 {
                     return false;
                 }
 
-                existingDepartment.DepartmentId = department.DepartmentId;
+                existingDepartment.DepartmentID = department.DepartmentID;
                 existingDepartment.Name = department.Name;
 
                 await _context.SaveChangesAsync();
@@ -113,7 +113,7 @@ namespace Hospital.DatabaseServices
         /// <returns>True if the department exists, otherwise false.</returns>
         public async Task<bool> DoesDepartmentExist(int departmentID)
         {
-            return await _context.Departments.AnyAsync(d => d.DepartmentId == departmentID);
+            return await _context.Departments.AnyAsync(d => d.DepartmentID == departmentID);
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace Hospital.DatabaseServices
                 //}
                 return await _context.Departments
                     .Select(d => new DepartmentModel(
-                        d.DepartmentId,
+                        d.DepartmentID,
                         d.Name
                     )).ToListAsync();
             }

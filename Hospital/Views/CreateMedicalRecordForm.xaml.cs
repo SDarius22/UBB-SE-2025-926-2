@@ -12,6 +12,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Hospital.DbContext;
 using Hospital.DatabaseServices.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Hospital.Views
 {
@@ -19,8 +20,6 @@ namespace Hospital.Views
     {
         private MedicalRecordCreationFormViewModel _viewModel;
         private MedicalRecordManager _medicalRecordManager;
-        private readonly AppDbContext _context;
-        private IMedicalRecordsDatabaseService _medicalModel;
 
         public CreateMedicalRecordForm()
         {
@@ -31,13 +30,18 @@ namespace Hospital.Views
         {
             base.OnNavigatedTo(e);
 
-            var doctorManager = new DoctorManager(new DoctorsDatabaseService(_context));
-            var procedureManager = new MedicalProcedureManager(new MedicalProceduresDatabaseService(_context));
-            var departmentManager = new DepartmentManager(new DepartmentsDatabaseService(_context));
+            var idoctorsDatabaseService = App.Services.GetRequiredService<IDoctorsDatabaseService>();
+            var imedicalProceduresDatabaseService = App.Services.GetRequiredService<IMedicalProceduresDatabaseService>();
+            var idepartmentsDatabaseService = App.Services.GetRequiredService<IDepartmentsDatabaseService>();
+            var imedicalRecordsDatabaseService = App.Services.GetRequiredService<IMedicalRecordsDatabaseService>();
 
-            _medicalRecordManager = new MedicalRecordManager(new MedicalRecordsDatabaseService(_context));
+            var doctorManager = new DoctorManager(idoctorsDatabaseService);
+            var procedureManager = new MedicalProcedureManager(imedicalProceduresDatabaseService);
+            var departmentManager = new DepartmentManager(idepartmentsDatabaseService);
 
-            _viewModel = new MedicalRecordCreationFormViewModel(doctorManager, procedureManager, _medicalModel);
+            _medicalRecordManager = new MedicalRecordManager(imedicalRecordsDatabaseService);
+
+            _viewModel = new MedicalRecordCreationFormViewModel(doctorManager, procedureManager, imedicalRecordsDatabaseService);
 
             await departmentManager.LoadDepartments();
             foreach (var d in departmentManager.GetDepartments())

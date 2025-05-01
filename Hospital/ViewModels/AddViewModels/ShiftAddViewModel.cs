@@ -34,10 +34,10 @@ namespace Hospital.ViewModels.AddViewModels
         /// </summary>
         public ShiftAddViewModel()
         {
-
+            this.shiftModel = App.Services.GetRequiredService<IShiftsDatabaseService>();
+            this.Shifts = new ObservableCollection<ShiftModel>();
             this.SaveShiftCommand = new RelayCommand(this.SaveShift);
             this.LoadShifts();
-            this.shiftModel = App.Services.GetRequiredService<IShiftsDatabaseService>();
         }
 
         /// <summary>

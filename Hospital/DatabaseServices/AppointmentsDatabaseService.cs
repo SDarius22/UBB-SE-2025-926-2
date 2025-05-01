@@ -1,7 +1,3 @@
-// <copyright file="AppointmentsDatabaseService.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
 namespace Hospital.DatabaseServices
 {
     using System;
@@ -79,41 +75,71 @@ namespace Hospital.DatabaseServices
         {
             try
             {
-                var str = @"
-                    SELECT
-                        a.AppointmentId,
-                        a.Finished,
-                        a.DateAndTime,
-                        d.DepartmentId,
-                        d.Name,
-                        doc.DoctorId,
-                        u1.Name as DoctorName,
-                        p.PatientId,
-                        u2.Name as PatientName,
-                        pr.ProcedureId,
-                        pr.ProcedureName,
-                        pr.ProcedureDuration
-                    FROM Appointments a
-                    JOIN Doctors doc ON a.DoctorId = doc.DoctorId
-                    JOIN Users u1 ON doc.UserId = u1.UserId
-                    JOIN Departments d ON doc.DepartmentId = d.DepartmentId
-                    JOIN Patients p ON a.PatientId = p.PatientId
-                    JOIN Users u2 ON p.UserId = u2.UserId
-                    JOIN Procedures pr ON a.ProcedureId = pr.ProcedureId
-                    ORDER BY a.AppointmentId";
-                var query = FormattableStringFactory.Create(str);
-
-                var appointments = await Task.Run(() => _context.Database.SqlQuery<AppointmentJointModel>(query).ToList());
-
-                return appointments;
+                return await _context.Appointments
+                    .Join(
+                        _context.DoctorJoints,
+                        a => a.DoctorId,
+                        doc => doc.DoctorId,
+                        (a, doc) => new { Appointment = a, Doctor = doc }
+                    )
+                    .Join(
+                        _context.Users,
+                        ad => ad.Doctor.UserId,
+                        u1 => u1.UserID,
+                        (ad, u1) => new { ad.Appointment, ad.Doctor, DoctorUser = u1 }
+                    )
+                    .Join(
+                        _context.Departments,
+                        add => add.Doctor.DepartmentId,
+                        d => d.DepartmentID,
+                        (add, d) => new { add.Appointment, add.Doctor, add.DoctorUser, Department = d }
+                    )
+                    .Join(
+                        _context.PatientJoints,
+                        addd => addd.Appointment.PatientId,
+                        p => p.PatientId,
+                        (addd, p) => new { addd.Appointment, addd.Doctor, addd.DoctorUser, addd.Department, Patient = p }
+                    )
+                    .Join(
+                        _context.Users,
+                        addp => addp.Patient.UserId,
+                        u2 => u2.UserID,
+                        (addp, u2) => new { addp.Appointment, addp.Doctor, addp.DoctorUser, addp.Department, addp.Patient, PatientUser = u2 }
+                    )
+                    .Join(
+                        _context.Procedures,
+                        addpu => addpu.Appointment.ProcedureId,
+                        pr => pr.ProcedureId,
+                        (addpu, pr) => new AppointmentJointModel
+                        {
+                            AppointmentId = addpu.Appointment.AppointmentId,
+                            Finished = addpu.Appointment.Finished,
+                            DateAndTime = addpu.Appointment.DateAndTime,
+                            DepartmentId = addpu.Department.DepartmentID,
+                            Name = addpu.Department.Name,
+                            DoctorId = addpu.Doctor.DoctorId,
+                            DoctorName = addpu.DoctorUser.Name,
+                            PatientId = addpu.Patient.PatientId,
+                            PatientName = addpu.PatientUser.Name,
+                            ProcedureId = pr.ProcedureId,
+                            ProcedureName = pr.ProcedureName,
+                            ProcedureDuration = pr.ProcedureDuration
+                        }
+                    )
+                    .OrderBy(a => a.AppointmentId)
+                    .ToListAsync();
             }
-            catch (SqlException sqlException)
+            catch (DbUpdateException ex)
             {
-                throw new DatabaseOperationException($"SQL Error: {sqlException.Message}");
+                throw new DatabaseOperationException(ex.Message);
             }
-            catch (Exception exception)
+            catch (SqlException ex)
             {
-                throw new DatabaseOperationException($"General Error: {exception.Message}");
+                throw new DatabaseOperationException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException(ex.Message);
             }
         }
 
@@ -127,44 +153,72 @@ namespace Hospital.DatabaseServices
         {
             try
             {
-                var str = @"
-                    SELECT 
-                        a.AppointmentId,
-                        a.Finished,
-                        a.DateAndTime,
-                        d.DepartmentId,
-                        d.Name,
-                        doc.DoctorId,
-                        u1.Name as DoctorName,
-                        p.PatientId,
-                        u2.Name as PatientName,
-                        pr.ProcedureId,
-                        pr.ProcedureName,
-                        pr.ProcedureDuration
-                    FROM Appointments a
-                    JOIN Doctors doc ON a.DoctorId = doc.DoctorId
-                    JOIN Users u1 ON doc.UserId = u1.UserId
-                    JOIN Departments d ON doc.DepartmentId = d.DepartmentId
-                    JOIN Patients p ON a.PatientId = p.PatientId
-                    JOIN Users u2 ON p.UserId = u2.UserId
-                    JOIN Procedures pr ON a.ProcedureId = pr.ProcedureId
-                    WHERE p.PatientId = {0}
-                    ORDER BY a.DateAndTime";
-
-                var query = FormattableStringFactory.Create(str, patientId);
-
-                var appointments = await Task.Run(() =>
-                    _context.Database.SqlQuery<AppointmentJointModel>(query).ToList());
-
-                return appointments;
+                return await _context.Appointments
+                    .Join(
+                        _context.DoctorJoints,
+                        a => a.DoctorId,
+                        doc => doc.DoctorId,
+                        (a, doc) => new { Appointment = a, Doctor = doc }
+                    )
+                    .Join(
+                        _context.Users,
+                        ad => ad.Doctor.UserId,
+                        u1 => u1.UserID,
+                        (ad, u1) => new { ad.Appointment, ad.Doctor, DoctorUser = u1 }
+                    )
+                    .Join(
+                        _context.Departments,
+                        add => add.Doctor.DepartmentId,
+                        d => d.DepartmentID,
+                        (add, d) => new { add.Appointment, add.Doctor, add.DoctorUser, Department = d }
+                    )
+                    .Join(
+                        _context.PatientJoints,
+                        addd => addd.Appointment.PatientId,
+                        p => p.PatientId,
+                        (addd, p) => new { addd.Appointment, addd.Doctor, addd.DoctorUser, addd.Department, Patient = p }
+                    )
+                    .Join(
+                        _context.Users,
+                        addp => addp.Patient.UserId,
+                        u2 => u2.UserID,
+                        (addp, u2) => new { addp.Appointment, addp.Doctor, addp.DoctorUser, addp.Department, addp.Patient, PatientUser = u2 }
+                    )
+                    .Join(
+                        _context.Procedures,
+                        addpu => addpu.Appointment.ProcedureId,
+                        pr => pr.ProcedureId,
+                        (addpu, pr) => new AppointmentJointModel
+                        {
+                            AppointmentId = addpu.Appointment.AppointmentId,
+                            Finished = addpu.Appointment.Finished,
+                            DateAndTime = addpu.Appointment.DateAndTime,
+                            DepartmentId = addpu.Department.DepartmentID,
+                            Name = addpu.Department.Name,
+                            DoctorId = addpu.Doctor.DoctorId,
+                            DoctorName = addpu.DoctorUser.Name,
+                            PatientId = addpu.Patient.PatientId,
+                            PatientName = addpu.PatientUser.Name,
+                            ProcedureId = pr.ProcedureId,
+                            ProcedureName = pr.ProcedureName,
+                            ProcedureDuration = pr.ProcedureDuration
+                        }
+                    )
+                    .Where(a => a.PatientId == patientId)
+                    .OrderBy(a => a.DateAndTime)
+                    .ToListAsync();
             }
-            catch (SqlException sqlException)
+            catch (DbUpdateException ex)
             {
-                throw new DatabaseOperationException($"SQL Error: {sqlException.Message}");
+                throw new DatabaseOperationException(ex.Message);
             }
-            catch (Exception exception)
+            catch (SqlException ex)
             {
-                throw new DatabaseOperationException($"General Error: {exception.Message}");
+                throw new DatabaseOperationException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException(ex.Message);
             }
         }
 
@@ -190,45 +244,72 @@ namespace Hospital.DatabaseServices
 
             try
             {
-                var query = FormattableStringFactory.Create(@"
-                    SELECT 
-                        a.AppointmentId,
-                        a.Finished,
-                        a.DateAndTime,
-                        d.DepartmentId,
-                        d.Name,
-                        doc.DoctorId,
-                        u1.Name as DoctorName,
-                        p.PatientId,
-                        u2.Name as PatientName,
-                        pr.ProcedureId,
-                        pr.ProcedureName,
-                        pr.ProcedureDuration
-                    FROM Appointments a
-                    JOIN Doctors doc ON a.DoctorId = doc.DoctorId
-                    JOIN Users u1 ON doc.UserId = u1.UserId
-                    JOIN Departments d ON doc.DepartmentId = d.DepartmentId
-                    JOIN Patients p ON a.PatientId = p.PatientId
-                    JOIN Users u2 ON p.UserId = u2.UserId
-                    JOIN Procedures pr ON a.ProcedureId = pr.ProcedureId
-                    WHERE a.DoctorId = {0}
-                      AND CONVERT(DATE, a.DateAndTime) = {1}
-                    ORDER BY a.DateAndTime",
-                            doctorId,
-                            date.Date);
-
-                var appointments = await Task.Run(() =>
-                    _context.Database.SqlQuery<AppointmentJointModel>(query).ToList());
-
-                return appointments;
+                return await _context.Appointments
+                    .Join(
+                        _context.DoctorJoints,
+                        a => a.DoctorId,
+                        doc => doc.DoctorId,
+                        (a, doc) => new { Appointment = a, Doctor = doc }
+                    )
+                    .Join(
+                        _context.Users,
+                        ad => ad.Doctor.UserId,
+                        u1 => u1.UserID,
+                        (ad, u1) => new { ad.Appointment, ad.Doctor, DoctorUser = u1 }
+                    )
+                    .Join(
+                        _context.Departments,
+                        add => add.Doctor.DepartmentId,
+                        d => d.DepartmentID,
+                        (add, d) => new { add.Appointment, add.Doctor, add.DoctorUser, Department = d }
+                    )
+                    .Join(
+                        _context.PatientJoints,
+                        addd => addd.Appointment.PatientId,
+                        p => p.PatientId,
+                        (addd, p) => new { addd.Appointment, addd.Doctor, addd.DoctorUser, addd.Department, Patient = p }
+                    )
+                    .Join(
+                        _context.Users,
+                        addp => addp.Patient.UserId,
+                        u2 => u2.UserID,
+                        (addp, u2) => new { addp.Appointment, addp.Doctor, addp.DoctorUser, addp.Department, addp.Patient, PatientUser = u2 }
+                    )
+                    .Join(
+                        _context.Procedures,
+                        addpu => addpu.Appointment.ProcedureId,
+                        pr => pr.ProcedureId,
+                        (addpu, pr) => new AppointmentJointModel
+                        {
+                            AppointmentId = addpu.Appointment.AppointmentId,
+                            Finished = addpu.Appointment.Finished,
+                            DateAndTime = addpu.Appointment.DateAndTime,
+                            DepartmentId = addpu.Department.DepartmentID,
+                            Name = addpu.Department.Name,
+                            DoctorId = addpu.Doctor.DoctorId,
+                            DoctorName = addpu.DoctorUser.Name,
+                            PatientId = addpu.Patient.PatientId,
+                            PatientName = addpu.PatientUser.Name,
+                            ProcedureId = pr.ProcedureId,
+                            ProcedureName = pr.ProcedureName,
+                            ProcedureDuration = pr.ProcedureDuration
+                        }
+                    )
+                    .Where(a => a.DoctorId == doctorId && a.DateAndTime.Date == date.Date)
+                    .OrderBy(a => a.DateAndTime)
+                    .ToListAsync();
             }
-            catch (SqlException sqlException)
+            catch (DbUpdateException ex)
             {
-                throw new DatabaseOperationException($"SQL Error: {sqlException.Message}");
+                throw new DatabaseOperationException(ex.Message);
             }
-            catch (Exception exception)
+            catch (SqlException ex)
             {
-                throw new DatabaseOperationException($"General Error: {exception.Message}");
+                throw new DatabaseOperationException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException(ex.Message);
             }
         }
 
@@ -242,43 +323,72 @@ namespace Hospital.DatabaseServices
         {
             try
             {
-                var query = FormattableStringFactory.Create(@"
-            SELECT 
-                a.AppointmentId,
-                a.Finished,
-                a.DateAndTime,
-                d.DepartmentId,
-                d.Name,
-                doc.DoctorId,
-                u1.Name as DoctorName,
-                p.PatientId,
-                u2.Name as PatientName,
-                pr.ProcedureId,
-                pr.ProcedureName,
-                pr.ProcedureDuration
-            FROM Appointments a
-            JOIN Doctors doc ON a.DoctorId = doc.DoctorId
-            JOIN Users u1 ON doc.UserId = u1.UserId
-            JOIN Departments d ON doc.DepartmentId = d.DepartmentId
-            JOIN Patients p ON a.PatientId = p.PatientId
-            JOIN Users u2 ON p.UserId = u2.UserId
-            JOIN Procedures pr ON a.ProcedureId = pr.ProcedureId
-            WHERE a.DoctorId = {0}
-            ORDER BY a.DateAndTime",
-                    doctorId);
-
-                var appointments = await Task.Run(() =>
-                    _context.Database.SqlQuery<AppointmentJointModel>(query).ToList());
-
-                return appointments;
+                return await _context.Appointments
+                    .Join(
+                        _context.DoctorJoints,
+                        a => a.DoctorId,
+                        doc => doc.DoctorId,
+                        (a, doc) => new { Appointment = a, Doctor = doc }
+                    )
+                    .Join(
+                        _context.Users,
+                        ad => ad.Doctor.UserId,
+                        u1 => u1.UserID,
+                        (ad, u1) => new { ad.Appointment, ad.Doctor, DoctorUser = u1 }
+                    )
+                    .Join(
+                        _context.Departments,
+                        add => add.Doctor.DepartmentId,
+                        d => d.DepartmentID,
+                        (add, d) => new { add.Appointment, add.Doctor, add.DoctorUser, Department = d }
+                    )
+                    .Join(
+                        _context.PatientJoints,
+                        addd => addd.Appointment.PatientId,
+                        p => p.PatientId,
+                        (addd, p) => new { addd.Appointment, addd.Doctor, addd.DoctorUser, addd.Department, Patient = p }
+                    )
+                    .Join(
+                        _context.Users,
+                        addp => addp.Patient.UserId,
+                        u2 => u2.UserID,
+                        (addp, u2) => new { addp.Appointment, addp.Doctor, addp.DoctorUser, addp.Department, addp.Patient, PatientUser = u2 }
+                    )
+                    .Join(
+                        _context.Procedures,
+                        addpu => addpu.Appointment.ProcedureId,
+                        pr => pr.ProcedureId,
+                        (addpu, pr) => new AppointmentJointModel
+                        {
+                            AppointmentId = addpu.Appointment.AppointmentId,
+                            Finished = addpu.Appointment.Finished,
+                            DateAndTime = addpu.Appointment.DateAndTime,
+                            DepartmentId = addpu.Department.DepartmentID,
+                            Name = addpu.Department.Name,
+                            DoctorId = addpu.Doctor.DoctorId,
+                            DoctorName = addpu.DoctorUser.Name,
+                            PatientId = addpu.Patient.PatientId,
+                            PatientName = addpu.PatientUser.Name,
+                            ProcedureId = pr.ProcedureId,
+                            ProcedureName = pr.ProcedureName,
+                            ProcedureDuration = pr.ProcedureDuration
+                        }
+                    )
+                    .Where(a => a.DoctorId == doctorId)
+                    .OrderBy(a => a.DateAndTime)
+                    .ToListAsync();
             }
-            catch (SqlException sqlException)
+            catch (DbUpdateException ex)
             {
-                throw new DatabaseOperationException($"SQL Error: {sqlException.Message}");
+                throw new DatabaseOperationException(ex.Message);
             }
-            catch (Exception exception)
+            catch (SqlException ex)
             {
-                throw new DatabaseOperationException($"General Error: {exception.Message}");
+                throw new DatabaseOperationException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException(ex.Message);
             }
         }
 
@@ -292,42 +402,70 @@ namespace Hospital.DatabaseServices
         {
             try
             {
-                var query = FormattableStringFactory.Create(@"
-            SELECT 
-                a.AppointmentId,
-                a.Finished,
-                a.DateAndTime,
-                d.DepartmentId,
-                d.Name,
-                doc.DoctorId,
-                u1.Name as DoctorName,
-                p.PatientId,
-                u2.Name as PatientName,
-                pr.ProcedureId,
-                pr.ProcedureName,
-                pr.ProcedureDuration
-            FROM Appointments a
-            JOIN Doctors doc ON a.DoctorId = doc.DoctorId
-            JOIN Users u1 ON doc.UserId = u1.UserId
-            JOIN Departments d ON doc.DepartmentId = d.DepartmentId
-            JOIN Patients p ON a.PatientId = p.PatientId
-            JOIN Users u2 ON p.UserId = u2.UserId
-            JOIN Procedures pr ON a.ProcedureId = pr.ProcedureId
-            WHERE a.AppointmentId = {0}",
-                    appointmentId);
-
-                var appointment = await Task.Run(() =>
-                    _context.Database.SqlQuery<AppointmentJointModel>(query).FirstOrDefault());
-
-                return appointment;
+                return await _context.Appointments
+                    .Join(
+                        _context.DoctorJoints,
+                        a => a.DoctorId,
+                        doc => doc.DoctorId,
+                        (a, doc) => new { Appointment = a, Doctor = doc }
+                    )
+                    .Join(
+                        _context.Users,
+                        ad => ad.Doctor.UserId,
+                        u1 => u1.UserID,
+                        (ad, u1) => new { ad.Appointment, ad.Doctor, DoctorUser = u1 }
+                    )
+                    .Join(
+                        _context.Departments,
+                        add => add.Doctor.DepartmentId,
+                        d => d.DepartmentID,
+                        (add, d) => new { add.Appointment, add.Doctor, add.DoctorUser, Department = d }
+                    )
+                    .Join(
+                        _context.PatientJoints,
+                        addd => addd.Appointment.PatientId,
+                        p => p.PatientId,
+                        (addd, p) => new { addd.Appointment, addd.Doctor, addd.DoctorUser, addd.Department, Patient = p }
+                    )
+                    .Join(
+                        _context.Users,
+                        addp => addp.Patient.UserId,
+                        u2 => u2.UserID,
+                        (addp, u2) => new { addp.Appointment, addp.Doctor, addp.DoctorUser, addp.Department, addp.Patient, PatientUser = u2 }
+                    )
+                    .Join(
+                        _context.Procedures,
+                        addpu => addpu.Appointment.ProcedureId,
+                        pr => pr.ProcedureId,
+                        (addpu, pr) => new AppointmentJointModel
+                        {
+                            AppointmentId = addpu.Appointment.AppointmentId,
+                            Finished = addpu.Appointment.Finished,
+                            DateAndTime = addpu.Appointment.DateAndTime,
+                            DepartmentId = addpu.Department.DepartmentID,
+                            Name = addpu.Department.Name,
+                            DoctorId = addpu.Doctor.DoctorId,
+                            DoctorName = addpu.DoctorUser.Name,
+                            PatientId = addpu.Patient.PatientId,
+                            PatientName = addpu.PatientUser.Name,
+                            ProcedureId = pr.ProcedureId,
+                            ProcedureName = pr.ProcedureName,
+                            ProcedureDuration = pr.ProcedureDuration
+                        }
+                    )
+                    .FirstOrDefaultAsync(a => a.AppointmentId == appointmentId);
             }
-            catch (SqlException sqlException)
+            catch (DbUpdateException ex)
             {
-                throw new DatabaseOperationException($"SQL Error: {sqlException.Message}");
+                throw new DatabaseOperationException(ex.Message);
             }
-            catch (Exception exception)
+            catch (SqlException ex)
             {
-                throw new DatabaseOperationException($"General Error: {exception.Message}");
+                throw new DatabaseOperationException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException(ex.Message);
             }
         }
 

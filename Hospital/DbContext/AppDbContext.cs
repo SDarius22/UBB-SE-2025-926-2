@@ -72,7 +72,7 @@ public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
         modelBuilder.Entity<DepartmentModel>(entity =>
         {
             entity.ToTable("Departments");
-            entity.HasKey(d => d.DepartmentId);
+            entity.HasKey(d => d.DepartmentID);
         });
 
         // Appointment Model Configuration
