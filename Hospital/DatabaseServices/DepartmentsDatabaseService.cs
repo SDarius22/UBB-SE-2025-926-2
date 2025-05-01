@@ -1,77 +1,58 @@
 ﻿using Hospital.Configs;
+using Hospital.DbContext;
+using Hospital.Exceptions;
 using Hospital.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Hospital.DatabaseServices
 {
     public class DepartmentsDatabaseService : IDepartmentsDatabaseService
     {
-        private readonly ApplicationConfiguration _configuration;
-        private readonly IDepartmentsDatabaseService _databaseService;
+        private readonly AppDbContext _context;
 
-        public DepartmentsDatabaseService(IDepartmentsDatabaseService? databaseService = null)
+        public DepartmentsDatabaseService(AppDbContext context)
         {
-            _configuration = ApplicationConfiguration.GetInstance();
-            _databaseService = databaseService ?? this;
-        }
-
-        public string GetConnectionString()
-        {
-            return _configuration.DatabaseConnection;
+            _context = context;
         }
 
         // This method will be used to get the departments from the database
         public virtual async Task<List<DepartmentModel>> GetDepartmentsFromDataBase()
         {
-            const string selectDepartmentsQuery = "SELECT * FROM Departments";
-
             try
             {
-                using SqlConnection sqlConnection = new SqlConnection(_configuration.DatabaseConnection);
-                await sqlConnection.OpenAsync().ConfigureAwait(false);
-
-                //Prepare the command
-                SqlCommand selectCommand = new SqlCommand(selectDepartmentsQuery, sqlConnection);
-                SqlDataReader reader = await selectCommand.ExecuteReaderAsync().ConfigureAwait(false);
-
-
-                //Prepare the list of departments
-                List<DepartmentModel> departmentList = new List<DepartmentModel>();
-
-                //Read the data from the database
-                while (await reader.ReadAsync().ConfigureAwait(false))
-                {
-                    int departmentId = reader.GetInt32(0);
-                    string departmentName = reader.GetString(1);
-                    DepartmentModel department = new DepartmentModel(departmentId, departmentName);
-                    departmentList.Add(department);
-                }
-                return departmentList;
-            }
-            catch (SqlException sqlException)
-            {
-                throw new Exception($"SQL Exception: {sqlException.Message}");
+                return await _context.Departments
+                    .Select(d => new DepartmentModel(
+                            d.DepartmentId,
+                            d.DepartmentName
+                        )).ToListAsync();
             }
             catch (Exception exception)
             {
-                throw new Exception($"Error loading departments: {exception.Message}");
+                throw new DepartmentNotFoundException($"Error loading departments: {exception.Message}");
             }
         }
 
-        public bool AddDepartment(DepartmentModel department)
+        public async Task<bool> AddDepartment(DepartmentModel department)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "INSERT INTO Departments (Name) VALUES (@Name)";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@Name", department.DepartmentName);
+                var entity = new DepartmentModel(department.DepartmentId, department.DepartmentName);
 
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
+                await _context.Departments.AddAsync(entity);
+                await _context.SaveChangesAsync();
+
+                department.DepartmentId = entity.DepartmentId;
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
@@ -80,35 +61,24 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="department">The department to update.</param>
         /// <returns>True if the department was updated successfully, otherwise false.</returns>
-        public bool UpdateDepartment(DepartmentModel department)
+        public async Task<bool> UpdateDepartment(DepartmentModel department)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+                var existingDepartment = await _context.Departments.FindAsync(department.DepartmentId);
+                if (existingDepartment == null)
                 {
-                    string query = "UPDATE Departments SET Name = @Name WHERE DepartmentId = @DepartmentID";
-                    SqlCommand command = new SqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@Name", department.DepartmentName);
-                    command.Parameters.AddWithValue("@DepartmentID", department.DepartmentId);
-
-                    connection.Open();
-                    int rowsAffected = command.ExecuteNonQuery();
-                    return rowsAffected > 0;
+                    return false;
                 }
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine($"SQL Error: {ex.Message}");
-                return false;
-            }
-            catch (InvalidOperationException ex)
-            {
-                Console.WriteLine($"Invalid Operation: {ex.Message}");
-                return false;
+
+                existingDepartment.DepartmentId = department.DepartmentId;
+                existingDepartment.DepartmentName = department.DepartmentName;
+
+                await _context.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Unexpected Error: {ex.Message}");
                 return false;
             }
         }
@@ -118,17 +88,20 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="departmentID">The ID of the department to delete.</param>
         /// <returns>True if the department was deleted successfully, otherwise false.</returns>
-        public bool DeleteDepartment(int departmentID)
+        public async Task<bool> DeleteDepartment(int departmentID)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "DELETE FROM Departments WHERE DepartmentId = @DepartmentID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@DepartmentID", departmentID);
+                var department = await _context.Departments.FindAsync(departmentID);
+                if (department == null) return false;
 
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
+                _context.Departments.Remove(department);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
@@ -137,42 +110,29 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="departmentID">The ID of the department to check.</param>
         /// <returns>True if the department exists, otherwise false.</returns>
-        public bool DoesDepartmentExist(int departmentID)
+        public async Task<bool> DoesDepartmentExist(int departmentID)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
-            {
-                string query = "SELECT COUNT(*) FROM Departments WHERE DepartmentId = @DepartmentID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@DepartmentID", departmentID);
-
-                connection.Open();
-                int count = (int)command.ExecuteScalar();
-                return count > 0;
-            }
+            return await _context.Departments.AnyAsync(d => d.DepartmentId == departmentID);
         }
 
         /// <summary>
         /// Retrieves all departments from the database.
         /// </summary>
         /// <returns>A list of departments.</returns>
-        public List<DepartmentModel> GetDepartments()
+        public async Task<List<DepartmentModel>> GetDepartments()
         {
-            List<DepartmentModel> departments = new List<DepartmentModel>();
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "SELECT * FROM Departments";
-                SqlCommand command = new SqlCommand(query, connection);
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    departments.Add(new DepartmentModel(
-                        reader.GetInt32(reader.GetOrdinal("DepartmentId")),
-                        reader.GetString(reader.GetOrdinal("Name"))));
-                }
+                return await _context.Departments
+                    .Select(d => new DepartmentModel(
+                        d.DepartmentId,
+                        d.DepartmentName
+                    )).ToListAsync();
             }
-
-            return departments;
+            catch (Exception exception)
+            {
+                throw new DepartmentNotFoundException($"Error loading departments: {exception.Message}");
+            }
         }
     }
 }

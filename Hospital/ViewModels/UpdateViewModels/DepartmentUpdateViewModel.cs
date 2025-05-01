@@ -7,20 +7,22 @@
     using Hospital.DatabaseServices;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.VisualBasic;
 
     /// <summary>
     /// ViewModel for updating departments.
     /// </summary>
     public class DepartmentUpdateViewModel : INotifyPropertyChanged
     {
-        private readonly DepartmentsDatabaseService departmentModel = new DepartmentsDatabaseService();
+        private readonly IDepartmentsDatabaseService departmentModel;
         private string errorMessage = string.Empty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DepartmentUpdateViewModel"/> class.
         /// </summary>
-        public DepartmentUpdateViewModel()
+        public DepartmentUpdateViewModel(IDepartmentsDatabaseService departmentModel)
         {
+            this.departmentModel = departmentModel;
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadDepartments();
         }
@@ -56,10 +58,11 @@
         /// <summary>
         /// Loads the departments from the database.
         /// </summary>
-        private void LoadDepartments()
+        private async void LoadDepartments()
         {
             this.Departments.Clear();
-            foreach (DepartmentModel department in this.departmentModel.GetDepartments())
+            var list = await this.departmentModel.GetDepartments();
+            foreach (DepartmentModel department in list)
             {
                 this.Departments.Add(department);
             }
@@ -68,7 +71,7 @@
         /// <summary>
         /// Saves the changes to the departments in the database.
         /// </summary>
-        private void SaveChanges()
+        private async void SaveChanges()
         {
             bool hasErrors = false;
             StringBuilder errorMessages = new StringBuilder();
@@ -82,7 +85,7 @@
                 }
                 else
                 {
-                    bool success = this.departmentModel.UpdateDepartment(department);
+                    bool success = await this.departmentModel.UpdateDepartment(department);
                     if (!success)
                     {
                         errorMessages.AppendLine("Failed to save changes for department: " + department.DepartmentId);

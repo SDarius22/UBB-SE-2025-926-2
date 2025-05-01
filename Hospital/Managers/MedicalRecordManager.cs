@@ -1,4 +1,5 @@
 ﻿using Hospital.DatabaseServices;
+using Hospital.DatabaseServices.Interfaces;
 using Hospital.Exceptions;
 using Hospital.Models;
 using System;

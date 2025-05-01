@@ -1,4 +1,5 @@
 ﻿using Hospital.DatabaseServices;
+using Hospital.DatabaseServices.Interfaces;
 using Hospital.Models;
 using System;
 using System.Collections.Generic;

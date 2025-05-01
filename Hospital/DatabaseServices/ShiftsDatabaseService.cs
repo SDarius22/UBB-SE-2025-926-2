@@ -1,249 +1,183 @@
 ﻿using Hospital.Configs;
+using Hospital.DbContext;
 using Hospital.Exceptions;
 using Hospital.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Hospital.DatabaseServices
 {
     public class ShiftsDatabaseService : IShiftsDatabaseService
     {
-        private readonly ApplicationConfiguration _configuration;
+        private readonly AppDbContext _context;
 
-        public ShiftsDatabaseService()
+        public ShiftsDatabaseService(AppDbContext context)
         {
-            this._configuration = ApplicationConfiguration.GetInstance();
+            _context = context;
         }
 
         public async Task<List<ShiftModel>> GetShifts()
         {
-            const string selectShiftsQuery = "SELECT ShiftId, Date, StartTime, EndTime FROM Shifts";
-            List<ShiftModel> shifts = new List<ShiftModel>();
-
             try
             {
-                using SqlConnection sqlConnection = new SqlConnection(_configuration.DatabaseConnection);
-                await sqlConnection.OpenAsync();
-
-                using SqlCommand selectShiftsCommand = new SqlCommand(selectShiftsQuery, sqlConnection);
-                using SqlDataReader reader = await selectShiftsCommand.ExecuteReaderAsync();
-
-                while (await reader.ReadAsync())
-                {
-                    shifts.Add(new ShiftModel(
-                        reader.GetInt32(0),
-                        DateOnly.FromDateTime(reader.GetDateTime(1)),
-                        reader.GetTimeSpan(2),
-                        reader.GetTimeSpan(3)
-                    ));
-                }
-            }
-            catch (SqlException sqlException)
-            {
-                throw new ShiftNotFoundException($"Database error loading shifts: {sqlException.Message}");
+                return await _context.Shifts
+                    .Select(s => new ShiftModel(
+                        s.ShiftId,
+                        s.Date,
+                        s.StartTime,
+                        s.EndTime
+                    )).ToListAsync();
             }
             catch (Exception exception)
             {
                 throw new ShiftNotFoundException($"Error loading shifts: {exception.Message}");
             }
-
-            return shifts;
         }
 
         public async Task<List<ScheduleModel>> GetSchedules()
         {
-            const string selectSchedulesQuery = "SELECT DoctorId, ShiftId, ScheduleId FROM Schedules";
-            List<ScheduleModel> schedules = new List<ScheduleModel>();
-
             try
             {
-                using SqlConnection sqlConnection = new SqlConnection(_configuration.DatabaseConnection);
-                await sqlConnection.OpenAsync();
-
-                using SqlCommand selectSchedulesCommand = new SqlCommand(selectSchedulesQuery, sqlConnection);
-
-                using SqlDataReader reader = await selectSchedulesCommand.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
-                {
-                    schedules.Add(new ScheduleModel(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2)));
-                }
-            }
-            catch (SqlException sqlException)
-            {
-                throw new ShiftNotFoundException($"SQL Error: {sqlException.Message}");
+                return await _context.Schedules
+                    .Select(s => new ScheduleModel(
+                        s.DoctorId,
+                        s.ShiftId,
+                        s.ScheduleId
+                    ))
+                    .ToListAsync();
             }
             catch (Exception exception)
             {
-                throw new ShiftNotFoundException($"General Error: {exception.Message}");
+                throw new ShiftNotFoundException($"Error loading schedules: {exception.Message}");
             }
-
-            return schedules;
         }
 
         public async Task<List<ShiftModel>> GetShiftsByDoctorId(int doctorId)
         {
             if (doctorId <= 0)
             {
-                throw new ShiftNotFoundException("Error loading shifts for doctor.");
+                throw new ShiftNotFoundException("Invalid doctor ID");
             }
-            const string selectShiftsByDoctorIdQuery = @"
-            SELECT s.ShiftId, s.Date, s.StartTime, s.EndTime
-            FROM Shifts s
-            JOIN Schedules sch ON s.ShiftId = sch.ShiftId
-            WHERE sch.DoctorId = @DoctorId";
-
-            List<ShiftModel> shifts = new List<ShiftModel>();
 
             try
             {
-                using SqlConnection sqlConnection = new SqlConnection(_configuration.DatabaseConnection);
-                await sqlConnection.OpenAsync();
-
-                using SqlCommand selectShiftsByDoctorIdCommand = new SqlCommand(selectShiftsByDoctorIdQuery, sqlConnection);
-                selectShiftsByDoctorIdCommand.Parameters.AddWithValue("@DoctorId", doctorId);
-
-                using SqlDataReader reader = await selectShiftsByDoctorIdCommand.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
-                {
-                    shifts.Add(new ShiftModel(
-                        reader.GetInt32(0),
-                        DateOnly.FromDateTime(reader.GetDateTime(1)),
-                        reader.GetTimeSpan(2),
-                        reader.GetTimeSpan(3)
-                    ));
-                }
-            }
-            catch (SqlException sqlException)
-            {
-                throw new ShiftNotFoundException($"Database error loading shifts for doctor {doctorId}: {sqlException.Message}");
+                return await _context.Schedules
+                    .Where(s => s.DoctorId == doctorId)
+                    .Join(_context.Shifts,
+                        schedule => schedule.ShiftId,
+                        shift => shift.ShiftId,
+                        (schedule, shift) => new ShiftModel(
+                            shift.ShiftId,
+                            shift.Date,
+                            shift.StartTime,
+                            shift.EndTime
+                        ))
+                    .ToListAsync();
             }
             catch (Exception exception)
             {
-                throw new ShiftNotFoundException($"Error loading shifts for doctor {doctorId}");
+                throw new ShiftNotFoundException($"Error loading shifts for doctor {doctorId}: {exception.Message}");
             }
-
-            return shifts;
         }
 
         public async Task<List<ShiftModel>> GetDoctorDaytimeShifts(int doctorId)
         {
             if (doctorId <= 0)
             {
-                throw new ShiftNotFoundException("Error loading upcoming shifts for doctor.");
+                throw new ShiftNotFoundException("Invalid doctor ID");
             }
-            const string selectDaytimeShiftByDoctorIdQuery = @"
-            SELECT s.ShiftId, s.Date, s.StartTime, s.EndTime
-            FROM Shifts s
-            JOIN Schedules sch ON s.ShiftId = sch.ShiftId
-            WHERE sch.DoctorId = @DoctorId AND s.StartTime < '20:00:00'
-            AND CAST(s.Date AS DATE) >= CAST(GETDATE() AS DATE)";
 
-            List<ShiftModel> shifts = new List<ShiftModel>();
+            var today = DateOnly.FromDateTime(DateTime.Today);
 
             try
             {
-                using SqlConnection sqlConnection = new SqlConnection(_configuration.DatabaseConnection);
-                await sqlConnection.OpenAsync();
+                return await _context.Schedules
+                    .Where(s => s.DoctorId == doctorId)
+                    .Join(_context.Shifts,
+                        schedule => schedule.ShiftId,
+                        shift => shift.ShiftId,
+                        (schedule, shift) => new { schedule, shift })
+                    .Where(x => x.shift.StartTime < TimeSpan.FromHours(20) &&
+                                x.shift.Date >= today)
+                    .Select(x => new ShiftModel(
+                        x.shift.ShiftId,
+                        x.shift.Date,
+                        x.shift.StartTime,
+                        x.shift.EndTime
+                    ))
+                    .ToListAsync();
+            }
+            catch (Exception exception)
+            {
+                throw new ShiftNotFoundException($"Error loading daytime shifts: {exception.Message}");
+            }
+        }
 
-                using SqlCommand selectDaytimeShiftsByDoctorIdCommand = new SqlCommand(selectDaytimeShiftByDoctorIdQuery, sqlConnection);
-                selectDaytimeShiftsByDoctorIdCommand.Parameters.AddWithValue("@DoctorId", doctorId);
+        public async Task<bool> AddShift(ShiftModel shift)
+        {
+            try
+            {
+                var entity = new ShiftModel(shift.ShiftId, shift.Date, shift.StartTime, shift.EndTime);
 
-                using SqlDataReader reader = await selectDaytimeShiftsByDoctorIdCommand.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
+                _context.Shifts.Add(entity);
+                await _context.SaveChangesAsync();
+
+                shift.ShiftId = entity.ShiftId;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateShift(ShiftModel shift)
+        {
+            try
+            {
+                var existingShift = await this._context.Shifts.FindAsync(shift.ShiftId);
+                if (existingShift == null)
                 {
-                    shifts.Add(new ShiftModel(
-                        reader.GetInt32(0),
-                        DateOnly.FromDateTime(reader.GetDateTime(1)),
-                        reader.GetTimeSpan(2),
-                        reader.GetTimeSpan(3)
-                    ));
+                    return false;
                 }
-            }
-            catch (SqlException sqlException)
-            {
-                throw new ShiftNotFoundException($"Database error loading upcoming shifts for doctor {doctorId}: {sqlException.Message}");
-            }
-            catch (Exception exception)
-            {
-                throw new ShiftNotFoundException($"Error loading upcoming shifts for doctor {doctorId}: {exception.Message}");
-            }
 
-            return shifts;
+                existingShift.Date = shift.Date;
+                existingShift.StartTime = shift.StartTime;
+                existingShift.EndTime = shift.EndTime;
+
+                await this._context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
-        public bool AddShift(ShiftModel shift)
+        public async Task<bool> DoesShiftExist(int shiftId)
         {
-            using SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection);
-            string query = "INSERT INTO Shifts (Date, StartTime, EndTime) VALUES (@Date, @StartTime, @EndTime)";
-            SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@Date", shift.Date.ToDateTime(TimeOnly.MinValue));
-            command.Parameters.AddWithValue("@StartTime", shift.StartTime);
-            command.Parameters.AddWithValue("@EndTime", shift.EndTime);
-
-            connection.Open();
-            int rowsAffected = command.ExecuteNonQuery();
-            return rowsAffected > 0;
+            return await _context.Shifts
+                .AnyAsync(s => s.ShiftId == shiftId);
         }
 
-        public bool UpdateShift(ShiftModel shift)
+        public async Task<bool> DeleteShift(int shiftId)
         {
             try
             {
-                using SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection);
-                string query = "UPDATE Shifts SET Date = @Date, StartTime = @StartTime, EndTime = @EndTime WHERE ShiftId = @ShiftId";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@Date", shift.Date.ToDateTime(TimeOnly.MinValue));
-                command.Parameters.AddWithValue("@StartTime", shift.StartTime);
-                command.Parameters.AddWithValue("@EndTime", shift.EndTime);
-                command.Parameters.AddWithValue("@ShiftId", shift.ShiftId);
+                var shift = await _context.Shifts.FindAsync(shiftId);
+                if (shift == null) return false;
 
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
+                _context.Shifts.Remove(shift);
+                await _context.SaveChangesAsync();
+                return true;
             }
-            catch (SqlException exception)
+            catch (Exception)
             {
-                Console.WriteLine($"SQL Error: {exception.Message}");
                 return false;
-            }
-            catch (InvalidOperationException exception)
-            {
-                Console.WriteLine($"Invalid Operation: {exception.Message}");
-                return false;
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine($"Unexpected Error: {exception.Message}");
-                return false;
-            }
-        }
-
-        public bool DoesShiftExist(int shiftID)
-        {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
-            {
-                string query = "SELECT COUNT(*) FROM Shifts WHERE ShiftId = @ShiftId";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@ShiftId", shiftID);
-                connection.Open();
-                int count = (int)command.ExecuteScalar();
-                return count > 0;
-            }
-        }
-
-        public bool DeleteShift(int shiftID)
-        {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
-            {
-                string query = "DELETE FROM Shifts WHERE ShiftId = @ShiftID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@ShiftId", shiftID);
-
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
             }
         }
     }

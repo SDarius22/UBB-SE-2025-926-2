@@ -1,18 +1,20 @@
-﻿namespace Hospital.ViewModels.AddViewModels
-{
-    using System.Collections.ObjectModel;
-    using System.ComponentModel;
-    using System.Windows.Input;
-    using Hospital.DatabaseServices;
-    using Hospital.Models;
-    using Hospital.Utils;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Input;
+using Hospital.DatabaseServices;
+using Hospital.DatabaseServices.Interfaces;
+using Hospital.Models;
+using Hospital.Utils;
+using System.Threading.Tasks;
 
+namespace Hospital.ViewModels.AddViewModels
+{
     /// <summary>
     /// ViewModel for adding equipment.
     /// </summary>
     public class EquipmentAddViewModel : INotifyPropertyChanged
     {
-        private readonly EquipmentDatabaseService equipmentModel = new EquipmentDatabaseService();
+        private readonly IEquipmentDatabaseService equipmentModel;
         private string name = string.Empty;
         private string type = string.Empty;
         private string specification = string.Empty;
@@ -22,8 +24,9 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="EquipmentAddViewModel"/> class.
         /// </summary>
-        public EquipmentAddViewModel()
+        public EquipmentAddViewModel(IEquipmentDatabaseService equipmentModel)
         {
+            this.equipmentModel = equipmentModel;
             this.SaveEquipmentCommand = new RelayCommand(this.SaveEquipment);
             this.LoadEquipments();
         }
@@ -133,7 +136,7 @@
         /// <summary>
         /// Saves the equipment to the database.
         /// </summary>
-        private void SaveEquipment()
+        private async void SaveEquipment()
         {
             var equipment = new EquipmentModel
             {
@@ -146,7 +149,7 @@
 
             if (this.ValidateEquipment(equipment))
             {
-                bool success = this.equipmentModel.AddEquipment(equipment);
+                bool success = await this.equipmentModel.AddEquipment(equipment);
                 this.ErrorMessage = success ? "Equipment added successfully" : "Failed to add equipment";
                 if (success)
                 {

@@ -1,7 +1,9 @@
-﻿namespace Hospital.DatabaseServices.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace Hospital.DatabaseServices.Interfaces
 {
     public interface IUserDatabaseService
     {
-        public bool UserExistsWithRole(int userID, string role);
+        public Task<bool> UserExistsWithRole(int userID, string role);
     }
 }

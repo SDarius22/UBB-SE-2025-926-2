@@ -5,6 +5,7 @@
     using System.ComponentModel;
     using System.Windows.Input;
     using Hospital.DatabaseServices;
+    using Hospital.DatabaseServices.Interfaces;
     using Hospital.Models;
     using Hospital.Utils;
 
@@ -13,7 +14,7 @@
     /// </summary>
     public class EquipmentDeleteViewModel : INotifyPropertyChanged
     {
-        private readonly EquipmentDatabaseService equipmentModel = new EquipmentDatabaseService();
+        private readonly IEquipmentDatabaseService equipmentModel;
         private ObservableCollection<EquipmentModel> equipments = new ObservableCollection<EquipmentModel>();
         private int equipmentID;
         private string errorMessage = string.Empty;
@@ -22,9 +23,10 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="EquipmentDeleteViewModel"/> class.
         /// </summary>
-        public EquipmentDeleteViewModel()
+        public EquipmentDeleteViewModel(IEquipmentDatabaseService equipmentModel)
         {
             // Load equipment for the DataGrid
+            this.equipmentModel = equipmentModel;
             LoadEquipments();
             this.DeleteEquipmentCommand = new RelayCommand(this.RemoveEquipment);
         }
@@ -115,13 +117,13 @@
                 return;
             }
 
-            if (!this.equipmentModel.DoesEquipmentExist(this.EquipmentID))
+            if (!await this.equipmentModel.DoesEquipmentExist(this.EquipmentID))
             {
                 this.ErrorMessage = "EquipmentID doesn't exist in the records";
                 return;
             }
 
-            bool success = this.equipmentModel.DeleteEquipment(this.EquipmentID);
+            bool success = await this.equipmentModel.DeleteEquipment(this.EquipmentID);
             this.ErrorMessage = success ? "Equipment deleted successfully" : "Failed to delete equipment";
 
             if (success)

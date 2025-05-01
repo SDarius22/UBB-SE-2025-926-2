@@ -1,22 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Hospital.Configs;
 using Hospital.DatabaseServices.Interfaces;
+using System.Collections.Generic;
+using Hospital.DbContext;
+using System.Threading.Tasks;
+//using Hospital.Configs;
 using Hospital.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using EquipmentModel = Hospital.Models.EquipmentModel;
+using Hospital.Models;
+using System.Linq;
 
 namespace Hospital.DatabaseServices
 {
     public class EquipmentDatabaseService : IEquipmentDatabaseService
     {
 
-        private readonly ApplicationConfiguration _configuration;
+        private readonly AppDbContext _context;
 
-        public EquipmentDatabaseService()
+        public EquipmentDatabaseService(AppDbContext context)
         {
-            _configuration = ApplicationConfiguration.GetInstance();
+            _context = context;
         }
 
         /// <summary>
@@ -24,20 +28,23 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="equipment">The equipment to add.</param>
         /// <returns>True if the equipment was added successfully, otherwise false.</returns>
-        public bool AddEquipment(EquipmentModel equipment)
+        public async Task<bool> AddEquipment(EquipmentModel equipment)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "INSERT INTO Equipments (Name, Type, Specification, Stock) VALUES (@Name, @Type, @Specification, @Stock)";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@Name", equipment.Name);
-                command.Parameters.AddWithValue("@Type", equipment.Type);
-                command.Parameters.AddWithValue("@Specification", equipment.Specification);
-                command.Parameters.AddWithValue("@Stock", equipment.Stock);
+                var entity = new EquipmentModel(equipment.EquipmentID, equipment.Name, equipment.Type, equipment.Specification, equipment.Stock);
 
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
+                await _context.Equipments.AddAsync(entity);
+                await _context.SaveChangesAsync();
+
+                // Update the model with generated ID if needed
+                equipment.EquipmentID = entity.EquipmentID;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding eqpuipment: {ex.Message}");
+                return false;
             }
         }
 
@@ -46,38 +53,26 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="equipment">The equipment to update.</param>
         /// <returns>True if the equipment was updated successfully, otherwise false.</returns>
-        public bool UpdateEquipment(EquipmentModel equipment)
+        public async Task<bool> UpdateEquipment(EquipmentModel equipment)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
-                {
-                    string query = "UPDATE Equipments SET Name = @Name, Specification = @Specification, Type = @Type, Stock = @Stock WHERE EquipmentID = @EquipmentID";
-                    SqlCommand command = new SqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@Name", equipment.Name);
-                    command.Parameters.AddWithValue("@Specification", equipment.Specification);
-                    command.Parameters.AddWithValue("@Type", equipment.Type);
-                    command.Parameters.AddWithValue("@Stock", equipment.Stock);
-                    command.Parameters.AddWithValue("@EquipmentID", equipment.EquipmentID);
+                var existingEquipment = await _context.Equipments.FindAsync(equipment.EquipmentID);
 
-                    connection.Open();
-                    int rowsAffected = command.ExecuteNonQuery();
-                    return rowsAffected > 0;
-                }
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine($"SQL Error: {ex.Message}");
-                return false;
-            }
-            catch (InvalidOperationException ex)
-            {
-                Console.WriteLine($"Invalid Operation: {ex.Message}");
-                return false;
+                if (existingEquipment == null) return false;
+
+                existingEquipment.Name = equipment.Name;
+                existingEquipment.Type = equipment.Type;
+                existingEquipment.Specification = equipment.Specification;
+                existingEquipment.Stock = equipment.Stock;
+
+
+                await _context.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine($"Error updating equipment: {ex.Message}");
                 return false;
             }
         }
@@ -87,17 +82,21 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="equipmentID">The ID of the equipment to delete.</param>
         /// <returns>True if the equipment was deleted successfully, otherwise false.</returns>
-        public bool DeleteEquipment(int equipmentID)
+        public async Task<bool> DeleteEquipment(int equipmentID)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "DELETE FROM Equipments WHERE EquipmentID = @EquipmentID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@EquipmentID", equipmentID);
+                var equipment = await _context.Equipments.FindAsync(equipmentID);
+                if (equipment == null) return false;
 
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
+                _context.Equipments.Remove(equipment);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting equipment: {ex.Message}");
+                return false;
             }
         }
 
@@ -106,18 +105,10 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="equipmentID">The ID of the equipment to check.</param>
         /// <returns>True if the equipment exists, otherwise false.</returns>
-        public bool DoesEquipmentExist(int equipmentID)
+        public async Task<bool> DoesEquipmentExist(int equipmentID)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
-            {
-                string query = "SELECT COUNT(*) FROM Equipments WHERE EquipmentID = @EquipmentID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@EquipmentID", equipmentID);
-
-                connection.Open();
-                int count = (int)command.ExecuteScalar();
-                return count > 0;
-            }
+            return await _context.Equipments
+                .AnyAsync(equipment => equipment.EquipmentID == equipmentID);
         }
 
         /// <summary>
@@ -127,40 +118,24 @@ namespace Hospital.DatabaseServices
 
         public async Task<List<EquipmentModel>> GetEquipments()
         {
-            const string selectSchedulesQuery = "SELECT * FROM Equipments";
-            List<EquipmentModel> equipments = new List<EquipmentModel>();
-
             try
             {
-                using SqlConnection sqlConnection = new SqlConnection(_configuration.DatabaseConnection);
-                await sqlConnection.OpenAsync();
-
-                using SqlCommand selectSchedulesCommand = new SqlCommand(selectSchedulesQuery, sqlConnection);
-
-                using SqlDataReader reader = await selectSchedulesCommand.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
-                {
-                    EquipmentModel equipment = new EquipmentModel
+                return await _context.Equipments
+                    .Select(equipment => new EquipmentModel
                     {
-                        EquipmentID = reader.GetInt32(0),
-                        Name = reader.GetString(1),
-                        Specification = reader.GetString(2),
-                        Type = reader.GetString(3),
-                        Stock = reader.GetInt32(4),
-                    };
-                    equipments.Add(equipment);
-                }
+                        EquipmentID = equipment.EquipmentID,
+                        Name = equipment.Name,
+                        Type = equipment.Type,
+                        Specification = equipment.Specification,
+                        Stock = equipment.Stock,
+                    })
+                    .ToListAsync();
             }
-            catch (SqlException sqlException)
+            catch (Exception ex)
             {
-                throw new ShiftNotFoundException($"SQL Error: {sqlException.Message}");
+                Console.WriteLine($"Error getting equipments: {ex.Message}");
+                return null;
             }
-            catch (Exception exception)
-            {
-                throw new ShiftNotFoundException($"General Error: {exception.Message}");
-            }
-
-            return equipments;
         }
     }
 }

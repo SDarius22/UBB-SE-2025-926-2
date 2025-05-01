@@ -1,4 +1,6 @@
-﻿namespace Hospital.ViewModels.UpdateViewModels
+﻿using Hospital.DatabaseServices.Interfaces;
+
+namespace Hospital.ViewModels.UpdateViewModels
 {
     using System;
     using System.Collections.Generic;
@@ -18,14 +20,15 @@
     /// </summary>
     public class RoomUpdateViewModel : INotifyPropertyChanged
     {
-        private readonly RoomDatabaseService roomModel = new RoomDatabaseService();
+        private readonly IRoomDatabaseService roomModel;
         private string errorMessage;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RoomUpdateViewModel"/> class.
         /// </summary>
-        public RoomUpdateViewModel()
+        public RoomUpdateViewModel(IRoomDatabaseService roomModel)
         {
+            this.roomModel = roomModel;
             this.errorMessage = string.Empty;
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadRooms();
@@ -71,10 +74,10 @@
         /// <summary>
         /// Loads the list of rooms into the <see cref="Rooms"/> collection.
         /// </summary>
-        private void LoadRooms()
+        private async void LoadRooms()
         {
             this.Rooms.Clear();
-            foreach (RoomModel room in this.roomModel.GetRooms() ?? Enumerable.Empty<RoomModel>())
+            foreach (RoomModel room in await this.roomModel.GetRooms() ?? Enumerable.Empty<RoomModel>())
             {
                 this.Rooms.Add(room);
             }
@@ -83,21 +86,22 @@
         /// <summary>
         /// Saves the changes to each room. Validates the room data and reports errors if any occur.
         /// </summary>
-        private void SaveChanges()
+        private async void SaveChanges()
         {
             bool hasErrors = false;
             StringBuilder errorMessages = new StringBuilder();
 
             foreach (RoomModel room in this.Rooms)
             {
-                if (!this.ValidateRoom(room))
+                bool isValid = await this.ValidateRoom(room);
+                if (!isValid)
                 {
                     hasErrors = true;
                     errorMessages.AppendLine("Room " + room.RoomID + ": " + this.ErrorMessage);
                 }
                 else
                 {
-                    bool success = this.roomModel.UpdateRoom(room);
+                    bool success = await this.roomModel.UpdateRoom(room);
                     if (!success)
                     {
                         errorMessages.AppendLine("Failed to save changes for room: " + room.RoomID);
@@ -121,7 +125,7 @@
         /// </summary>
         /// <param name="room">The room to validate.</param>
         /// <returns>True if the room is valid, otherwise false.</returns>
-        private bool ValidateRoom(RoomModel room)
+        private async Task<bool> ValidateRoom(RoomModel room)
         {
             if (room.Capacity <= 0)
             {
@@ -129,14 +133,14 @@
                 return false;
             }
 
-            bool departmentExists = this.roomModel.DoesDepartmentExist(room.DepartmentID);
+            bool departmentExists = await this.roomModel.DoesDepartmentExist(room.DepartmentID);
             if (!departmentExists)
             {
                 this.ErrorMessage = "Department ID doesn’t exist in the Departments Records";
                 return false;
             }
 
-            bool equipmentExists = this.roomModel.DoesEquipmentExist(room.EquipmentID);
+            bool equipmentExists = await this.roomModel.DoesEquipmentExist(room.EquipmentID);
             if (!equipmentExists)
             {
                 this.ErrorMessage = "Equipment ID doesn’t exist in the Equipment Records";

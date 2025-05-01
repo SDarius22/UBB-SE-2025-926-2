@@ -12,13 +12,14 @@ namespace Hospital.ViewModels
     using System.ComponentModel;
     using Hospital.Models;
     using Hospital.DatabaseServices;
+    using Hospital.DatabaseServices.Interfaces;
 
     /// <summary>
     /// ViewModel for managing doctor information.
     /// </summary>
     public class DoctorInformationViewModel : INotifyPropertyChanged
     {
-        private readonly DoctorInformationDatabaseService doctorModel = new DoctorInformationDatabaseService();
+        private readonly IDoctorInformationDatabaseService doctorModel;
 
         // Fields
         private int userID;
@@ -37,6 +38,11 @@ namespace Hospital.ViewModels
         private int departmentID;
         private string departmentName = string.Empty;
         private decimal salary;
+
+        public DoctorInformationViewModel(IDoctorInformationDatabaseService doctorModel)
+        {
+            this.doctorModel = doctorModel;
+        }
 
         /// <summary>
         /// Gets or sets the user ID.
@@ -251,9 +257,9 @@ namespace Hospital.ViewModels
         /// </summary>
         /// <param name="doctorID">The unique identifier of the doctor.</param>
         /// <exception cref="Exception">Thrown if the doctor is not found.</exception>
-        public void LoadDoctorInformation(int doctorID)
+        public async void LoadDoctorInformation(int doctorID)
         {
-            var doctorInfo = this.doctorModel.GetDoctorInformation(doctorID);
+            var doctorInfo = await this.doctorModel.GetDoctorInformation(doctorID);
             if (doctorInfo != null)
             {
                 this.UserID = doctorInfo.UserID;
@@ -270,7 +276,7 @@ namespace Hospital.ViewModels
                 this.Rating = doctorInfo.Rating;
                 this.DepartmentID = doctorInfo.DepartmentID;
                 this.DepartmentName = doctorInfo.DepartmentName;
-                this.Salary = this.doctorModel.ComputeSalary(doctorID);
+                this.Salary = await this.doctorModel.ComputeSalary(doctorID);
             }
             else
             {

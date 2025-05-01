@@ -1,18 +1,25 @@
-﻿using Hospital.Configs;
+﻿//using Hospital.Configs;
+using Hospital.DatabaseServices.Interfaces;
+using Hospital.DbContext;
+using Hospital.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using DrugModel = Hospital.Models.DrugModel;
 
 namespace Hospital.DatabaseServices
 {
     public class DrugsDatabaseService : IDrugsDatabaseService
     {
-        private readonly ApplicationConfiguration _configuration;
+        private readonly AppDbContext _context;
 
-        public DrugsDatabaseService()
+        public DrugsDatabaseService(AppDbContext context)
         {
-            _configuration = ApplicationConfiguration.GetInstance();
+            _context = context;
         }
 
         /// <summary>
@@ -20,23 +27,23 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="drug">The drug to add.</param>
         /// <returns>True if the drug was added successfully; otherwise, false.</returns>
-        public bool AddDrug(DrugModel drug)
+        public async Task<bool> AddDrug(DrugModel drug)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                // string query = "INSERT INTO Drugs (DrugID, Name, Administration, Specification, Supply) VALUES (@DrugID, @Name, @Administration, @Specification, @Supply)";
-                string query = "INSERT INTO Drugs (Name, Administration, Specification, Supply) VALUES (@Name, @Administration, @Specification, @Supply)";
-                SqlCommand command = new SqlCommand(query, connection);
+                var entity = new DrugModel(drug.DrugID, drug.Name, drug.Administration, drug.Specification, drug.Supply);
 
-                // command.Parameters.AddWithValue("@DrugID", drug.DrugID);
-                command.Parameters.AddWithValue("@Name", drug.Name);
-                command.Parameters.AddWithValue("@Administration", drug.Administration);
-                command.Parameters.AddWithValue("@Specification", drug.Specification);
-                command.Parameters.AddWithValue("@Supply", drug.Supply);
+                await _context.Drugs.AddAsync(entity);
+                await _context.SaveChangesAsync();
 
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
+                // Update the model with generated ID if needed
+                drug.DrugID = entity.DrugID;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding drug: {ex.Message}");
+                return false;
             }
         }
 
@@ -45,39 +52,27 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="drug">The drug to update.</param>
         /// <returns>True if the drug was updated successfully; otherwise, false.</returns>
-        public bool UpdateDrug(DrugModel drug)
+        public async Task<bool> UpdateDrug(DrugModel drug)
         {
+
             try
             {
-                using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
-                {
-                    // string query = "UPDATE Drugs SET Name = @Name, Administration = @Administration, Specification = @Specification, Supply = @Supply WHERE DrugID = @DrugID";
-                    string query = "UPDATE Drugs SET Name = @Name, Administration = @Administration, Specification = @Specification, Supply = @Supply WHERE DrugID = @DrugID";
-                    SqlCommand command = new SqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@Name", drug.Name);
-                    command.Parameters.AddWithValue("@Administration", drug.Administration);
-                    command.Parameters.AddWithValue("@Specification", drug.Specification);
-                    command.Parameters.AddWithValue("@Supply", drug.Supply);
-                    command.Parameters.AddWithValue("@DrugID", drug.DrugID);
+                var existingDrug = await _context.Drugs.FindAsync(drug.DrugID);
 
-                    connection.Open();
-                    int rowsAffected = command.ExecuteNonQuery();
-                    return rowsAffected > 0;
-                }
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine($"SQL Error: {ex.Message}");
-                return false;
-            }
-            catch (InvalidOperationException ex)
-            {
-                Console.WriteLine($"Invalid Operation: {ex.Message}");
-                return false;
+                if (existingDrug == null) return false;
+
+                existingDrug.Name = drug.Name;
+                existingDrug.Administration = drug.Administration;
+                existingDrug.Specification = drug.Specification;
+                existingDrug.Supply = drug.Supply;
+
+
+                await _context.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Unexpected Error: {ex.Message}");
+                Console.WriteLine($"Error updating drug: {ex.Message}");
                 return false;
             }
         }
@@ -87,17 +82,21 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="drugID">The ID of the drug to delete.</param>
         /// <returns>True if the drug was deleted successfully; otherwise, false.</returns>
-        public bool DeleteDrug(int drugID)
+        public async Task<bool> DeleteDrug(int drugID)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "DELETE FROM Drugs WHERE DrugID = @DrugID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@DrugID", drugID);
+                var drug = await _context.Drugs.FindAsync(drugID);
+                if (drug == null) return false;
 
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
-                return rowsAffected > 0;
+                _context.Drugs.Remove(drug);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting drug: {ex.Message}");
+                return false;
             }
         }
 
@@ -106,48 +105,37 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="drugID">The ID of the drug to check.</param>
         /// <returns>True if the drug exists; otherwise, false.</returns>
-        public bool DoesDrugExist(int drugID)
+        public async Task<bool> DoesDrugExist(int drugID)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
-            {
-                string query = "SELECT COUNT(*) FROM Drugs WHERE DrugID = @DrugID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@DrugID", drugID);
 
-                connection.Open();
-                int count = (int)command.ExecuteScalar();
-                return count > 0;
-            }
+            return await _context.Drugs
+                .AnyAsync(drug => drug.DrugID == drugID);
         }
 
         /// <summary>
         /// Retrieves all drugs from the database.
         /// </summary>
         /// <returns>A list of drugs.</returns>
-        public List<DrugModel> GetDrugs()
+        public async Task<List<DrugModel>> GetDrugs()
         {
-            List<DrugModel> drugs = new List<DrugModel>();
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "SELECT * FROM Drugs";
-                SqlCommand command = new SqlCommand(query, connection);
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    DrugModel drug = new DrugModel
+                return await _context.Drugs
+                    .Select(drug => new DrugModel
                     {
-                        DrugID = reader.GetInt32(0),
-                        Name = reader.GetString(1),
-                        Administration = reader.GetString(2),
-                        Supply = reader.GetInt32(3),
-                        Specification = reader.GetString(4),
-                    };
-                    drugs.Add(drug);
-                }
+                        DrugID = drug.DrugID,
+                        Name = drug.Name,
+                        Administration = drug.Administration,
+                        Specification = drug.Specification,
+                        Supply = drug.Supply,
+                    })
+                    .ToListAsync();
             }
-
-            return drugs;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting drugs: {ex.Message}");
+                return null;
+            }
         }
     }
 }

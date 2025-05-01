@@ -7,6 +7,8 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using Hospital.DatabaseServices.Interfaces;
+
 namespace Hospital.ViewModels.UpdateViewModels
 {
     using System;
@@ -30,7 +32,7 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// The model for managing schedules.
         /// </summary>
-        private readonly ScheduleDatabaseService scheduleModel = new ScheduleDatabaseService();
+        private readonly IScheduleDatabaseService scheduleModel;
 
         /// <summary>
         /// The collection of schedules displayed in the view.
@@ -40,8 +42,9 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleUpdateViewModel"/> class.
         /// </summary>
-        public ScheduleUpdateViewModel()
+        public ScheduleUpdateViewModel(IScheduleDatabaseService scheduleModel)
         {
+            this.scheduleModel = scheduleModel;
             this.errorMessage = string.Empty;
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadSchedules();
@@ -94,21 +97,22 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// Saves the changes made to the schedules.
         /// </summary>
-        private void SaveChanges()
+        private async void SaveChanges()
         {
             bool hasErrors = false;
             StringBuilder errorMessages = new StringBuilder();
 
             foreach (ScheduleModel schedule in this.Schedules)
             {
-                if (!this.ValidateSchedule(schedule))
+                bool isValid = await this.ValidateSchedule(schedule);
+                if (!isValid)
                 {
                     hasErrors = true;
                     errorMessages.AppendLine("Schedule " + schedule.ScheduleId + ": " + this.ErrorMessage);
                 }
                 else
                 {
-                    bool success = this.scheduleModel.UpdateSchedule(schedule);
+                    bool success = await this.scheduleModel.UpdateSchedule(schedule);
 
                     if (!success)
                     {
@@ -133,9 +137,9 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// </summary>
         /// <param name="schedule">Schedule to be validated.</param>
         /// <returns>True if the schedule is valid, false otherwise.</returns>
-        private bool ValidateSchedule(ScheduleModel schedule)
+        private async Task<bool> ValidateSchedule(ScheduleModel schedule)
         {
-            bool doctorExists = this.scheduleModel.DoesDoctorExist(schedule.DoctorId);
+            bool doctorExists = await this.scheduleModel.DoesDoctorExist(schedule.DoctorId);
 
             if (!doctorExists)
             {
@@ -143,7 +147,7 @@ namespace Hospital.ViewModels.UpdateViewModels
                 return false;
             }
 
-            bool shiftExists = this.scheduleModel.DoesShiftExist(schedule.ShiftId);
+            bool shiftExists = await this.scheduleModel.DoesShiftExist(schedule.ShiftId);
 
             if (!shiftExists)
             {

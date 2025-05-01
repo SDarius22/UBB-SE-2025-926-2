@@ -14,6 +14,7 @@ namespace Hospital.ViewModels.DeleteViewModels
     using System.ComponentModel;
     using System.Windows.Input;
     using Hospital.DatabaseServices;
+    using Hospital.DatabaseServices.Interfaces;
     using Hospital.Models;
     using Hospital.Utils;
 
@@ -25,7 +26,7 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// <summary>
         /// The model for managing schedules.
         /// </summary>
-        private readonly ScheduleDatabaseService scheduleModel = new ScheduleDatabaseService();
+        private readonly IScheduleDatabaseService scheduleModel;
 
         /// <summary>
         /// The collection of schedules displayed in the view.
@@ -50,8 +51,9 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleDeleteViewModel"/> class.
         /// </summary>
-        public ScheduleDeleteViewModel()
+        public ScheduleDeleteViewModel( IScheduleDatabaseService scheduleModel )
         {
+            this.scheduleModel = scheduleModel;
             this.DeleteScheduleCommand = new RelayCommand(this.RemoveSchedule);
             this.LoadSchedules();
         }
@@ -130,13 +132,13 @@ namespace Hospital.ViewModels.DeleteViewModels
                 return;
             }
 
-            if (!this.scheduleModel.DoesScheduleExist(this.ScheduleID))
+            if (!await this.scheduleModel.DoesScheduleExist(this.ScheduleID))
             {
                 this.ErrorMessage = "ScheduleID doesn't exist in the records";
                 return;
             }
 
-            bool success = this.scheduleModel.DeleteSchedule(this.ScheduleID);
+            bool success = await this.scheduleModel.DeleteSchedule(this.ScheduleID);
             this.ErrorMessage = success ? "Schedule deleted successfully" : "Failed to delete schedule";
 
             if (success)

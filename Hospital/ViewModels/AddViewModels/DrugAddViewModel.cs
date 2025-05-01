@@ -7,22 +7,24 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Input;
+using Hospital.DatabaseServices;
+using Hospital.DatabaseServices.Interfaces;
+using Hospital.Models;
+using Hospital.Utils;
+using System.Threading.Tasks;
+
 namespace Hospital.ViewModels.AddViewModels
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel;
-    using System.Windows.Input;
-    using Hospital.DatabaseServices;
-    using Hospital.Models;
-    using Hospital.Utils;
-
     /// <summary>
     /// ViewModel for adding a new drug.
     /// </summary>
     public class DrugAddViewModel : INotifyPropertyChanged
     {
-        private readonly DrugsDatabaseService drugModel = new DrugsDatabaseService();
+        private readonly IDrugsDatabaseService drugModel;
         private string name = string.Empty;
         private string administration = string.Empty;
         private string specification = string.Empty;
@@ -32,8 +34,9 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="DrugAddViewModel"/> class.
         /// </summary>
-        public DrugAddViewModel()
+        public DrugAddViewModel(IDrugsDatabaseService drugModel)
         {
+            this.drugModel = drugModel;
             this.SaveDrugCommand = new RelayCommand(this.SaveDrug);
             this.LoadDrugs();
         }
@@ -116,20 +119,22 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Loads all drugs into the ObservableCollection.
         /// </summary>
-        private void LoadDrugs()
+        private async Task LoadDrugs()
         {
             this.Drugs.Clear();
 
-            foreach (DrugModel drug in this.drugModel.GetDrugs())
+            var list = await this.drugModel.GetDrugs();
+            foreach (DrugModel drug in list)
             {
                 this.Drugs.Add(drug);
             }
+
         }
 
         /// <summary>
         /// Creates and saves a new drug if validation passes.
         /// </summary>
-        private void SaveDrug()
+        private async void SaveDrug()
         {
             var drug = new DrugModel
             {
@@ -142,7 +147,7 @@ namespace Hospital.ViewModels.AddViewModels
 
             if (this.ValidateDrug(drug))
             {
-                bool success = this.drugModel.AddDrug(drug);
+                bool success = await this.drugModel.AddDrug(drug);
                 this.ErrorMessage = success ? "Drug added successfully" : "Failed to add drug";
 
                 if (success)

@@ -19,6 +19,7 @@ namespace Hospital.ViewModels.UpdateViewModels
     using System.Threading.Tasks;
     using System.Windows.Input;
     using Hospital.DatabaseServices;
+    using Hospital.DatabaseServices.Interfaces;
     using Hospital.Models;
     using Hospital.Utils;
 
@@ -27,15 +28,16 @@ namespace Hospital.ViewModels.UpdateViewModels
     /// </summary>
     public class DrugUpdateViewModel : INotifyPropertyChanged
     {
-        private readonly DrugsDatabaseService drugModel = new DrugsDatabaseService();
+        private readonly IDrugsDatabaseService drugModel;
 
         private string errorMessage = string.Empty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DrugUpdateViewModel"/> class.
         /// </summary>
-        public DrugUpdateViewModel()
+        public DrugUpdateViewModel(IDrugsDatabaseService drugModel)
         {
+            this.drugModel = drugModel;
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadDrugs();
         }
@@ -66,11 +68,11 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// Loads the current list of drugs from the data model.
         /// </summary>
-        private void LoadDrugs()
+        private async void LoadDrugs()
         {
             this.Drugs.Clear();
 
-            foreach (DrugModel drug in this.drugModel.GetDrugs())
+            foreach (DrugModel drug in await this.drugModel.GetDrugs())
             {
                 this.Drugs.Add(drug);
             }
@@ -79,7 +81,7 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// Saves the modified drug entries after validation.
         /// </summary>
-        private void SaveChanges()
+        private async void SaveChanges()
         {
             bool hasErrors = false;
             StringBuilder errorMessages = new StringBuilder();
@@ -93,7 +95,7 @@ namespace Hospital.ViewModels.UpdateViewModels
                 }
                 else
                 {
-                    bool success = this.drugModel.UpdateDrug(drug);
+                    bool success = await this.drugModel.UpdateDrug(drug);
 
                     if (!success)
                     {

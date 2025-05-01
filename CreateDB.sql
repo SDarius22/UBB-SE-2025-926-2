@@ -1,6 +1,6 @@
 -- run one by one
 
-
+DROP DATABASE HospitalManagement;
 --create db
 CREATE DATABASE HospitalManagement;
 

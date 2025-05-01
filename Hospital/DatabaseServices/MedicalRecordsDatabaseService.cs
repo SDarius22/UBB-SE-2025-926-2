@@ -1,277 +1,156 @@
-using Hospital.Configs;
+//using Hospital.Configs;
+using Hospital.DbContext;
 using Hospital.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using Hospital.Models;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Hospital.DatabaseServices.Interfaces;
+using Microsoft.VisualBasic;
+using System.Linq;
 
 namespace Hospital.DatabaseServices
 {
     public class MedicalRecordsDatabaseService : IMedicalRecordsDatabaseService
     {
-        private readonly ApplicationConfiguration _configuration;
+        private readonly AppDbContext _context;
 
-        public MedicalRecordsDatabaseService()
+        public MedicalRecordsDatabaseService(AppDbContext context)
         {
-            _configuration = ApplicationConfiguration.GetInstance();
+            _context = context;
         }
 
         public async Task<int> AddMedicalRecord(MedicalRecordModel medicalRecord)
         {
-            DateTime recordDate = DateTime.Now;
-
-            const string insertMedicalRecordQuery =
-                "INSERT INTO MedicalRecords(DoctorId, PatientId, ProcedureId, Conclusion, DateAndTime) " +
-                "OUTPUT INSERTED.MedicalRecordId " +
-                "VALUES (@DoctorId, @PatientId, @ProcedureId, @Conclusion, @DateAndTime)";
-
             try
             {
-                using var sqlConnection = new SqlConnection(_configuration.DatabaseConnection);
-                await sqlConnection.OpenAsync().ConfigureAwait(false);
-                Console.WriteLine("Connection established successfully.");
+                medicalRecord.DateAndTime = DateTime.Now;
 
-                using var insertMedicalRecordCommand = new SqlCommand(insertMedicalRecordQuery, sqlConnection);
+                var entity = new MedicalRecordModel(medicalRecord.MedicalRecordId, medicalRecord.PatientId, medicalRecord.DoctorId, medicalRecord.ProcedureId, medicalRecord.Conclusion, medicalRecord.DateAndTime);
 
-                insertMedicalRecordCommand.Parameters.AddWithValue("@DoctorId", medicalRecord.DoctorId);
-                insertMedicalRecordCommand.Parameters.AddWithValue("@PatientId", medicalRecord.PatientId);
-                insertMedicalRecordCommand.Parameters.AddWithValue("@ProcedureId", medicalRecord.ProcedureId);
-                insertMedicalRecordCommand.Parameters.AddWithValue("@Conclusion", medicalRecord.Conclusion ?? (object)DBNull.Value);
-                insertMedicalRecordCommand.Parameters.AddWithValue("@DateAndTime", recordDate); // Pass the record's date
+                await _context.MedicalRecords.AddAsync(entity);
+                await _context.SaveChangesAsync();
 
-                object result = await insertMedicalRecordCommand.ExecuteScalarAsync().ConfigureAwait(false);
-
-                int medicalRecordId = result != null ? Convert.ToInt32(result) : -1;
-                return medicalRecordId;
+                // Update the model with generated ID if needed
+                medicalRecord.MedicalRecordId = entity.MedicalRecordId;
+                return entity.MedicalRecordId;
             }
-            catch (SqlException sqlException)
+            catch (Exception ex)
             {
-                throw new DatabaseOperationException($"SQL Error: {sqlException.Message}");
-            }
-            catch (Exception exception)
-            {
-                throw new DatabaseOperationException($"General Error: {exception.Message}");
+                Console.WriteLine($"Error adding medical record: {ex.Message}");
+                return -1;
             }
         }
 
         public async Task<List<MedicalRecordJointModel>> GetMedicalRecordsForPatient(int patientId)
         {
-            const string selectMedicalRecordForPatientQuery =
-              "SELECT " +
-              "     mr.MedicalRecordId, " +
-              "     mr.PatientId, " +
-              "     p.Name AS PatientName, " +
-              "     mr.DoctorId, " +
-              "     d.Name AS DoctorName, " +
-              "     pr.DepartmentId, " +
-              "     dept.Name, " +
-              "     mr.ProcedureId, " +
-              "     pr.ProcedureName, " +
-              "     mr.DateAndTime, " +
-              "     mr.Conclusion " +
-              "FROM MedicalRecords mr " +
-              "JOIN Users p ON mr.PatientId = p.UserId " +
-              "JOIN Users d ON mr.DoctorId = d.UserId " +
-              "JOIN Procedures pr ON mr.ProcedureId = pr.ProcedureId " +
-              "JOIN Departments dept ON pr.DepartmentId = dept.DepartmentId " +
-              "WHERE mr.PatientId = @PatientId";
             try
             {
-                using var sqlConnection = new SqlConnection(_configuration.DatabaseConnection);
+                var records = await _context.MedicalRecords
+                    .Where(mr => mr.PatientId == patientId)
+                    .Join(_context.Users, mr => mr.PatientId, p => p.UserId, (mr, p) => new { mr, PatientName = p.Name })
+                    .Join(_context.Users, temp => temp.mr.DoctorId, d => d.UserId, (temp, d) => new { temp.mr, temp.PatientName, DoctorName = d.Name })
+                    .Join(_context.Procedures, temp => temp.mr.ProcedureId, pr => pr.ProcedureId, (temp, pr) => new { temp, pr, pr.DepartmentId, ProcedureName = pr.ProcedureName })
+                    .Join(_context.Departments, temp => temp.DepartmentId, dept => dept.DepartmentId, (temp, dept) => new MedicalRecordJointModel(
+                        temp.temp.mr.MedicalRecordId,
+                        temp.temp.mr.PatientId,
+                        temp.temp.PatientName,
+                        temp.temp.mr.DoctorId,
+                        temp.temp.DoctorName,
+                        dept.DepartmentId,
+                        dept.DepartmentName,
+                        temp.pr.ProcedureId,
+                        temp.ProcedureName,
+                        temp.temp.mr.DateAndTime,
+                        temp.temp.mr.Conclusion))
+                    .ToListAsync();
 
-                // Open the database connection asynchronously
-                await sqlConnection.OpenAsync().ConfigureAwait(false);
-                Debug.WriteLine("Connection established successfully.");
-
-                // Create a command to execute the SQL query
-                using var selectMedicalRecordsForPatientCommand = new SqlCommand(selectMedicalRecordForPatientQuery, sqlConnection);
-
-                // Add parameters to the query
-                selectMedicalRecordsForPatientCommand.Parameters.AddWithValue("@PatientId", patientId);
-
-                // Execute the query asynchronously and retrieve the MedicalRecord
-                SqlDataReader reader = await selectMedicalRecordsForPatientCommand.ExecuteReaderAsync().ConfigureAwait(false);
-
-                List<MedicalRecordJointModel> medicalRecords = new List<MedicalRecordJointModel>();
-
-                while (await reader.ReadAsync().ConfigureAwait(false))
-                {
-                    medicalRecords.Add(new MedicalRecordJointModel(
-                        reader.GetInt32(0),     // MedicalRecordId
-                        reader.GetInt32(1),     // PatientId
-                        reader.GetString(2),    // PatientName
-                        reader.GetInt32(3),     // DoctorId
-                        reader.GetString(4),    // DoctorName
-                        reader.GetInt32(5),     // DepartmentId
-                        reader.GetString(6),    // DepartmentName
-                        reader.GetInt32(7),     // ProcedureId
-                        reader.GetString(8),    // ProcedureName
-                        reader.GetDateTime(9),  // Date
-                        reader.GetString(10))    // Conclusion
-                    );
-                }
-
-                if (medicalRecords.Count == 0)
+                if (!records.Any())
                 {
                     throw new MedicalRecordNotFoundException("No medical records found for the given patient.");
                 }
 
-                return medicalRecords;
+                return records;
             }
-            catch (SqlException sqlException)
+            catch (Exception ex)
             {
-                throw new MedicalRecordNotFoundException($"SQL Error: {sqlException.Message}");
+                throw new MedicalRecordNotFoundException($"Error fetching records: {ex.Message}");
             }
-            catch (Exception exception)
-            {
-                throw new MedicalRecordNotFoundException($"General Error: {exception.Message}");
-            }
+
         }
 
         public async Task<MedicalRecordJointModel> GetMedicalRecordById(int medicalRecordId)
         {
-            const string selectMedicalRecordQuery =
-              "SELECT " +
-              "     mr.MedicalRecordId, " +
-              "     mr.PatientId, " +
-              "     p.Name AS PatientName, " +
-              "     mr.DoctorId, " +
-              "     d.Name AS DoctorName, " +
-              "     pr.DepartmentId, " +
-              "     dept.Name, " +
-              "     mr.ProcedureId, " +
-              "     pr.ProcedureName, " +
-              "     mr.DateAndTime, " +
-              "     mr.Conclusion " +
-              "FROM MedicalRecords mr " +
-              "JOIN Users p ON mr.PatientId = p.UserId " +
-              "JOIN Users d ON mr.DoctorId = d.UserId " +
-              "JOIN Procedures pr ON mr.ProcedureId = pr.ProcedureId " +
-              "JOIN Departments dept ON pr.DepartmentId = dept.DepartmentId " +
-              "WHERE MedicalRecordId = @MedicalRecordId";
             try
             {
-                using var sqlConnection = new SqlConnection(_configuration.DatabaseConnection);
+                var record = await _context.MedicalRecords
+                    .Where(mr => mr.MedicalRecordId == medicalRecordId)
+                    .Join(_context.Users, mr => mr.PatientId, p => p.UserId, (mr, p) => new { mr, PatientName = p.Name })
+                    .Join(_context.Users, temp => temp.mr.DoctorId, d => d.UserId, (temp, d) => new { temp.mr, temp.PatientName, DoctorName = d.Name })
+                    .Join(_context.Procedures, temp => temp.mr.ProcedureId, pr => pr.ProcedureId, (temp, pr) => new { temp, pr, pr.DepartmentId, ProcedureName = pr.ProcedureName })
+                    .Join(_context.Departments, temp => temp.DepartmentId, dept => dept.DepartmentId, (temp, dept) => new MedicalRecordJointModel(
+                        temp.temp.mr.MedicalRecordId,
+                        temp.temp.mr.PatientId,
+                        temp.temp.PatientName,
+                        temp.temp.mr.DoctorId,
+                        temp.temp.DoctorName,
+                        dept.DepartmentId,
+                        dept.DepartmentName,
+                        temp.pr.ProcedureId,
+                        temp.ProcedureName,
+                        temp.temp.mr.DateAndTime,
+                        temp.temp.mr.Conclusion))
+                    .FirstOrDefaultAsync();
 
-                // Open the database connection asynchronously
-                await sqlConnection.OpenAsync().ConfigureAwait(false);
-                Console.WriteLine("Connection established successfully.");
-
-                // Create a command to execute the SQL query
-                using var selectMedicalRecordCommand = new SqlCommand(selectMedicalRecordQuery, sqlConnection);
-
-                // Add parameters to the query
-                selectMedicalRecordCommand.Parameters.AddWithValue("@MedicalRecordId", medicalRecordId);
-
-                // Execute the query asynchronously and retrieve the MedicalRecord
-                SqlDataReader reader = await selectMedicalRecordCommand.ExecuteReaderAsync().ConfigureAwait(false);
-                MedicalRecordJointModel medicalRecord = null;
-
-                while (await reader.ReadAsync().ConfigureAwait(false))
-                {
-                    medicalRecord = new MedicalRecordJointModel(
-                        reader.GetInt32(0),     // MedicalRecordId
-                        reader.GetInt32(1),     // PatientId
-                        reader.GetString(2),    // PatientName
-                        reader.GetInt32(3),     // DoctorId
-                        reader.GetString(4),    // DoctorName
-                        reader.GetInt32(5),     // DepartmentId
-                        reader.GetString(6),    // DepartmentName
-                        reader.GetInt32(7),     // ProcedureId
-                        reader.GetString(8),    // ProcedureName
-                        reader.GetDateTime(9),  // Date
-                        reader.GetString(10));     // Conclusion
-                }
-
-                if (medicalRecord == null)
+                if (record == null)
                 {
                     throw new MedicalRecordNotFoundException("No medical record found for the given ID.");
                 }
 
-                return medicalRecord;
+                return record;
             }
-            catch (SqlException sqlException)
+            catch (Exception ex)
             {
-                throw new MedicalRecordNotFoundException($"SQL Error: {sqlException.Message}");
-            }
-            catch (Exception exception)
-            {
-                throw new MedicalRecordNotFoundException($"General Error: {exception.Message}");
+                throw new MedicalRecordNotFoundException($"Error fetching record: {ex.Message}");
             }
         }
 
-        public async Task<List<MedicalRecordJointModel>> GetMedicalRecordsForDoctor(int DoctorId)
+        public async Task<List<MedicalRecordJointModel>> GetMedicalRecordsForDoctor(int doctorId)
         {
-            const string selectMedicalRecordsForDoctorQuery =
-              "SELECT " +
-              "     mr.MedicalRecordId, " +
-              "     mr.PatientId, " +
-              "     p.Name AS PatientName, " +
-              "     mr.DoctorId, " +
-              "     d.Name AS DoctorName, " +
-              "     pr.DepartmentId, " +
-              "     dept.Name, " +
-              "     mr.ProcedureId, " +
-              "     pr.ProcedureName, " +
-              "     mr.DateAndTime, " +
-              "     mr.Conclusion " +
-              "FROM MedicalRecords mr " +
-              "JOIN Users p ON mr.PatientId = p.UserId " +
-              "JOIN Users d ON mr.DoctorId = d.UserId " +
-              "JOIN Procedures pr ON mr.ProcedureId = pr.ProcedureId " +
-              "JOIN Departments dept ON pr.DepartmentId = dept.DepartmentId " +
-              "WHERE DoctorId = @DoctorId";
             try
             {
-                using var sqlConnection = new SqlConnection(_configuration.DatabaseConnection);
+                var records = await _context.MedicalRecords
+                    .Where(mr => mr.DoctorId == doctorId)
+                    .Join(_context.Users, mr => mr.PatientId, p => p.UserId, (mr, p) => new { mr, PatientName = p.Name })
+                    .Join(_context.Users, temp => temp.mr.DoctorId, d => d.UserId, (temp, d) => new { temp.mr, temp.PatientName, DoctorName = d.Name })
+                    .Join(_context.Procedures, temp => temp.mr.ProcedureId, pr => pr.ProcedureId, (temp, pr) => new { temp, pr, pr.DepartmentId, ProcedureName = pr.ProcedureName })
+                    .Join(_context.Departments, temp => temp.DepartmentId, dept => dept.DepartmentId, (temp, dept) => new MedicalRecordJointModel(
+                        temp.temp.mr.MedicalRecordId,
+                        temp.temp.mr.PatientId,
+                        temp.temp.PatientName,
+                        temp.temp.mr.DoctorId,
+                        temp.temp.DoctorName,
+                        dept.DepartmentId,
+                        dept.DepartmentName,
+                        temp.pr.ProcedureId,
+                        temp.ProcedureName,
+                        temp.temp.mr.DateAndTime,
+                        temp.temp.mr.Conclusion))
+                    .ToListAsync();
 
-                // Open the database connection asynchronously
-                await sqlConnection.OpenAsync().ConfigureAwait(false);
-                Console.WriteLine("Connection established successfully.");
-
-                // Create a command to execute the SQL query
-                using var selectMedicalRecordsForDoctorCommand = new SqlCommand(selectMedicalRecordsForDoctorQuery, sqlConnection);
-
-                // Add parameters to the query
-                selectMedicalRecordsForDoctorCommand.Parameters.AddWithValue("@DoctorId", DoctorId);
-
-                // Execute the query asynchronously and retrieve the MedicalRecords
-                SqlDataReader reader = await selectMedicalRecordsForDoctorCommand.ExecuteReaderAsync().ConfigureAwait(false);
-                List<MedicalRecordJointModel> medicalRecords = new List<MedicalRecordJointModel>();
-
-                while (await reader.ReadAsync().ConfigureAwait(false))
-                {
-                    medicalRecords.Add(new MedicalRecordJointModel(
-                        reader.GetInt32(0),     // MedicalRecordId
-                        reader.GetInt32(1),     // PatientId
-                        reader.GetString(2),    // PatientName
-                        reader.GetInt32(3),     // DoctorId
-                        reader.GetString(4),    // DoctorName
-                        reader.GetInt32(5),     // DepartmentId
-                        reader.GetString(6),    // DepartmentName
-                        reader.GetInt32(7),     // ProcedureId
-                        reader.GetString(8),    // ProcedureName
-                        reader.GetDateTime(9),  // Date
-                        reader.GetString(10))    // Conclusion
-                    );
-                }
-
-                if (medicalRecords.Count == 0)
+                if (!records.Any())
                 {
                     throw new MedicalRecordNotFoundException("No medical records found for the given doctor.");
                 }
 
-                return medicalRecords;
+                return records;
             }
-            catch (SqlException sqlException)
+            catch (Exception ex)
             {
-                throw new MedicalRecordNotFoundException($"SQL Error: {sqlException.Message}");
-            }
-            catch (Exception exception)
-            {
-                throw new MedicalRecordNotFoundException($"General Error: {exception.Message}");
+                throw new MedicalRecordNotFoundException($"Error fetching records: {ex.Message}");
             }
         }
     }

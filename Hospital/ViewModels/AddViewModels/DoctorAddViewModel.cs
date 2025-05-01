@@ -12,6 +12,7 @@ namespace Hospital.ViewModels.AddViewModels
     using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
+    using System.Threading.Tasks;
     using System.Windows.Input;
     using Hospital.DatabaseServices;
     using Hospital.Models;
@@ -23,7 +24,7 @@ namespace Hospital.ViewModels.AddViewModels
     public class DoctorAddViewModel : INotifyPropertyChanged
     {
         // Private fields
-        private readonly DoctorsDatabaseService doctorModel = new DoctorsDatabaseService();
+        private readonly IDoctorsDatabaseService doctorModel;
         private int userID;
         private int departmentID;
         private int rating;
@@ -33,8 +34,9 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="DoctorAddViewModel"/> class.
         /// </summary>
-        public DoctorAddViewModel()
+        public DoctorAddViewModel(IDoctorsDatabaseService doctorModel)
         {
+            this.doctorModel = doctorModel;
             this.SaveDoctorCommand = new RelayCommand(this.SaveDoctor);
             this.LoadDoctors();
         }
@@ -129,7 +131,7 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Creates and saves a new doctor if validation passes.
         /// </summary>
-        private void SaveDoctor()
+        private async void SaveDoctor()
         {
             var doctor = new DoctorJointModel(
                 0,
@@ -138,9 +140,9 @@ namespace Hospital.ViewModels.AddViewModels
                 this.Rating,
                 this.LicenseNumber);
 
-            if (this.ValidateDoctor(doctor))
+            if (await this.ValidateDoctor(doctor))
             {
-                bool success = this.doctorModel.AddDoctor(doctor);
+                bool success = await this.doctorModel.AddDoctor(doctor);
                 this.ErrorMessage = success ? "Doctor added successfully" : "Failed to add doctor";
 
                 if (success)
@@ -155,27 +157,27 @@ namespace Hospital.ViewModels.AddViewModels
         /// </summary>
         /// <param name="doctor">The doctor to validate.</param>
         /// <returns><c>true</c> if valid; otherwise, <c>false</c>.</returns>
-        private bool ValidateDoctor(DoctorJointModel doctor)
+        private async Task<bool> ValidateDoctor(DoctorJointModel doctor)
         {
-            if (!this.doctorModel.DoesUserExist(doctor.UserId))
+            if (!await this.doctorModel.DoesUserExist(doctor.UserId))
             {
                 this.ErrorMessage = "UserID doesn’t exist in the Users Records.";
                 return false;
             }
 
-            if (!this.doctorModel.IsUserDoctor(doctor.UserId))
+            if (!await this.doctorModel.IsUserDoctor(doctor.UserId))
             {
                 this.ErrorMessage = "The user with this UserID is not a Doctor.";
                 return false;
             }
 
-            if (this.doctorModel.IsUserAlreadyDoctor(doctor.UserId))
+            if (await this.doctorModel.IsUserAlreadyDoctor(doctor.UserId))
             {
                 this.ErrorMessage = "The user already exists in the Doctors Records.";
                 return false;
             }
 
-            if (!this.doctorModel.DoesDepartmentExist(doctor.DepartmentId))
+            if (!await this.doctorModel.DoesDepartmentExist(doctor.DepartmentId))
             {
                 this.ErrorMessage = "DepartmentID doesn’t exist in the Departments Records.";
                 return false;

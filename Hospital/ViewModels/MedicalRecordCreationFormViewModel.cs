@@ -1,4 +1,5 @@
-﻿using Hospital.Managers;
+﻿using Hospital.DatabaseServices.Interfaces;
+using Hospital.Managers;
 using Hospital.Models;
 using System;
 using System.Collections.ObjectModel;
@@ -127,10 +128,13 @@ namespace Hospital.ViewModels
         }
 
         // Constructor
-        public MedicalRecordCreationFormViewModel(IDoctorManager doctorManager, IMedicalProcedureManager procedureManager)
+        private readonly IMedicalRecordsDatabaseService _medicalRecordsDbService;
+
+        public MedicalRecordCreationFormViewModel(IDoctorManager doctorManager, IMedicalProcedureManager procedureManager, IMedicalRecordsDatabaseService medicalRecordsDbService)
         {
             _doctorManager = doctorManager;
             _procedureManager = procedureManager;
+            _medicalRecordsDbService = medicalRecordsDbService;
         }
 
         // INotifyPropertyChanged
