@@ -110,5 +110,26 @@ namespace Backend.API.Controllers
                 return BadRequest($"Error deleting room: {ex.Message}");
             }
         }
+
+        // Helper Method 1: Check if Room Exists
+        [HttpGet("{roomId}/exists")]
+        public async Task<bool> DoesRoomExist(int roomID)
+        {
+            return await _roomService.DoesRoomExist(roomID);
+        }
+
+        // Helper Method 2: Check if Equipment Exists
+        [HttpGet("{equipmentId}/exists")]
+        public async Task<bool> DoesEquipmentExist(int equipmentID)
+        {
+            return await _roomService.DoesEquipmentExist(equipmentID);
+        }
+
+        // Helper Method 3: Check if Department Exists
+        [HttpGet("{departmentId}/exists")]
+        public async Task<bool> DoesDepartmentExist(int departmentID)
+        {
+            return await _roomService.DoesDepartmentExist(departmentID);
+        }
     }
 }
