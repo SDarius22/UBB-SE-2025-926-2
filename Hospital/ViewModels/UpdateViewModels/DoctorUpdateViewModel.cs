@@ -22,6 +22,7 @@ namespace Hospital.ViewModel
     using Hospital.DatabaseServices.Interfaces;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel for updating doctors in the system.
@@ -35,10 +36,10 @@ namespace Hospital.ViewModel
         /// <summary>
         /// Initializes a new instance of the <see cref="DoctorUpdateViewModel"/> class.
         /// </summary>
-        public DoctorUpdateViewModel(IDoctorsDatabaseService doctorModel, IUserDatabaseService userModel)
+        public DoctorUpdateViewModel()
         {
-            this.doctorModel = doctorModel;
-            this.userModel = userModel;
+            this.doctorModel = App.Services.GetRequiredService<IDoctorsDatabaseService>();
+            this.userModel = App.Services.GetRequiredService<IUserDatabaseService>();
 
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadDoctors();

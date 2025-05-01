@@ -26,11 +26,10 @@ namespace Hospital.Views.ModifyViews
     public sealed partial class ModifyDrugView : Page
     {
         private DrugUpdateViewModel _viewModel;
-        private IDrugsDatabaseService _drugModel;
         public ModifyDrugView()
         {
             this.InitializeComponent();
-            _viewModel = new DrugUpdateViewModel(_drugModel);
+            _viewModel = new DrugUpdateViewModel();
             this.DataContext = _viewModel;
         }
     }

@@ -10,12 +10,11 @@ namespace Hospital.Views.ModifyViews
     public sealed partial class ModifyShiftView : Page
     {
         private ShiftUpdateViewModel viewModel;
-        private IShiftsDatabaseService _shiftModel;
 
         public ModifyShiftView()
         {
             this.InitializeComponent();
-            this.viewModel = new ShiftUpdateViewModel(_shiftModel);
+            this.viewModel = new ShiftUpdateViewModel();
             this.DataContext = this.viewModel;
         }
     }

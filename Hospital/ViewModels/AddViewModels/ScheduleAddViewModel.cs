@@ -18,6 +18,7 @@ namespace Hospital.ViewModels.AddViewModels
     using Hospital.DatabaseServices.Interfaces;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel for adding schedules.
@@ -101,9 +102,9 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleAddViewModel"/> class.
         /// </summary>
-        public ScheduleAddViewModel(  IScheduleDatabaseService scheduleModel )
+        public ScheduleAddViewModel()
         {
-            this.scheduleModel = scheduleModel;
+            this.scheduleModel = App.Services.GetRequiredService<IScheduleDatabaseService>();
             this.SaveScheduleCommand = new RelayCommand(this.SaveSchedule);
             this.LoadSchedules();
         }

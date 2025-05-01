@@ -5,6 +5,8 @@ namespace Hospital.Views
     using Hospital.Models;
     using Hospital.DatabaseServices;
     using System.Threading.Tasks;
+    using Hospital.DatabaseServices.Interfaces;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -12,14 +14,16 @@ namespace Hospital.Views
     ///
     public sealed partial class ScheduleAndShifts : Page
     {
-        private readonly ShiftsDatabaseService shiftModel;
-        private readonly ScheduleDatabaseService scheduleModel;
+        private readonly IShiftsDatabaseService shiftModel;
+        private readonly IScheduleDatabaseService scheduleModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleAndShifts"/> class.
         /// </summary>
         public ScheduleAndShifts()
         {
+            shiftModel = App.Services.GetRequiredService<IShiftsDatabaseService>();
+            scheduleModel = App.Services.GetRequiredService<IScheduleDatabaseService>();
             this.InitializeComponent();
             this.LoadAsync();
         }

@@ -29,12 +29,10 @@ namespace Hospital.Views.ModifyViews
     public sealed partial class ModifyDoctorView : Page
     {
         private DoctorUpdateViewModel _viewModel;
-        private IDoctorsDatabaseService _doctorModel;
-        private IUserDatabaseService _userModel;
         public ModifyDoctorView()
         {
             this.InitializeComponent();
-            _viewModel = new DoctorUpdateViewModel(_doctorModel, _userModel);
+            _viewModel = new DoctorUpdateViewModel();
             this.DataContext = _viewModel;
         }
     }

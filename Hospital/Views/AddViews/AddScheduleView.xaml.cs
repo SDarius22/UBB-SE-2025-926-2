@@ -10,11 +10,10 @@ namespace Hospital.Views.AddViews
     public sealed partial class AddScheduleView : Page
     {
         private ScheduleAddViewModel viewModel;
-        private IScheduleDatabaseService _scheduleModel;
         public AddScheduleView()
         {
             this.InitializeComponent();
-            this.viewModel = new ScheduleAddViewModel(_scheduleModel);
+            this.viewModel = new ScheduleAddViewModel();
             this.DataContext = this.viewModel;
         }
     }

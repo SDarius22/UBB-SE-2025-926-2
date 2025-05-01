@@ -10,12 +10,11 @@ namespace Hospital.Views.ModifyViews
     public sealed partial class ModifyScheduleView : Page
     {
         private ScheduleUpdateViewModel viewModel;
-        private IScheduleDatabaseService _scheduleModel;
 
         public ModifyScheduleView()
         {
             this.InitializeComponent();
-            this.viewModel = new ScheduleUpdateViewModel(_scheduleModel);
+            this.viewModel = new ScheduleUpdateViewModel();
             this.DataContext = this.viewModel;
         }
     }

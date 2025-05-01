@@ -20,6 +20,7 @@ namespace Hospital.ViewModels.UpdateViewModels
     using Hospital.DatabaseServices;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel for updating shifts.
@@ -39,9 +40,9 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ShiftUpdateViewModel"/> class.
         /// </summary>
-        public ShiftUpdateViewModel(IShiftsDatabaseService shiftModel)
+        public ShiftUpdateViewModel()
         {
-            this.shiftModel = shiftModel;
+            this.shiftModel = App.Services.GetRequiredService<IShiftsDatabaseService>();
             this.errorMessage = string.Empty;
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadShifts();

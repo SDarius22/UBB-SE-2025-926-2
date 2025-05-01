@@ -10,6 +10,7 @@
     using Hospital.DatabaseServices.Interfaces;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel for adding rooms. Handles room data binding, validation, and interaction with the RoomModel.
@@ -25,9 +26,9 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="RoomAddViewModel"/> class.
         /// </summary>
-        public RoomAddViewModel( IRoomDatabaseService roomModel )
+        public RoomAddViewModel()
         {
-            this.roomModel = roomModel;
+            this.roomModel = App.Services.GetRequiredService<IRoomDatabaseService>();
             this.SaveRoomCommand = new RelayCommand(this.SaveRoom);
             this.LoadRooms();
         }

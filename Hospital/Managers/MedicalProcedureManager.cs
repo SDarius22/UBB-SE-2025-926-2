@@ -34,7 +34,6 @@ namespace Hospital.Managers
             {
                 Procedures.Clear();
                 List<ProcedureModel> procedures = await _medicalProcedureDatabaseService.GetProceduresByDepartmentId(departmentId).ConfigureAwait(false);
-                Procedures.Clear();
                 foreach (ProcedureModel procedure in procedures)
                 {
                     Procedures.Add(procedure);

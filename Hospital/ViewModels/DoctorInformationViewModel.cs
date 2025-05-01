@@ -13,6 +13,7 @@ namespace Hospital.ViewModels
     using Hospital.Models;
     using Hospital.DatabaseServices;
     using Hospital.DatabaseServices.Interfaces;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel for managing doctor information.
@@ -39,9 +40,9 @@ namespace Hospital.ViewModels
         private string departmentName = string.Empty;
         private decimal salary;
 
-        public DoctorInformationViewModel(IDoctorInformationDatabaseService doctorModel)
+        public DoctorInformationViewModel()
         {
-            this.doctorModel = doctorModel;
+            this.doctorModel = App.Services.GetRequiredService<IDoctorInformationDatabaseService>();
         }
 
         /// <summary>

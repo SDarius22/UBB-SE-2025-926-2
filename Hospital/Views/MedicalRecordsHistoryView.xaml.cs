@@ -1,8 +1,11 @@
+using Hospital.DatabaseServices;
+using Hospital.DatabaseServices.Interfaces;
 using Hospital.DbContext;
 using Hospital.Managers;
 using Hospital.Models;
 using Hospital.Services;
 using Hospital.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -23,8 +26,14 @@ namespace Hospital.Views
         public MedicalRecordsHistoryView()
         {
             this.InitializeComponent();
+            var _medicalRecordDatabaseService = App.Services.GetRequiredService<IMedicalRecordsDatabaseService>();
+            var _documentDatabaseService = App.Services.GetRequiredService<IDocumentDatabaseService>();
 
-            _viewModel = new MedicalRecordsHistoryViewModel(1, new MedicalRecordManager(new DatabaseServices.MedicalRecordsDatabaseService(_context)), new DocumentManager(new DatabaseServices.DocumentDatabaseService(_context), new FileService()));
+            _viewModel = new MedicalRecordsHistoryViewModel(
+                1, // This should be replaced with the actual logged-in patient ID
+                new MedicalRecordManager(_medicalRecordDatabaseService),
+                new DocumentManager(_documentDatabaseService, new FileService())
+            );
             this.MedicalRecordsPanel.DataContext = _viewModel;
         }
 

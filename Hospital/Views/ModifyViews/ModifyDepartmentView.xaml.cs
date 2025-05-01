@@ -10,7 +10,6 @@ namespace Hospital.Views.ModifyViews
     public sealed partial class ModifyDepartmentView : Page
     {
         private DepartmentUpdateViewModel viewModel;
-        private IDepartmentsDatabaseService _departmentModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ModifyDepartmentView"/> class.
@@ -18,7 +17,7 @@ namespace Hospital.Views.ModifyViews
         public ModifyDepartmentView()
         {
             this.InitializeComponent();
-            this.viewModel = new DepartmentUpdateViewModel(_departmentModel);
+            this.viewModel = new DepartmentUpdateViewModel();
             this.DataContext = this.viewModel;
         }
     }

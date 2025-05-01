@@ -7,6 +7,7 @@
     using Hospital.DatabaseServices;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.VisualBasic;
 
     /// <summary>
@@ -20,9 +21,9 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="DepartmentUpdateViewModel"/> class.
         /// </summary>
-        public DepartmentUpdateViewModel(IDepartmentsDatabaseService departmentModel)
+        public DepartmentUpdateViewModel()
         {
-            this.departmentModel = departmentModel;
+            this.departmentModel = App.Services.GetRequiredService<IDepartmentsDatabaseService>();
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadDepartments();
         }

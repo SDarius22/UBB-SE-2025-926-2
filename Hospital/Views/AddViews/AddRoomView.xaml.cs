@@ -24,7 +24,6 @@ namespace Hospital.Views.AddViews
     public sealed partial class AddRoomView : Page
     {
         private RoomAddViewModel viewModel;
-        private IRoomDatabaseService _roomModel;
         /// <summary>
         /// Initializes a new instance of the <see cref="AddRoomView"/> class.
         /// Sets up the view model and data context for the page.
@@ -32,7 +31,7 @@ namespace Hospital.Views.AddViews
         public AddRoomView()
         {
             this.InitializeComponent();
-            this.viewModel = new RoomAddViewModel(_roomModel);
+            this.viewModel = new RoomAddViewModel();
             this.DataContext = this.viewModel;
         }
     }

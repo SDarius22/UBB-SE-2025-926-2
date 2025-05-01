@@ -13,7 +13,6 @@ namespace Hospital.Views
     public sealed partial class DoctorInfoPage : Page
     {
         private DoctorInformationViewModel viewModel;
-        private IDoctorInformationDatabaseService _doctorModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DoctorInfoPage"/> class.
@@ -21,7 +20,7 @@ namespace Hospital.Views
         public DoctorInfoPage()
         {
             this.InitializeComponent();
-            this.viewModel = new DoctorInformationViewModel(_doctorModel);
+            this.viewModel = new DoctorInformationViewModel();
             this.DataContext = this.viewModel;
         }
 

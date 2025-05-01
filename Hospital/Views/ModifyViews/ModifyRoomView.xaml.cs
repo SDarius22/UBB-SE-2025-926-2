@@ -24,7 +24,6 @@ namespace Hospital.Views.ModifyViews
     public sealed partial class ModifyRoomView : Page
     {
         private RoomUpdateViewModel viewModel;
-        private IRoomDatabaseService _roomModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ModifyRoomView"/> class.
@@ -33,7 +32,7 @@ namespace Hospital.Views.ModifyViews
         public ModifyRoomView()
         {
             this.InitializeComponent();
-            this.viewModel = new RoomUpdateViewModel(_roomModel);
+            this.viewModel = new RoomUpdateViewModel();
             this.DataContext = this.viewModel;
         }
     }

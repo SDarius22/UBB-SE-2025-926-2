@@ -26,11 +26,10 @@ namespace Hospital.Views.AddViews
     public sealed partial class AddDoctorView : Page
     {
         private DoctorAddViewModel _viewModel;
-        private IDoctorsDatabaseService _doctorModel;
         public AddDoctorView()
         {
             this.InitializeComponent();
-            _viewModel = new DoctorAddViewModel(_doctorModel);
+            _viewModel = new DoctorAddViewModel();
             this.DataContext = _viewModel;
         }
     }

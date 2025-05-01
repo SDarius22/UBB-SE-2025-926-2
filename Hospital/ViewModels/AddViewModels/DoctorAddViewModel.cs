@@ -17,6 +17,7 @@ namespace Hospital.ViewModels.AddViewModels
     using Hospital.DatabaseServices;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel for adding a new doctor.
@@ -34,9 +35,9 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="DoctorAddViewModel"/> class.
         /// </summary>
-        public DoctorAddViewModel(IDoctorsDatabaseService doctorModel)
+        public DoctorAddViewModel()
         {
-            this.doctorModel = doctorModel;
+            this.doctorModel = App.Services.GetRequiredService<IDoctorsDatabaseService>();
             this.SaveDoctorCommand = new RelayCommand(this.SaveDoctor);
             this.LoadDoctors();
         }
@@ -122,7 +123,7 @@ namespace Hospital.ViewModels.AddViewModels
         private async void LoadDoctors()
         {
             this.Doctors.Clear();
-            var list = await this.doctorModel.GetDoctors(); 
+            var list = await this.doctorModel.GetDoctors();
             foreach (DoctorJointModel doctor in list)
             {
                 this.Doctors.Add(doctor);
