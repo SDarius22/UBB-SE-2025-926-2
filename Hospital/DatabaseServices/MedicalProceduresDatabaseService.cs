@@ -1,62 +1,44 @@
-﻿using Hospital.Configs;
+﻿//using Hospital.Configs;
+using Hospital.DbContext;
 using Hospital.Models;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Hospital.DatabaseServices.Interfaces;
+using Hospital.Exceptions;
 
 namespace Hospital.DatabaseServices
 {
     public class MedicalProceduresDatabaseService : IMedicalProceduresDatabaseService
     {
-        private readonly ApplicationConfiguration _configuration;
+        private readonly AppDbContext _context;
 
-        public MedicalProceduresDatabaseService()
+        public MedicalProceduresDatabaseService(AppDbContext context)
         {
-            _configuration = ApplicationConfiguration.GetInstance();
+            _context = context;
         }
 
         // This method will be used to get the procedures from the database
         public async Task<List<ProcedureModel>> GetProceduresByDepartmentId(int departmentId)
         {
-            const string selectProceduresByDepartmentQuery = @"SELECT * FROM Procedures WHERE DepartmentId = @departmentId";
+            if (departmentId <= 0)
+            {
+                throw new ShiftNotFoundException("Invalid department ID");
+            }
 
             try
             {
-                using SqlConnection sqlConnection = new SqlConnection(_configuration.DatabaseConnection);
-                await sqlConnection.OpenAsync().ConfigureAwait(false);
-
-                // Prepare the command
-                SqlCommand selectProceduresCommand = new SqlCommand(selectProceduresByDepartmentQuery, sqlConnection);
-                selectProceduresCommand.Parameters.AddWithValue("@departmentId", departmentId);
-
-                SqlDataReader reader = await selectProceduresCommand.ExecuteReaderAsync().ConfigureAwait(false);
-
-                // Prepare the list of procedures
-                List<ProcedureModel> procedures = new List<ProcedureModel>();
-
-                // Read the data from the database
-                while (await reader.ReadAsync().ConfigureAwait(false))
-                {
-                    int procedureId = reader.GetInt32(0);
-                    string procedureName = reader.GetString(1);
-                    TimeSpan procedureDuration = reader.GetTimeSpan(2);
-                    ProcedureModel medicalProcedure = new ProcedureModel(procedureId, departmentId, procedureName, procedureDuration);
-                    procedures.Add(medicalProcedure);
-                }
-                return procedures;
-            }
-            catch (SqlException sqlException)
-            {
-                Console.WriteLine($"SQL Exception: {sqlException.Message}");
-                return new List<ProcedureModel>();
+                return await _context.Procedures
+                    .Where(procedure => procedure.DepartmentId == departmentId)
+                    .ToListAsync();
             }
             catch (Exception exception)
             {
-                Console.WriteLine($"General Exception: {exception.Message}");
-                return new List<ProcedureModel>();
+                throw new ShiftNotFoundException($"Error loading procedures for departmentID {departmentId}: {exception.Message}");
             }
         }
     }

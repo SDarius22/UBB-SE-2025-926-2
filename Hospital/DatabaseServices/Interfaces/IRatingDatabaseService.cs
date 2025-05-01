@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -9,15 +8,15 @@ using Microsoft.Data.SqlClient;
 using Microsoft.UI.Xaml.Controls;
 using Hospital.Models;
 
-namespace Hospital.DatabaseServices
+namespace Hospital.DatabaseServices.Interfaces
 {
     public interface IRatingDatabaseService
     {
-        public RatingModel? FetchRating(int medicalRecordID);
+        Task<RatingModel?> FetchRating(int medicalRecordID);
 
-        public bool AddRating(RatingModel rating);
+        public Task<bool> AddRating(RatingModel rating);
 
-        public bool RemoveRating(int ratingId);
+        public Task<bool> RemoveRating(int ratingId);
 
 
     }

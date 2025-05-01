@@ -1,13 +1,15 @@
-﻿namespace Hospital.DatabaseServices
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Hospital.Models;
+
+namespace Hospital.DatabaseServices.Interfaces
 {
-    using System.Collections.Generic;
-    using Hospital.Models;
     public interface IDrugsDatabaseService
     {
-        public bool AddDrug(DrugModel drug);
-        public bool UpdateDrug(DrugModel drug);
-        public bool DeleteDrug(int drugID);
-        public bool DoesDrugExist(int drugID);
-        public List<DrugModel> GetDrugs();
+        public Task<bool> AddDrug(DrugModel drug);
+        public Task<bool> UpdateDrug(DrugModel drug);
+        public Task<bool> DeleteDrug(int drugID);
+        public Task<bool> DoesDrugExist(int drugID);
+        public Task<List<DrugModel>> GetDrugs();
     }
 }
