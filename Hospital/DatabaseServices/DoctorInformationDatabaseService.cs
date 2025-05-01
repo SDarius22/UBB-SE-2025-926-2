@@ -25,32 +25,58 @@ namespace Hospital.DatabaseServices
             _context = context;
         }
 
+        // ... existing code ...
         public async Task<DoctorInformationModel> GetDoctorInformation(int doctorId)
         {
             try
             {
-                var query = FormattableStringFactory.Create(@"
-                    SELECT 
-                        UserID, Username, Mail, Role, Name, Birthdate, Cnp, Address, 
-                        PhoneNumber, RegistrationDate, DoctorID, LicenseNumber, 
-                        Experience, Rating, DepartmentID, Name as DepartmentName
-                    FROM UserDoctorDepartmentView
-                    WHERE DoctorID = {0}",
-                    doctorId);
-
-                var doctorInfo = await Task.Run(() =>
-                    _context.Database.SqlQuery<DoctorInformationModel>(query).FirstOrDefault());
+                var doctorInfo = await _context.DoctorJoints
+                    .Join(
+                        _context.Users,
+                        d => d.UserId,
+                        u => u.UserID,
+                        (d, u) => new { Doctor = d, User = u }
+                    )
+                    .Join(
+                        _context.Departments,
+                        du => du.Doctor.DepartmentId,
+                        dept => dept.DepartmentId,
+                        (du, dept) => new DoctorInformationModel
+                        {
+                            UserID = du.User.UserID,
+                            Username = du.User.Username,
+                            Mail = du.User.Mail,
+                            Role = du.User.Role,
+                            Name = du.User.Name,
+                            Birthdate = du.User.BirthDate.ToDateTime(TimeOnly.MinValue),
+                            Cnp = du.User.Cnp,
+                            Address = du.User.Address,
+                            PhoneNumber = du.User.PhoneNumber,
+                            RegistrationDate = du.User.RegistrationDate,
+                            DoctorID = du.Doctor.DoctorId,
+                            LicenseNumber = du.Doctor.LicenseNumber,
+                            Rating = (float)du.Doctor.DoctorRating,
+                            DepartmentID = dept.DepartmentId,
+                            DepartmentName = dept.Name
+                        }
+                    )
+                    .FirstOrDefaultAsync(d => d.DoctorID == doctorId);
 
                 return doctorInfo ?? throw new DatabaseOperationException("Doctor not found");
             }
-            catch (SqlException sqlException)
+            catch (DbUpdateException ex)
             {
-                throw new DatabaseOperationException($"SQL Error: {sqlException.Message}");
+                throw new DatabaseOperationException(ex.Message);
             }
-            catch (Exception exception)
+            catch (SqlException ex)
             {
-                throw new DatabaseOperationException($"General Error: {exception.Message}");
+                throw new DatabaseOperationException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException(ex.Message);
             }
         }
+        // ... existing code ...
     }
 }
