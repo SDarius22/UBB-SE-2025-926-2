@@ -60,7 +60,7 @@ namespace Hospital.ViewModels
                 OnPropertyChanged(nameof(SelectedDepartment));
 
                 // Trigger loading of dependent data
-                _ = LoadDoctorsAndProceduresAsync(_selectedDepartment?.DepartmentId ?? 0);
+                _ = LoadDoctorsAndProceduresAsync(_selectedDepartment?.DepartmentID ?? 0);
             }
         }
 

@@ -2,6 +2,7 @@ namespace Hospital.Views.AddViews
 {
     using Microsoft.UI.Xaml.Controls;
     using Hospital.ViewModels.AddViewModels;
+    using Hospital.DatabaseServices.Interfaces;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -9,7 +10,6 @@ namespace Hospital.Views.AddViews
     public sealed partial class AddScheduleView : Page
     {
         private ScheduleAddViewModel viewModel;
-
         public AddScheduleView()
         {
             this.InitializeComponent();

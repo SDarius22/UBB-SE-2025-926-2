@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Hospital.ViewModels.DeleteViewModels;
+using Hospital.DatabaseServices;
 
 // To learn more about WinUI, the WinUI Hospital structure,
 // and more about our Hospital templates, see: http://aka.ms/winui-Hospital-info.
@@ -25,10 +26,11 @@ namespace Hospital.Views.DeleteViews
     public sealed partial class DeleteDoctorView : Page
     {
         private DoctorDeleteViewModel _viewmodel;
+        private IDoctorsDatabaseService _doctorModel;
         public DeleteDoctorView()
         {
             this.InitializeComponent();
-            _viewmodel = new DoctorDeleteViewModel();
+            _viewmodel = new DoctorDeleteViewModel(_doctorModel);
             this.DataContext = _viewmodel;
         }
     }

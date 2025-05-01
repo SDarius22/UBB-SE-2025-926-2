@@ -26,10 +26,6 @@ namespace Hospital.DatabaseServices
 
         public Task<bool> UserExistsInDoctors(int userID, int doctorID);
 
-        public List<ShiftModel> GetShiftsForCurrentMonth(int doctorID);
-
-        public Task<double> ComputeDoctorSalary(int doctorID);
-
-        public List<DoctorJointModel> GetDoctors();
+        public Task<List<DoctorJointModel>> GetDoctors();
     }
 }

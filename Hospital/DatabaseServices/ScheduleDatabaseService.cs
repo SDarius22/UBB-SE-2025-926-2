@@ -130,7 +130,7 @@ namespace Hospital.DatabaseServices
         public async Task<bool> DoesShiftExist(int shiftId)
         {
             return await _context.Shifts
-                .AnyAsync(s => s.ShiftId == shiftId);
+                .AnyAsync(s => s.ShiftID == shiftId);
         }
 
         /// <summary>

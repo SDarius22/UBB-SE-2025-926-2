@@ -14,6 +14,8 @@ using Windows.ApplicationModel.Appointments;
 using Hospital.Models;
 using Microsoft.UI.Xaml.Input;
 using Hospital.DatabaseServices;
+using Hospital.DbContext;
+using Hospital.DatabaseServices.Interfaces;
 
 namespace Hospital.Views
 {
@@ -25,6 +27,9 @@ namespace Hospital.Views
 
         private IMedicalRecordManager _medicalRecordManager;
         private IDocumentManager _documentManager;
+
+        private readonly AppDbContext _context;
+        private IMedicalRecordsDatabaseService _medicalModel;
 
         public DoctorScheduleView(
             IAppointmentManager appointmentManagerModel,
@@ -213,10 +218,10 @@ namespace Hospital.Views
 
         private void ShowMedicalRecordForm(AppointmentJointModel appointment)
         {
-            var doctorManager = new DoctorManager(new DoctorsDatabaseService());
-            var procedureManager = new MedicalProcedureManager(new MedicalProceduresDatabaseService());
+            var doctorManager = new DoctorManager(new DoctorsDatabaseService(_context));
+            var procedureManager = new MedicalProcedureManager(new MedicalProceduresDatabaseService(_context));
 
-            var viewModel = new MedicalRecordCreationFormViewModel(doctorManager, procedureManager);
+            var viewModel = new MedicalRecordCreationFormViewModel(doctorManager, procedureManager, _medicalModel);
 
             var medicalRecordCreateView = new CreateMedicalRecordForm();
 

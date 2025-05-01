@@ -22,6 +22,7 @@ namespace Hospital.ViewModels.UpdateViewModels
     using Hospital.DatabaseServices.Interfaces;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel used for managing updates to drug records.
@@ -35,9 +36,9 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="DrugUpdateViewModel"/> class.
         /// </summary>
-        public DrugUpdateViewModel(IDrugsDatabaseService drugModel)
+        public DrugUpdateViewModel()
         {
-            this.drugModel = drugModel;
+            this.drugModel = App.Services.GetRequiredService<IDrugsDatabaseService>();
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadDrugs();
         }

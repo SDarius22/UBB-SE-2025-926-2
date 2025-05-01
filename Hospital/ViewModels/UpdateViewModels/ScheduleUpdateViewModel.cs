@@ -23,6 +23,7 @@ namespace Hospital.ViewModels.UpdateViewModels
     using Hospital.Models;
     using Hospital.Utils;
     using Hospital.ViewModel;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel for updating schedules.
@@ -42,9 +43,9 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleUpdateViewModel"/> class.
         /// </summary>
-        public ScheduleUpdateViewModel(IScheduleDatabaseService scheduleModel)
+        public ScheduleUpdateViewModel()
         {
-            this.scheduleModel = scheduleModel;
+            this.scheduleModel = App.Services.GetRequiredService<IScheduleDatabaseService>();
             this.errorMessage = string.Empty;
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadSchedules();

@@ -24,9 +24,6 @@ namespace Hospital.Models
         /// </summary>
         public DrugModel()
         {
-            this.Name = "Unspecified";
-            this.Administration = "0";
-            this.Specification = "0";
         }
 
         /// <summary>

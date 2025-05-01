@@ -20,6 +20,7 @@ namespace Hospital.ViewModels.UpdateViewModels
     using Hospital.DatabaseServices;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel for updating shifts.
@@ -39,9 +40,9 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ShiftUpdateViewModel"/> class.
         /// </summary>
-        public ShiftUpdateViewModel(IShiftsDatabaseService shiftModel)
+        public ShiftUpdateViewModel()
         {
-            this.shiftModel = shiftModel;
+            this.shiftModel = App.Services.GetRequiredService<IShiftsDatabaseService>();
             this.errorMessage = string.Empty;
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadShifts();
@@ -88,7 +89,7 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// Saves the changes made to the shifts.
         /// </summary>
-        private async Task SaveChanges()
+        private async void SaveChanges()
         {
             bool hasErrors = false;
 
@@ -99,14 +100,14 @@ namespace Hospital.ViewModels.UpdateViewModels
                 if (!this.ValidateShift(shift))
                 {
                     hasErrors = true;
-                    errorMessages.AppendLine("Shift " + shift.ShiftId + ": " + this.ErrorMessage);
+                    errorMessages.AppendLine("Shift " + shift.ShiftID + ": " + this.ErrorMessage);
                 }
                 else
                 {
                     bool success = await this.shiftModel.UpdateShift(shift);
                     if (!success)
                     {
-                        errorMessages.AppendLine("Failed to save changes for shift: " + shift.ShiftId);
+                        errorMessages.AppendLine("Failed to save changes for shift: " + shift.ShiftID);
                         hasErrors = true;
                     }
                 }

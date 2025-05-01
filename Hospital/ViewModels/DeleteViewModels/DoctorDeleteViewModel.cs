@@ -38,13 +38,18 @@ namespace Hospital.ViewModels.DeleteViewModels
             this.doctors = new ObservableCollection<DoctorJointModel>();
             this.errorMessage = string.Empty;
 
-            // Load doctors for the DataGrid
-            this.Doctors = new ObservableCollection<DoctorJointModel>(this.doctorModel.GetDoctors());
+            // Load doctors from the database
+            this.LoadDoctors();
 
             this.DeleteDoctorCommand = new RelayCommand(this.RemoveDoctor);
 
             // Initialize PropertyChanged to avoid nullability issues
             this.PropertyChanged = (sender, args) => { };
+        }
+
+        private async void LoadDoctors()
+        {
+            this.Doctors = new ObservableCollection<DoctorJointModel>(await this.doctorModel.GetDoctors());
         }
 
         /// <summary>
@@ -170,7 +175,7 @@ namespace Hospital.ViewModels.DeleteViewModels
 
             if (success)
             {
-                this.Doctors = new ObservableCollection<DoctorJointModel>(this.doctorModel.GetDoctors());
+                this.Doctors = new ObservableCollection<DoctorJointModel>(await this.doctorModel.GetDoctors());
             }
         }
     }

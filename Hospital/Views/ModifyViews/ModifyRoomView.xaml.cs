@@ -15,6 +15,7 @@ namespace Hospital.Views.ModifyViews
     using Hospital.ViewModels.UpdateViewModels;
     using Windows.Foundation;
     using Windows.Foundation.Collections;
+    using Hospital.DatabaseServices.Interfaces;
 
     /// <summary>
     /// Represents a page for modifying an existing room. This page can be used either standalone or within a Frame navigation.

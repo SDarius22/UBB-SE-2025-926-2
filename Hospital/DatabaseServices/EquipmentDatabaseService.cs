@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using EquipmentModel = Hospital.Models.EquipmentModel;
 using Hospital.Models;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Hospital.DatabaseServices
 {
@@ -120,6 +121,7 @@ namespace Hospital.DatabaseServices
         {
             try
             {
+                Debug.WriteLine("Getting all equipments from the database.");
                 return await _context.Equipments
                     .Select(equipment => new EquipmentModel
                     {
@@ -133,7 +135,7 @@ namespace Hospital.DatabaseServices
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error getting equipments: {ex.Message}");
+                Debug.WriteLine($"Error getting equipments: {ex.Message}");
                 return null;
             }
         }

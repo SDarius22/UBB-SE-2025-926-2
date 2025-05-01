@@ -12,6 +12,9 @@ using Microsoft.UI;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using Hospital.ViewModels;
+using Hospital.DbContext;
+using Microsoft.Extensions.DependencyInjection;
+using Hospital.DatabaseServices;
 
 namespace Hospital.Views
 {
@@ -25,7 +28,8 @@ public sealed partial class PatientScheduleView : Page
             this.InitializeComponent();
 
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-            _viewModel = new PatientScheduleViewModel(new AppointmentManager(new DatabaseServices.AppointmentsDatabaseService()));
+            var _appointmentDatabaseService = App.Services.GetRequiredService<IAppointmentsDatabaseService>();
+            _viewModel = new PatientScheduleViewModel(new AppointmentManager(_appointmentDatabaseService));
 
             DailyScheduleList.ItemsSource = _viewModel.DailyAppointments;
             AppointmentsCalendar.CalendarViewDayItemChanging += CalendarView_DayItemChanging;
@@ -87,7 +91,7 @@ public sealed partial class PatientScheduleView : Page
         {
             string message = $"Date and Time: {appointment.DateAndTime:f}\n" +
                            $"Doctor: {appointment.DoctorName}\n" +
-                           $"Department: {appointment.DepartmentName}\n" +
+                           $"Department: {appointment.Name}\n" +
                            $"Procedure: {appointment.ProcedureName}\n" +
                            $"Procedure Duration: {appointment.ProcedureDuration.TotalMinutes} minutes";
 

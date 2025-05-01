@@ -17,6 +17,9 @@ using Hospital.Managers;
 using Hospital.DatabaseServices;
 using Hospital.ViewModels;
 using System.Threading.Tasks;
+using Hospital.DbContext;
+using Microsoft.Extensions.DependencyInjection;
+using Hospital.DatabaseServices.Interfaces;
 
 // To learn more about WinUI, the WinUI Hospital structure,
 // and more about our Hospital templates, see: http://aka.ms/winui-Hospital-info.
@@ -35,15 +38,16 @@ namespace Hospital.Views.AddViews
         private readonly ShiftManager _shiftManager;
         private readonly AppointmentManager _appointmentManager;
 
+
         public AddPage()
         {
             this.InitializeComponent();
 
-            var departmentsDatabaseService = new DepartmentsDatabaseService();
-            var proceduresDatabaseService = new MedicalProceduresDatabaseService();
-            var doctorsDatabaseService = new DoctorsDatabaseService();
-            var shiftsDatabaseService = new ShiftsDatabaseService();
-            var appointmentsDatabaseService = new AppointmentsDatabaseService();
+            var departmentsDatabaseService = App.Services.GetRequiredService<IDepartmentsDatabaseService>();
+            var proceduresDatabaseService = App.Services.GetRequiredService<IMedicalProceduresDatabaseService>();
+            var doctorsDatabaseService = App.Services.GetRequiredService<IDoctorsDatabaseService>();
+            var shiftsDatabaseService = App.Services.GetRequiredService<IShiftsDatabaseService>();
+            var appointmentsDatabaseService = App.Services.GetRequiredService<IAppointmentsDatabaseService>();
 
             _departmentManager = new DepartmentManager(departmentsDatabaseService);
             _procedureManager = new MedicalProcedureManager(proceduresDatabaseService);

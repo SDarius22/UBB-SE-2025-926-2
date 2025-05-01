@@ -6,6 +6,7 @@ using Hospital.DatabaseServices.Interfaces;
 using Hospital.Models;
 using Hospital.Utils;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Hospital.ViewModels.AddViewModels
 {
@@ -24,9 +25,9 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="EquipmentAddViewModel"/> class.
         /// </summary>
-        public EquipmentAddViewModel(IEquipmentDatabaseService equipmentModel)
+        public EquipmentAddViewModel()
         {
-            this.equipmentModel = equipmentModel;
+            this.equipmentModel = App.Services.GetRequiredService<IEquipmentDatabaseService>();
             this.SaveEquipmentCommand = new RelayCommand(this.SaveEquipment);
             this.LoadEquipments();
         }

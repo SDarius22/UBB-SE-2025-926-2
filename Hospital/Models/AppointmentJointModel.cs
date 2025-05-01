@@ -16,7 +16,7 @@ namespace Hospital.Models
 
         public int DepartmentId { get; set; }
 
-        public string DepartmentName { get; set; }
+        public string Name { get; set; }
 
         public int DoctorId { get; set; }
 
@@ -38,7 +38,7 @@ namespace Hospital.Models
             Finished = finished;
             DateAndTime = dateAndTime;
             DepartmentId = departmentId;
-            DepartmentName = departmentName;
+            Name = departmentName;
             DoctorId = doctorId;
             DoctorName = doctorName;
             PatientId = patientId;

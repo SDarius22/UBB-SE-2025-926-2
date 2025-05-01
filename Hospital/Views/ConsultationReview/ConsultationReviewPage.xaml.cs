@@ -7,6 +7,8 @@ namespace Hospital.Views.ConsultationReview
     using Microsoft.UI.Xaml.Media;
     using Hospital.Models;
     using Hospital.DatabaseServices;
+    using System.Threading.Tasks;
+    using Hospital.DbContext;
 
     /// <summary>
     /// ConsultationReview Page.
@@ -16,7 +18,7 @@ namespace Hospital.Views.ConsultationReview
         private int reviewID;
         private int selectedRating = 0;
         private int medicalRecordID;
-        private RatingDatabaseService reviewModel = new ();
+        private RatingDatabaseService reviewModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConsultationReviewPage"/> class.
@@ -88,7 +90,7 @@ namespace Hospital.Views.ConsultationReview
                     motivation: this.FeedbackTextBox.Text,
                     numberStars: this.selectedRating);
 
-                bool isSuccess = this.reviewModel.AddRating(review);
+                bool isSuccess = this.reviewModel.AddRating(review).Result;
 
                 if (isSuccess)
                 {

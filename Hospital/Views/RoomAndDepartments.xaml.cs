@@ -5,20 +5,24 @@ namespace Hospital.Views
     using Microsoft.UI.Xaml.Controls;
     using Hospital.Models;
     using Hospital.DatabaseServices;
+    using Hospital.DatabaseServices.Interfaces;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class RoomAndDepartments : Page
     {
-        private readonly RoomDatabaseService roomModel = new ();
-        private readonly DepartmentsDatabaseService departmentModel = new ();
+        private readonly IRoomDatabaseService roomModel;
+        private readonly IDepartmentsDatabaseService departmentModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RoomAndDepartments"/> class.
         /// </summary>
         public RoomAndDepartments()
         {
+            roomModel = App.Services.GetRequiredService<IRoomDatabaseService>();
+            departmentModel = App.Services.GetRequiredService<IDepartmentsDatabaseService>();
             this.InitializeComponent();
             this.Load();
         }
@@ -33,17 +37,17 @@ namespace Hospital.Views
         /// </summary>
         public ObservableCollection<DepartmentModel> Departments { get; set; } = new ();
 
-        private void Load()
+        private async void Load()
         {
             this.Departments.Clear();
-            foreach (DepartmentModel department in this.departmentModel.GetDepartments())
+            var list = await this.departmentModel.GetDepartments();
+            foreach (DepartmentModel department in list)
             {
                 this.Departments.Add(department);
             }
 
             this.Rooms.Clear();
-
-            List<RoomModel>? rooms = this.roomModel.GetRooms();
+            List<RoomModel>? rooms = await this.roomModel.GetRooms();
             if (rooms != null)
             {
                 foreach (RoomModel room in rooms)

@@ -16,6 +16,7 @@ namespace Hospital.Views.DeleteViews
     using Hospital.ViewModels.DeleteViewModels;
     using Windows.Foundation;
     using Windows.Foundation.Collections;
+    using Hospital.DatabaseServices.Interfaces;
 
     /// <summary>
     /// Represents a page for deleting a room. This page can be used either standalone or within a Frame navigation.
@@ -24,6 +25,7 @@ namespace Hospital.Views.DeleteViews
     public sealed partial class DeleteRoomView : Page
     {
         private RoomDeleteViewModel viewmodel;
+        private IRoomDatabaseService _roomModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DeleteRoomView"/> class.
@@ -32,7 +34,7 @@ namespace Hospital.Views.DeleteViews
         public DeleteRoomView()
         {
             this.InitializeComponent();
-            this.viewmodel = new RoomDeleteViewModel();
+            this.viewmodel = new RoomDeleteViewModel(_roomModel);
             this.DataContext = this.viewmodel;
         }
     }

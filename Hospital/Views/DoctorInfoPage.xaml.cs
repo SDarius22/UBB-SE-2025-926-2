@@ -5,6 +5,7 @@ namespace Hospital.Views
     using Microsoft.UI.Xaml.Navigation;
     using Hospital.Models;
     using Hospital.ViewModels;
+    using Hospital.DatabaseServices.Interfaces;
 
     /// <summary>
     /// DoctorInfoPage class.

@@ -8,6 +8,7 @@
     using Hospital.DatabaseServices.Interfaces;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel for updating equipment.
@@ -20,9 +21,9 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="EquipmentUpdateViewModel"/> class.
         /// </summary>
-        public EquipmentUpdateViewModel(IEquipmentDatabaseService equipmentModel)
+        public EquipmentUpdateViewModel()
         {
-            this.equipmentModel = equipmentModel;
+            this.equipmentModel = App.Services.GetRequiredService<IEquipmentDatabaseService>();
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadEquipments();
         }

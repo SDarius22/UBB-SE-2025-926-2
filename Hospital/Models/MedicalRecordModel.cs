@@ -20,6 +20,15 @@ namespace Hospital.Models
 
         public string Conclusion { get; set; }
 
+        public virtual PatientJointModel Patient { get; set; }
+        public virtual DoctorJointModel Doctor { get; set; }
+        public virtual ProcedureModel Procedure { get; set; }
+
+        public MedicalRecordModel()
+        {
+        }
+
+
         public MedicalRecordModel(int medicalRecordId, int patientId, int doctorId, int procedureId, string conclusion, DateTime dateAndTime)
         {
             MedicalRecordId = medicalRecordId;

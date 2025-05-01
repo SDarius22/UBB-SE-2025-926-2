@@ -51,17 +51,17 @@ namespace Hospital.DatabaseServices
             {
                 var records = await _context.MedicalRecords
                     .Where(mr => mr.PatientId == patientId)
-                    .Join(_context.Users, mr => mr.PatientId, p => p.UserId, (mr, p) => new { mr, PatientName = p.Name })
-                    .Join(_context.Users, temp => temp.mr.DoctorId, d => d.UserId, (temp, d) => new { temp.mr, temp.PatientName, DoctorName = d.Name })
+                    .Join(_context.Users, mr => mr.PatientId, p => p.UserID, (mr, p) => new { mr, PatientName = p.Name })
+                    .Join(_context.Users, temp => temp.mr.DoctorId, d => d.UserID, (temp, d) => new { temp.mr, temp.PatientName, DoctorName = d.Name })
                     .Join(_context.Procedures, temp => temp.mr.ProcedureId, pr => pr.ProcedureId, (temp, pr) => new { temp, pr, pr.DepartmentId, ProcedureName = pr.ProcedureName })
-                    .Join(_context.Departments, temp => temp.DepartmentId, dept => dept.DepartmentId, (temp, dept) => new MedicalRecordJointModel(
+                    .Join(_context.Departments, temp => temp.DepartmentId, dept => dept.DepartmentID, (temp, dept) => new MedicalRecordJointModel(
                         temp.temp.mr.MedicalRecordId,
                         temp.temp.mr.PatientId,
                         temp.temp.PatientName,
                         temp.temp.mr.DoctorId,
                         temp.temp.DoctorName,
-                        dept.DepartmentId,
-                        dept.DepartmentName,
+                        dept.DepartmentID,
+                        dept.Name,
                         temp.pr.ProcedureId,
                         temp.ProcedureName,
                         temp.temp.mr.DateAndTime,
@@ -88,17 +88,17 @@ namespace Hospital.DatabaseServices
             {
                 var record = await _context.MedicalRecords
                     .Where(mr => mr.MedicalRecordId == medicalRecordId)
-                    .Join(_context.Users, mr => mr.PatientId, p => p.UserId, (mr, p) => new { mr, PatientName = p.Name })
-                    .Join(_context.Users, temp => temp.mr.DoctorId, d => d.UserId, (temp, d) => new { temp.mr, temp.PatientName, DoctorName = d.Name })
+                    .Join(_context.Users, mr => mr.PatientId, p => p.UserID, (mr, p) => new { mr, PatientName = p.Name })
+                    .Join(_context.Users, temp => temp.mr.DoctorId, d => d.UserID, (temp, d) => new { temp.mr, temp.PatientName, DoctorName = d.Name })
                     .Join(_context.Procedures, temp => temp.mr.ProcedureId, pr => pr.ProcedureId, (temp, pr) => new { temp, pr, pr.DepartmentId, ProcedureName = pr.ProcedureName })
-                    .Join(_context.Departments, temp => temp.DepartmentId, dept => dept.DepartmentId, (temp, dept) => new MedicalRecordJointModel(
+                    .Join(_context.Departments, temp => temp.DepartmentId, dept => dept.DepartmentID, (temp, dept) => new MedicalRecordJointModel(
                         temp.temp.mr.MedicalRecordId,
                         temp.temp.mr.PatientId,
                         temp.temp.PatientName,
                         temp.temp.mr.DoctorId,
                         temp.temp.DoctorName,
-                        dept.DepartmentId,
-                        dept.DepartmentName,
+                        dept.DepartmentID,
+                        dept.Name,
                         temp.pr.ProcedureId,
                         temp.ProcedureName,
                         temp.temp.mr.DateAndTime,
@@ -124,17 +124,17 @@ namespace Hospital.DatabaseServices
             {
                 var records = await _context.MedicalRecords
                     .Where(mr => mr.DoctorId == doctorId)
-                    .Join(_context.Users, mr => mr.PatientId, p => p.UserId, (mr, p) => new { mr, PatientName = p.Name })
-                    .Join(_context.Users, temp => temp.mr.DoctorId, d => d.UserId, (temp, d) => new { temp.mr, temp.PatientName, DoctorName = d.Name })
+                    .Join(_context.Users, mr => mr.PatientId, p => p.UserID, (mr, p) => new { mr, PatientName = p.Name })
+                    .Join(_context.Users, temp => temp.mr.DoctorId, d => d.UserID, (temp, d) => new { temp.mr, temp.PatientName, DoctorName = d.Name })
                     .Join(_context.Procedures, temp => temp.mr.ProcedureId, pr => pr.ProcedureId, (temp, pr) => new { temp, pr, pr.DepartmentId, ProcedureName = pr.ProcedureName })
-                    .Join(_context.Departments, temp => temp.DepartmentId, dept => dept.DepartmentId, (temp, dept) => new MedicalRecordJointModel(
+                    .Join(_context.Departments, temp => temp.DepartmentId, dept => dept.DepartmentID, (temp, dept) => new MedicalRecordJointModel(
                         temp.temp.mr.MedicalRecordId,
                         temp.temp.mr.PatientId,
                         temp.temp.PatientName,
                         temp.temp.mr.DoctorId,
                         temp.temp.DoctorName,
-                        dept.DepartmentId,
-                        dept.DepartmentName,
+                        dept.DepartmentID,
+                        dept.Name,
                         temp.pr.ProcedureId,
                         temp.ProcedureName,
                         temp.temp.mr.DateAndTime,

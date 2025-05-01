@@ -34,34 +34,34 @@
             _context = context;
         }
 
+
         // This method will be used to get the doctors from the database
         public async Task<List<DoctorJointModel>> GetDoctorsByDepartment(int departmentId)
         {
             try
             {
-                var query = FormattableStringFactory.Create(@"
-                    SELECT
-                        d.DoctorId,
-                        d.UserId,
-                        u.Username,
-                        d.DepartmentId,
-                        d.Rating,
-                        d.LicenseNumber
-                    FROM Doctors d
-                    INNER JOIN Users u ON d.UserId = u.UserId
-                    WHERE d.DepartmentId = {0}",
-                            departmentId);
-
-                var doctors = await Task.Run(() =>
-                    _context.Database.SqlQuery<DoctorJointModel>(query).ToList());
-
-                return doctors;
+                return await _context.DoctorJoints
+                    .Join(
+                        _context.Users,
+                        d => d.UserId,
+                        u => u.UserID,
+                        (d, u) => new DoctorJointModel
+                        {
+                            DoctorId = d.DoctorId,
+                            UserId = d.UserId,
+                            DepartmentId = d.DepartmentId,
+                            Rating = d.Rating,
+                            LicenseNumber = d.LicenseNumber
+                        }
+                    )
+                    .Where(d => d.DepartmentId == departmentId)
+                    .ToListAsync();
             }
-            catch (SqlException sqlException)
+            catch (SqlException)
             {
                 return new List<DoctorJointModel>();
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 return new List<DoctorJointModel>();
             }
@@ -76,24 +76,25 @@
         {
             try
             {
-                var query = FormattableStringFactory.Create(
-                    "INSERT INTO Doctors (UserID, DepartmentID, Rating, LicenseNumber) " +
-                    "VALUES ({0}, {1}, {2}, {3})",
-                    doctor.UserId,
-                    doctor.DepartmentId,
-                    doctor.DoctorRating,
-                    doctor.LicenseNumber);
+                var doctorEntity = new DoctorJointModel
+                {
+                    UserId = doctor.UserId,
+                    DepartmentId = doctor.DepartmentId,
+                    Rating = doctor.Rating,
+                    LicenseNumber = doctor.LicenseNumber
+                };
 
-                var rowsAffected = await _context.Database.ExecuteSqlInterpolatedAsync(query);
+                await _context.DoctorJoints.AddAsync(doctorEntity);
+                var rowsAffected = await _context.SaveChangesAsync();
                 return rowsAffected > 0;
             }
-            catch (SqlException sqlException)
+            catch (DbUpdateException ex)
             {
-                throw new DatabaseOperationException($"SQL Error: {sqlException.Message}");
+                throw new DatabaseOperationException($"SQL Error: {ex.Message}");
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                throw new DatabaseOperationException($"General Error: {exception.Message}");
+                throw new DatabaseOperationException($"General Error: {ex.Message}");
             }
         }
 
@@ -106,18 +107,19 @@
         {
             try
             {
-                var query = FormattableStringFactory.Create(
-                    "UPDATE Doctors SET " +
-                    "UserID = {0}, " +
-                    "DepartmentID = {1}, " +
-                    "LicenseNumber = {2} " +
-                    "WHERE DoctorID = {3}",
-                    doctor.UserId,
-                    doctor.DepartmentId,
-                    doctor.LicenseNumber,
-                    doctor.DoctorId);
+                var existingDoctor = await _context.DoctorJoints
+                    .FirstOrDefaultAsync(d => d.DoctorId == doctor.DoctorId);
 
-                var rowsAffected = await _context.Database.ExecuteSqlInterpolatedAsync(query);
+                if (existingDoctor == null)
+                {
+                    return false;
+                }
+
+                existingDoctor.UserId = doctor.UserId;
+                existingDoctor.DepartmentId = doctor.DepartmentId;
+                existingDoctor.LicenseNumber = doctor.LicenseNumber;
+
+                var rowsAffected = await _context.SaveChangesAsync();
                 return rowsAffected > 0;
             }
             catch (SqlException ex)
@@ -146,14 +148,19 @@
         {
             try
             {
-                var query = FormattableStringFactory.Create(
-                    "DELETE FROM Doctors WHERE DoctorID = {0}",
-                    doctorID);
+                var doctor = await _context.DoctorJoints
+                    .FirstOrDefaultAsync(d => d.DoctorId == doctorID);
 
-                var rowsAffected = await _context.Database.ExecuteSqlInterpolatedAsync(query);
+                if (doctor == null)
+                {
+                    return false;
+                }
+
+                _context.DoctorJoints.Remove(doctor);
+                var rowsAffected = await _context.SaveChangesAsync();
                 return rowsAffected > 0;
             }
-            catch (SqlException ex)
+            catch (DbUpdateException ex)
             {
                 throw new DatabaseOperationException($"SQL Error deleting doctor: {ex.Message}");
             }
@@ -172,16 +179,10 @@
         {
             try
             {
-                var query = FormattableStringFactory.Create(
-                    "SELECT COUNT(*) FROM Doctors WHERE DoctorID = {0}",
-                    doctorID);
-
-                var count = await Task.Run(() =>
-                    _context.Database.SqlQuery<int>(query).FirstOrDefault());
-
-                return count > 0;
+                return await _context.DoctorJoints
+                    .AnyAsync(d => d.DoctorId == doctorID);
             }
-            catch (SqlException ex)
+            catch (DbUpdateException ex)
             {
                 throw new DatabaseOperationException($"SQL Error checking doctor existence: {ex.Message}");
             }
@@ -200,17 +201,10 @@
         {
             try
             {
-                var query = FormattableStringFactory.Create(
-                    "SELECT COUNT(*) FROM Doctors WHERE UserID = {0}",
-                    userID);
-
-                // Using Task.Run to wrap the synchronous operation
-                var count = await Task.Run(() =>
-                    _context.Database.SqlQuery<int>(query).FirstOrDefault());
-
-                return count > 0;
+                return await _context.DoctorJoints
+                    .AnyAsync(d => d.UserId == userID);
             }
-            catch (SqlException ex)
+            catch (DbUpdateException ex)
             {
                 throw new DatabaseOperationException($"SQL Error checking doctor status: {ex.Message}");
             }
@@ -230,7 +224,7 @@
             try
             {
                 return await _context.Users
-                    .AnyAsync(u => u.UserId == userID);
+                    .AnyAsync(u => u.UserID == userID);
             }
             catch (Exception ex)
             {
@@ -247,13 +241,11 @@
         {
             try
             {
-                var query = FormattableStringFactory.Create(
-                    "SELECT Role FROM Users WHERE UserID = {0}",
-                    userID);
 
-                // Using Task.Run to wrap the synchronous operation
-                var role = await Task.Run(() =>
-                    _context.Database.SqlQuery<string>(query).FirstOrDefault());
+                var role = await _context.Users
+                    .Where(u => u.UserID == userID)
+                    .Select(u => u.Role)
+                    .FirstOrDefaultAsync();
 
                 return role == "Doctor";
             }
@@ -276,17 +268,10 @@
         {
             try
             {
-                var query = FormattableStringFactory.Create(
-                    "SELECT COUNT(*) FROM Departments WHERE DepartmentID = {0}",
-                    departmentID);
-
-                // Using Task.Run to wrap the synchronous operation
-                var count = await Task.Run(() =>
-                    _context.Database.SqlQuery<int>(query).FirstOrDefault());
-
-                return count > 0;
+                return await _context.Departments
+                    .AnyAsync(d => d.DepartmentID == departmentID);
             }
-            catch (SqlException ex)
+            catch (DbUpdateException ex)
             {
                 throw new DatabaseOperationException($"SQL Error checking department existence: {ex.Message}");
             }
@@ -306,20 +291,10 @@
         {
             try
             {
-                // Create parameterized query using FormattableStringFactory
-                FormattableString query = FormattableStringFactory.Create(
-                    "SELECT COUNT(*) FROM Doctors WHERE UserID = {0} AND DoctorID <> {1}",
-                    userID,
-                    doctorID);
-
-                // Execute query asynchronously
-                int count = await _context.Database
-                    .SqlQuery<int>(query)
-                    .FirstOrDefaultAsync();
-
-                return count > 0;
+                return await _context.DoctorJoints
+                    .AnyAsync(d => d.UserId == userID && d.DoctorId != doctorID);
             }
-            catch (SqlException ex)
+            catch (DbUpdateException ex)
             {
                 throw new DatabaseOperationException($"SQL Error checking doctor assignment: {ex.Message}");
             }
@@ -330,98 +305,30 @@
         }
 
         /// <summary>
-        /// Retrieves the shifts for the current month for a specific doctor.
-        /// </summary>
-        /// <param name="doctorID">The ID of the doctor whose shifts are to be retrieved.</param>
-        /// <returns>A list of shifts for the current month.</returns>
-        public List<ShiftModel> GetShiftsForCurrentMonth(int doctorID)
-        {
-            List<ShiftModel> shifts = new List<ShiftModel>();
-
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
-            {
-                string query = @"
-                    SELECT s.ShiftID, s.Date, s.StartTime, s.EndTime
-                    FROM GetCurrentMonthShiftsForDoctor(@DoctorID) s";
-
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@DoctorID", doctorID);
-
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    shifts.Add(new ShiftModel(
-                        reader.GetInt32(0),
-                        DateOnly.FromDateTime(reader.GetDateTime(1)), // Convert DateTime to DateOnly
-                        reader.GetTimeSpan(2),
-                        reader.GetTimeSpan(3)));
-                }
-            }
-
-            return shifts;
-        }
-
-        /// <summary>
-        /// Computes the salary of a doctor for the current month based on their shifts.
-        /// </summary>
-        /// <param name="doctorID">The ID of the doctor whose salary is to be computed.</param>
-        /// <returns>The total salary of the doctor for the current month.</returns>
-        public async Task<double> ComputeDoctorSalary(int doctorID)
-        {
-            List<ShiftModel> shifts = this.GetShiftsForCurrentMonth(doctorID);
-            double totalSalary = 0;
-
-            foreach (var shift in shifts)
-            {
-                double shiftRate = 0;
-
-                if (shift.StartTime == new TimeSpan(8, 0, 0) && shift.EndTime == new TimeSpan(20, 0, 0))
-                {
-                    shiftRate = Type0Rate * 12;
-                }
-                else if (shift.StartTime == new TimeSpan(20, 0, 0) && shift.EndTime == new TimeSpan(8, 0, 0))
-                {
-                    shiftRate = Type1Rate * 12;
-                }
-                else if (shift.StartTime == new TimeSpan(8, 0, 0) && shift.EndTime == new TimeSpan(8, 0, 0).Add(TimeSpan.FromDays(1)))
-                {
-                    shiftRate = Type2Rate * 24;
-                }
-
-                totalSalary += shiftRate;
-            }
-
-            return totalSalary;
-        }
-
-        /// <summary>
         /// Retrieves all doctors from the database.
         /// </summary>
         /// <returns>A list of all doctors.</returns>
-        public List<DoctorJointModel> GetDoctors()
+        public async Task<List<DoctorJointModel>> GetDoctors()
         {
-            List<DoctorJointModel> doctors = new List<DoctorJointModel>();
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "SELECT DoctorId, UserId, DepartmentId, Rating, LicenseNumber FROM Doctors";
-                SqlCommand command = new SqlCommand(query, connection);
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    doctors.Add(new DoctorJointModel(
-                        reader.GetInt32(0),
-                        reader.GetInt32(1),
-                        reader.GetInt32(2),
-                        reader.GetDouble(3),
-                        reader.GetString(4)));
-                }
+                return await _context.DoctorJoints
+                    .Select(d => new DoctorJointModel(
+                        d.DoctorId,
+                        d.UserId,
+                        d.DepartmentId,
+                        d.Rating,
+                        d.LicenseNumber))
+                    .ToListAsync();
             }
-
-            return doctors;
+            catch (DbUpdateException ex)
+            {
+                throw new DatabaseOperationException($"SQL Error retrieving doctors: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException($"Error retrieving doctors: {ex.Message}");
+            }
         }
     }
 }

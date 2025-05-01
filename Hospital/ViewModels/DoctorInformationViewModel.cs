@@ -13,6 +13,7 @@ namespace Hospital.ViewModels
     using Hospital.Models;
     using Hospital.DatabaseServices;
     using Hospital.DatabaseServices.Interfaces;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel for managing doctor information.
@@ -37,11 +38,10 @@ namespace Hospital.ViewModels
         private float rating;
         private int departmentID;
         private string departmentName = string.Empty;
-        private decimal salary;
 
-        public DoctorInformationViewModel(IDoctorInformationDatabaseService doctorModel)
+        public DoctorInformationViewModel()
         {
-            this.doctorModel = doctorModel;
+            this.doctorModel = App.Services.GetRequiredService<IDoctorInformationDatabaseService>();
         }
 
         /// <summary>
@@ -240,19 +240,6 @@ namespace Hospital.ViewModels
         }
 
         /// <summary>
-        /// Gets or sets the salary of the doctor.
-        /// </summary>
-        public decimal Salary
-        {
-            get => this.salary;
-            set
-            {
-                this.salary = value;
-                this.OnPropertyChanged(nameof(this.Salary));
-            }
-        }
-
-        /// <summary>
         /// Loads the doctor information based on the provided doctor ID.
         /// </summary>
         /// <param name="doctorID">The unique identifier of the doctor.</param>
@@ -276,7 +263,6 @@ namespace Hospital.ViewModels
                 this.Rating = doctorInfo.Rating;
                 this.DepartmentID = doctorInfo.DepartmentID;
                 this.DepartmentName = doctorInfo.DepartmentName;
-                this.Salary = await this.doctorModel.ComputeSalary(doctorID);
             }
             else
             {

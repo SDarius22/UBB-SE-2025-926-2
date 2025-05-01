@@ -14,6 +14,8 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Hospital.ViewModel;
 using Hospital.Models;
+using Hospital.DatabaseServices.Interfaces;
+using Hospital.DatabaseServices;
 
 
 // To learn more about WinUI, the WinUI Hospital structure,

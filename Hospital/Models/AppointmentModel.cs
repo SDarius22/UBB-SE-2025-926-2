@@ -15,6 +15,10 @@ namespace Hospital.Models
         public bool Finished { get; set; }
         public int ProcedureId { get; set; }
 
+        public virtual DoctorJointModel Doctor { get; set; }
+
+        public virtual PatientJointModel Patient { get; set; }
+
         public AppointmentModel(int appointmentId, int doctorId, int patientId, DateTime dateAndTime, bool finished, int procedureId)
         {
             AppointmentId = appointmentId;

@@ -14,6 +14,7 @@ namespace Hospital.ViewModels.UpdateViewModels
     using Hospital.Models;
     using Hospital.Utils;
     using Hospital.ViewModel;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel for updating room information. Handles validation, updating rooms, and error message management.
@@ -26,9 +27,9 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="RoomUpdateViewModel"/> class.
         /// </summary>
-        public RoomUpdateViewModel(IRoomDatabaseService roomModel)
+        public RoomUpdateViewModel()
         {
-            this.roomModel = roomModel;
+            this.roomModel = App.Services.GetRequiredService<IRoomDatabaseService>();
             this.errorMessage = string.Empty;
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadRooms();

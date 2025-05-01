@@ -7,6 +7,7 @@
     using Hospital.DatabaseServices;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.VisualBasic;
 
     /// <summary>
@@ -20,9 +21,9 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="DepartmentUpdateViewModel"/> class.
         /// </summary>
-        public DepartmentUpdateViewModel(IDepartmentsDatabaseService departmentModel)
+        public DepartmentUpdateViewModel()
         {
-            this.departmentModel = departmentModel;
+            this.departmentModel = App.Services.GetRequiredService<IDepartmentsDatabaseService>();
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadDepartments();
         }
@@ -81,14 +82,14 @@
                 if (!this.ValidateDepartment(department))
                 {
                     hasErrors = true;
-                    errorMessages.AppendLine("Department " + department.DepartmentId + ": " + this.ErrorMessage);
+                    errorMessages.AppendLine("Department " + department.DepartmentID + ": " + this.ErrorMessage);
                 }
                 else
                 {
                     bool success = await this.departmentModel.UpdateDepartment(department);
                     if (!success)
                     {
-                        errorMessages.AppendLine("Failed to save changes for department: " + department.DepartmentId);
+                        errorMessages.AppendLine("Failed to save changes for department: " + department.DepartmentID);
                         hasErrors = true;
                     }
                 }
@@ -104,7 +105,7 @@
         /// <returns>True if the department is valid, otherwise false.</returns>
         private bool ValidateDepartment(DepartmentModel department)
         {
-            if (!System.Text.RegularExpressions.Regex.IsMatch(department.DepartmentName, @"^[a-zA-Z0-9 ]*$"))
+            if (!System.Text.RegularExpressions.Regex.IsMatch(department.Name, @"^[a-zA-Z0-9 ]*$"))
             {
                 this.ErrorMessage = "Department Name should contain only alphanumeric characters";
                 return false;

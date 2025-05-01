@@ -210,13 +210,13 @@ namespace Hospital.ViewModels
             ProceduresList?.Clear();
             DoctorsList?.Clear();
 
-            await _procedureManager.LoadProceduresByDepartmentId(SelectedDepartment.DepartmentId);
+            await _procedureManager.LoadProceduresByDepartmentId(SelectedDepartment.DepartmentID);
             foreach (ProcedureModel procedure in _procedureManager.GetProcedures())
             {
                 ProceduresList?.Add(procedure);
             }
 
-            await _doctorManager.LoadDoctors(SelectedDepartment.DepartmentId);
+            await _doctorManager.LoadDoctors(SelectedDepartment.DepartmentID);
             foreach (DoctorJointModel doctor in _doctorManager.GetDoctorsWithRatings())
             {
                 DoctorsList?.Add(doctor);
@@ -225,7 +225,7 @@ namespace Hospital.ViewModels
             Debug.WriteLine($"Loaded {ProceduresList.Count} procedures");
             Debug.WriteLine($"Loaded {DoctorsList.Count} doctors");
 
-            await _doctorManager.LoadDoctors(SelectedDepartment.DepartmentId);
+            await _doctorManager.LoadDoctors(SelectedDepartment.DepartmentID);
             Debug.WriteLine("Doctors in manager after LoadDoctors: " + _doctorManager.GetDoctorsWithRatings().Count);
 
             AreProceduresAndDoctorsEnabled = ProceduresList.Count > 0 && DoctorsList.Count > 0;
