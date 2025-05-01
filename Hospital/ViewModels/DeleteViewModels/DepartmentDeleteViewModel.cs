@@ -13,7 +13,7 @@
     /// </summary>
     public class DepartmentDeleteViewModel : INotifyPropertyChanged
     {
-        private readonly DepartmentsDatabaseService departmentModel = new DepartmentsDatabaseService();
+        private readonly IDepartmentsDatabaseService departmentModel;
         private ObservableCollection<DepartmentModel> departments;
         private int departmentID;
         private string errorMessage = string.Empty;
@@ -22,11 +22,17 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="DepartmentDeleteViewModel"/> class.
         /// </summary>
-        public DepartmentDeleteViewModel()
+        public DepartmentDeleteViewModel(IDepartmentsDatabaseService departmentModel)
         {
             // Load departments for the DataGrid
-            this.departments = new ObservableCollection<DepartmentModel>(this.departmentModel.GetDepartments());
+            this.departmentModel = departmentModel;
+            LoadDepartments();
             this.DeleteDepartmentCommand = new RelayCommand(this.RemoveDepartment);
+        }
+
+        private async void LoadDepartments()
+        {
+            this.departments = new ObservableCollection<DepartmentModel>(await this.departmentModel.GetDepartments());
         }
 
         /// <summary>
@@ -107,7 +113,7 @@
         /// <summary>
         /// Removes the department from the database.
         /// </summary>
-        private void RemoveDepartment()
+        private async void RemoveDepartment()
         {
             if (this.DepartmentID == 0)
             {
@@ -115,18 +121,18 @@
                 return;
             }
 
-            if (!this.departmentModel.DoesDepartmentExist(this.DepartmentID))
+            if (!await this.departmentModel.DoesDepartmentExist(this.DepartmentID))
             {
                 this.ErrorMessage = "DepartmentID doesn't exist in the records";
                 return;
             }
 
-            bool success = this.departmentModel.DeleteDepartment(this.DepartmentID);
+            bool success = await this.departmentModel.DeleteDepartment(this.DepartmentID);
             this.ErrorMessage = success ? "Department deleted successfully" : "Failed to delete department";
 
             if (success)
             {
-                this.Departments = new ObservableCollection<DepartmentModel>(this.departmentModel.GetDepartments());
+                this.Departments = new ObservableCollection<DepartmentModel>(await this.departmentModel.GetDepartments());
             }
         }
 

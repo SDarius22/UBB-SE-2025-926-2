@@ -2,6 +2,7 @@
 {
     using System.Collections.ObjectModel;
     using System.ComponentModel;
+    using System.Threading.Tasks;
     using System.Windows.Input;
     using Hospital.DatabaseServices;
     using Hospital.Models;
@@ -12,15 +13,16 @@
     /// </summary>
     public class DepartmentAddViewModel : INotifyPropertyChanged
     {
-        private readonly DepartmentsDatabaseService departmentModel = new DepartmentsDatabaseService();
+        private readonly IDepartmentsDatabaseService departmentModel;
         private string name = string.Empty;
         private string errorMessage = string.Empty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DepartmentAddViewModel"/> class.
         /// </summary>
-        public DepartmentAddViewModel()
+        public DepartmentAddViewModel(IDepartmentsDatabaseService departmentModel)
         {
+            this.departmentModel = departmentModel;
             this.SaveDepartmentCommand = new RelayCommand(this.SaveDepartment);
             this.LoadDepartments();
         }
@@ -78,10 +80,11 @@
         /// <summary>
         /// Loads the departments from the database.
         /// </summary>
-        private void LoadDepartments()
+        private async Task LoadDepartments()
         {
             this.Departments.Clear();
-            foreach (DepartmentModel department in this.departmentModel.GetDepartments())
+            var list = await this.departmentModel.GetDepartments();
+            foreach (DepartmentModel department in list)
             {
                 this.Departments.Add(department);
             }
@@ -90,13 +93,13 @@
         /// <summary>
         /// Saves the department to the database.
         /// </summary>
-        private void SaveDepartment()
+        private async void SaveDepartment()
         {
             var department = new DepartmentModel(0, this.Name);
 
             if (this.ValidateDepartment(department))
             {
-                bool success = this.departmentModel.AddDepartment(department);
+                bool success = await this.departmentModel.AddDepartment(department);
                 this.ErrorMessage = success ? "Department added successfully" : "Failed to add department";
                 if (success)
                 {

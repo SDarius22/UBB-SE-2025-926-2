@@ -6,11 +6,15 @@
     using System.Linq;
     using System.Numerics;
     using System.Reflection;
+    using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading.Tasks;
     using Hospital.Configs;
+    using Hospital.DbContext;
+    using Hospital.Exceptions;
     using Hospital.Models;
     using Microsoft.Data.SqlClient;
+    using Microsoft.EntityFrameworkCore;
     using Windows.System;
     using DoctorJointModel = Hospital.Models.DoctorJointModel;
 
@@ -22,16 +26,20 @@
         private const double Type2Rate = Type1Rate * 1.5d;
 
         private readonly ApplicationConfiguration _configuration;
+        private readonly AppDbContext _context;
 
-        public DoctorsDatabaseService()
+        public DoctorsDatabaseService(AppDbContext context)
         {
             this._configuration = ApplicationConfiguration.GetInstance();
+            _context = context;
         }
 
         // This method will be used to get the doctors from the database
         public async Task<List<DoctorJointModel>> GetDoctorsByDepartment(int departmentId)
         {
-            const string selectDoctorsByDepartmentQuery = @"
+            try
+            {
+                var query = FormattableStringFactory.Create(@"
                     SELECT
                         d.DoctorId,
                         d.UserId,
@@ -41,52 +49,20 @@
                         d.LicenseNumber
                     FROM Doctors d
                     INNER JOIN Users u ON d.UserId = u.UserId
-                    WHERE d.DepartmentId = @departmentId";
+                    WHERE d.DepartmentId = {0}",
+                            departmentId);
 
-            try
-            {
-                Debug.WriteLine("→ Entered GetDoctorsByDepartment with departmentId = " + departmentId);
+                var doctors = await Task.Run(() =>
+                    _context.Database.SqlQuery<DoctorJointModel>(query).ToList());
 
-                using SqlConnection sqlConnection = new SqlConnection(_configuration.DatabaseConnection);
-                await sqlConnection.OpenAsync().ConfigureAwait(false);
-
-                // Prepare the command
-                SqlCommand selectDoctorsCommand = new SqlCommand(selectDoctorsByDepartmentQuery, sqlConnection);
-
-                // Insert parameters
-                selectDoctorsCommand.Parameters.AddWithValue("@departmentId", departmentId);
-
-                SqlDataReader reader = await selectDoctorsCommand.ExecuteReaderAsync().ConfigureAwait(false);
-
-
-                // Prepare the list of doctors
-                List<DoctorJointModel> doctorsList = new List<DoctorJointModel>();
-
-                // Read the data from the database
-                while (await reader.ReadAsync().ConfigureAwait(false))
-                {
-                    int doctorId = reader.GetInt32(0);
-                    int userId = reader.GetInt32(1);
-                    string doctorName = reader.GetString(2);
-                    int depId = reader.GetInt32(3);
-                    double rating = reader.GetDouble(4);
-                    string licenseNumber = reader.GetString(5);
-                    DoctorJointModel doctor = new DoctorJointModel(doctorId, userId, doctorName, departmentId, rating, licenseNumber);
-                    doctorsList.Add(doctor);
-                    Debug.WriteLine($"→ Row: doctorId={reader.GetInt32(0)}, userId={reader.GetInt32(1)}, deptId={reader.GetInt32(3)}");
-
-                }
-                Debug.WriteLine("doctors count from database: " + doctorsList.Count);
-                return doctorsList;
+                return doctors;
             }
             catch (SqlException sqlException)
             {
-                Debug.WriteLine($"SQL Exception: {sqlException.Message}");
                 return new List<DoctorJointModel>();
             }
             catch (Exception exception)
             {
-                Debug.WriteLine($"General Exception: {exception.Message}");
                 return new List<DoctorJointModel>();
             }
         }
@@ -96,20 +72,28 @@
         /// </summary>
         /// <param name="doctor">The doctor to add.</param>
         /// <returns>True if the doctor was added successfully; otherwise, false.</returns>
-        public bool AddDoctor(DoctorJointModel doctor)
+        public async Task<bool> AddDoctor(DoctorJointModel doctor)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "INSERT INTO Doctors (UserID, DepartmentID, Rating, LicenseNumber) VALUES (@UserID, @DepartmentID, @Rating, @LicenseNumber)";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@UserID", doctor.UserId);
-                command.Parameters.AddWithValue("@DepartmentID", doctor.DepartmentId);
-                command.Parameters.AddWithValue("@Rating", doctor.DoctorRating);
-                command.Parameters.AddWithValue("@LicenseNumber", doctor.LicenseNumber);
+                var query = FormattableStringFactory.Create(
+                    "INSERT INTO Doctors (UserID, DepartmentID, Rating, LicenseNumber) " +
+                    "VALUES ({0}, {1}, {2}, {3})",
+                    doctor.UserId,
+                    doctor.DepartmentId,
+                    doctor.DoctorRating,
+                    doctor.LicenseNumber);
 
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
+                var rowsAffected = await _context.Database.ExecuteSqlInterpolatedAsync(query);
                 return rowsAffected > 0;
+            }
+            catch (SqlException sqlException)
+            {
+                throw new DatabaseOperationException($"SQL Error: {sqlException.Message}");
+            }
+            catch (Exception exception)
+            {
+                throw new DatabaseOperationException($"General Error: {exception.Message}");
             }
         }
 
@@ -118,23 +102,23 @@
         /// </summary>
         /// <param name="doctor">The doctor with updated details.</param>
         /// <returns>True if the doctor was updated successfully; otherwise, false.</returns>
-        public bool UpdateDoctor(DoctorJointModel doctor)
+        public async Task<bool> UpdateDoctor(DoctorJointModel doctor)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
-                {
-                    string query = "UPDATE Doctors SET UserID = @UserID, DepartmentID = @DepartmentID, LicenseNumber = @LicenseNumber WHERE DoctorID = @DoctorID";
-                    SqlCommand command = new SqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@UserID", doctor.UserId);
-                    command.Parameters.AddWithValue("@DepartmentID", doctor.DepartmentId);
-                    command.Parameters.AddWithValue("@LicenseNumber", doctor.LicenseNumber);
-                    command.Parameters.AddWithValue("@DoctorID", doctor.DoctorId);
+                var query = FormattableStringFactory.Create(
+                    "UPDATE Doctors SET " +
+                    "UserID = {0}, " +
+                    "DepartmentID = {1}, " +
+                    "LicenseNumber = {2} " +
+                    "WHERE DoctorID = {3}",
+                    doctor.UserId,
+                    doctor.DepartmentId,
+                    doctor.LicenseNumber,
+                    doctor.DoctorId);
 
-                    connection.Open();
-                    int rowsAffected = command.ExecuteNonQuery();
-                    return rowsAffected > 0;
-                }
+                var rowsAffected = await _context.Database.ExecuteSqlInterpolatedAsync(query);
+                return rowsAffected > 0;
             }
             catch (SqlException ex)
             {
@@ -158,17 +142,24 @@
         /// </summary>
         /// <param name="doctorID">The ID of the doctor to delete.</param>
         /// <returns>True if the doctor was deleted successfully; otherwise, false.</returns>
-        public bool DeleteDoctor(int doctorID)
+        public async Task<bool> DeleteDoctor(int doctorID)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection)) // Added 'this.'
+            try
             {
-                string query = "DELETE FROM Doctors WHERE DoctorID = @DoctorID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@DoctorID", doctorID);
+                var query = FormattableStringFactory.Create(
+                    "DELETE FROM Doctors WHERE DoctorID = {0}",
+                    doctorID);
 
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
+                var rowsAffected = await _context.Database.ExecuteSqlInterpolatedAsync(query);
                 return rowsAffected > 0;
+            }
+            catch (SqlException ex)
+            {
+                throw new DatabaseOperationException($"SQL Error deleting doctor: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException($"Error deleting doctor: {ex.Message}");
             }
         }
 
@@ -177,17 +168,26 @@
         /// </summary>
         /// <param name="doctorID">The ID of the doctor to check.</param>
         /// <returns>True if the doctor exists; otherwise, false.</returns>
-        public bool DoesDoctorExist(int doctorID)
+        public async Task<bool> DoesDoctorExist(int doctorID)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "SELECT COUNT(*) FROM Doctors WHERE DoctorID = @DoctorID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@DoctorID", doctorID);
+                var query = FormattableStringFactory.Create(
+                    "SELECT COUNT(*) FROM Doctors WHERE DoctorID = {0}",
+                    doctorID);
 
-                connection.Open();
-                int count = (int)command.ExecuteScalar();
+                var count = await Task.Run(() =>
+                    _context.Database.SqlQuery<int>(query).FirstOrDefault());
+
                 return count > 0;
+            }
+            catch (SqlException ex)
+            {
+                throw new DatabaseOperationException($"SQL Error checking doctor existence: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException($"Error checking doctor existence: {ex.Message}");
             }
         }
 
@@ -196,17 +196,27 @@
         /// </summary>
         /// <param name="userID">The ID of the user to check.</param>
         /// <returns>True if the user is already a doctor; otherwise, false.</returns>
-        public bool IsUserAlreadyDoctor(int userID)
+        public async Task<bool> IsUserAlreadyDoctor(int userID)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "SELECT COUNT(*) FROM Doctors WHERE UserID = @UserID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@UserID", userID);
+                var query = FormattableStringFactory.Create(
+                    "SELECT COUNT(*) FROM Doctors WHERE UserID = {0}",
+                    userID);
 
-                connection.Open();
-                int count = (int)command.ExecuteScalar();
+                // Using Task.Run to wrap the synchronous operation
+                var count = await Task.Run(() =>
+                    _context.Database.SqlQuery<int>(query).FirstOrDefault());
+
                 return count > 0;
+            }
+            catch (SqlException ex)
+            {
+                throw new DatabaseOperationException($"SQL Error checking doctor status: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException($"Error checking doctor status: {ex.Message}");
             }
         }
 
@@ -215,17 +225,16 @@
         /// </summary>
         /// <param name="userID">The ID of the user to check.</param>
         /// <returns>True if the user exists; otherwise, false.</returns>
-        public bool DoesUserExist(int userID)
+        public async Task<bool> DoesUserExist(int userID)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "SELECT COUNT(*) FROM Users WHERE UserID = @UserID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@UserID", userID);
-
-                connection.Open();
-                int count = (int)command.ExecuteScalar();
-                return count > 0;
+                return await _context.Users
+                    .AnyAsync(u => u.UserId == userID);
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException($"Error checking user existence: {ex.Message}");
             }
         }
 
@@ -234,17 +243,27 @@
         /// </summary>
         /// <param name="userID">The ID of the user to check.</param>
         /// <returns>True if the user is a doctor; otherwise, false.</returns>
-        public bool IsUserDoctor(int userID)
+        public async Task<bool> IsUserDoctor(int userID)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "SELECT Role FROM Users WHERE UserID = @UserID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@UserID", userID);
+                var query = FormattableStringFactory.Create(
+                    "SELECT Role FROM Users WHERE UserID = {0}",
+                    userID);
 
-                connection.Open();
-                string role = (string)command.ExecuteScalar();
+                // Using Task.Run to wrap the synchronous operation
+                var role = await Task.Run(() =>
+                    _context.Database.SqlQuery<string>(query).FirstOrDefault());
+
                 return role == "Doctor";
+            }
+            catch (SqlException ex)
+            {
+                throw new DatabaseOperationException($"SQL Error checking user role: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException($"Error checking user role: {ex.Message}");
             }
         }
 
@@ -253,17 +272,27 @@
         /// </summary>
         /// <param name="departmentID">The ID of the department to check.</param>
         /// <returns>True if the department exists; otherwise, false.</returns>
-        public bool DoesDepartmentExist(int departmentID)
+        public async Task<bool> DoesDepartmentExist(int departmentID)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "SELECT COUNT(*) FROM Departments WHERE DepartmentID = @DepartmentID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@DepartmentID", departmentID);
+                var query = FormattableStringFactory.Create(
+                    "SELECT COUNT(*) FROM Departments WHERE DepartmentID = {0}",
+                    departmentID);
 
-                connection.Open();
-                int count = (int)command.ExecuteScalar();
+                // Using Task.Run to wrap the synchronous operation
+                var count = await Task.Run(() =>
+                    _context.Database.SqlQuery<int>(query).FirstOrDefault());
+
                 return count > 0;
+            }
+            catch (SqlException ex)
+            {
+                throw new DatabaseOperationException($"SQL Error checking department existence: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException($"Error checking department existence: {ex.Message}");
             }
         }
 
@@ -273,17 +302,30 @@
         /// <param name="userID">The ID of the user to check.</param>
         /// <param name="doctorID">The ID of the doctor to exclude from the check.</param>
         /// <returns>True if the user exists in the doctors table with a different doctor ID; otherwise, false.</returns>
-        public bool UserExistsInDoctors(int userID, int doctorID)
+        public async Task<bool> UserExistsInDoctors(int userID, int doctorID)
         {
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                string query = "SELECT COUNT(*) FROM Doctors WHERE UserID = @UserID AND DoctorID != @DoctorID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@UserID", userID);
-                command.Parameters.AddWithValue("@DoctorID", doctorID);
-                connection.Open();
-                int count = (int)command.ExecuteScalar();
+                // Create parameterized query using FormattableStringFactory
+                FormattableString query = FormattableStringFactory.Create(
+                    "SELECT COUNT(*) FROM Doctors WHERE UserID = {0} AND DoctorID <> {1}",
+                    userID,
+                    doctorID);
+
+                // Execute query asynchronously
+                int count = await _context.Database
+                    .SqlQuery<int>(query)
+                    .FirstOrDefaultAsync();
+
                 return count > 0;
+            }
+            catch (SqlException ex)
+            {
+                throw new DatabaseOperationException($"SQL Error checking doctor assignment: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException($"Error checking doctor assignment: {ex.Message}");
             }
         }
 
@@ -326,7 +368,7 @@
         /// </summary>
         /// <param name="doctorID">The ID of the doctor whose salary is to be computed.</param>
         /// <returns>The total salary of the doctor for the current month.</returns>
-        public double ComputeDoctorSalary(int doctorID)
+        public async Task<double> ComputeDoctorSalary(int doctorID)
         {
             List<ShiftModel> shifts = this.GetShiftsForCurrentMonth(doctorID);
             double totalSalary = 0;

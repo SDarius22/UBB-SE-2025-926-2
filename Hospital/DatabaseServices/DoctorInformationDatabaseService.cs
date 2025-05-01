@@ -1,9 +1,13 @@
 ﻿using Hospital.Configs;
 using Hospital.DatabaseServices.Interfaces;
+using Hospital.DbContext;
+using Hospital.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using DoctorInformationModel = Hospital.Models.DoctorInformationModel;
@@ -13,60 +17,40 @@ namespace Hospital.DatabaseServices
     public class DoctorInformationDatabaseService : IDoctorInformationDatabaseService
     {
         private readonly ApplicationConfiguration _configuration;
+        private readonly AppDbContext _context;
 
-        public DoctorInformationDatabaseService()
+        public DoctorInformationDatabaseService(AppDbContext context)
         {
             this._configuration = ApplicationConfiguration.GetInstance();
+            _context = context;
         }
 
-        public DoctorInformationModel GetDoctorInformation(int doctorId)
+        public async Task<DoctorInformationModel> GetDoctorInformation(int doctorId)
         {
-            DoctorInformationModel? doctorInformationModel = null; // Use nullable type
-
-            using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))
+            try
             {
-                connection.Open();
-                string query = @"
-                            SELECT 
-                                UserID, Username, Mail, Role, Name, Birthdate, Cnp, Address, PhoneNumber, RegistrationDate, 
-                                DoctorID, LicenseNumber, Experience, Rating, DepartmentID, Name
-                            FROM UserDoctorDepartmentView
-                            WHERE DoctorID = @DoctorID";
+                var query = FormattableStringFactory.Create(@"
+                    SELECT 
+                        UserID, Username, Mail, Role, Name, Birthdate, Cnp, Address, 
+                        PhoneNumber, RegistrationDate, DoctorID, LicenseNumber, 
+                        Experience, Rating, DepartmentID, Name as DepartmentName
+                    FROM UserDoctorDepartmentView
+                    WHERE DoctorID = {0}",
+                    doctorId);
 
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@DoctorID", doctorId);
+                var doctorInfo = await Task.Run(() =>
+                    _context.Database.SqlQuery<DoctorInformationModel>(query).FirstOrDefault());
 
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            doctorInformationModel = new DoctorInformationModel(
-                                reader.GetInt32(reader.GetOrdinal("UserID")),
-                                reader.GetString(reader.GetOrdinal("Username")),
-                                reader.GetString(reader.GetOrdinal("Mail")),
-                                reader.GetString(reader.GetOrdinal("Role")),
-                                reader.GetString(reader.GetOrdinal("Name")),
-                                reader.GetDateTime(reader.GetOrdinal("Birthdate")),
-                                reader.GetString(reader.GetOrdinal("Cnp")),
-                                reader.GetString(reader.GetOrdinal("Address")),
-                                reader.GetString(reader.GetOrdinal("PhoneNumber")),
-                                reader.GetDateTime(reader.GetOrdinal("RegistrationDate")),
-                                reader.GetInt32(reader.GetOrdinal("DoctorID")),
-                                reader.GetString(reader.GetOrdinal("LicenseNumber")),
-                                (float)reader.GetDouble(reader.GetOrdinal("Rating")),
-                                reader.GetInt32(reader.GetOrdinal("DepartmentID")),
-                                reader.GetString(reader.GetOrdinal("DepartmentName")));
-                        }
-                        else
-                        {
-                            throw new Exception("Doctor not found");
-                        }
-                    }
-                }
+                return doctorInfo ?? throw new DatabaseOperationException("Doctor not found");
             }
-
-            return doctorInformationModel ?? throw new Exception("Doctor information is null");
+            catch (SqlException sqlException)
+            {
+                throw new DatabaseOperationException($"SQL Error: {sqlException.Message}");
+            }
+            catch (Exception exception)
+            {
+                throw new DatabaseOperationException($"General Error: {exception.Message}");
+            }
         }
 
         /// <summary>
@@ -74,7 +58,7 @@ namespace Hospital.DatabaseServices
         /// </summary>
         /// <param name="doctorId">The unique identifier of the doctor.</param>
         /// <returns>The computed salary as a decimal value.</returns>
-        public decimal ComputeSalary(int doctorId)
+        public async Task<decimal> ComputeSalary(int doctorId)
         {
             decimal salary = 0;
 
