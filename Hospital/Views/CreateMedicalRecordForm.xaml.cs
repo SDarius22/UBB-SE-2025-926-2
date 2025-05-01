@@ -7,12 +7,10 @@ using Microsoft.UI.Xaml.Navigation;
 using Hospital.ViewModels;
 using Hospital.Models;
 using Hospital.Managers;
-using Hospital.DatabaseServices;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using Hospital.DbContext;
-using Hospital.DatabaseServices.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Hospital.ApiClients;
 
 namespace Hospital.Views
 {
@@ -30,10 +28,10 @@ namespace Hospital.Views
         {
             base.OnNavigatedTo(e);
 
-            var idoctorsDatabaseService = App.Services.GetRequiredService<IDoctorsDatabaseService>();
-            var imedicalProceduresDatabaseService = App.Services.GetRequiredService<IMedicalProceduresDatabaseService>();
-            var idepartmentsDatabaseService = App.Services.GetRequiredService<IDepartmentsDatabaseService>();
-            var imedicalRecordsDatabaseService = App.Services.GetRequiredService<IMedicalRecordsDatabaseService>();
+            var idoctorsDatabaseService = App.Services.GetRequiredService<DoctorApiService>();
+            var imedicalProceduresDatabaseService = App.Services.GetRequiredService<MedicalProceduresApiService>();
+            var idepartmentsDatabaseService = App.Services.GetRequiredService<DepartmentsApiService>();
+            var imedicalRecordsDatabaseService = App.Services.GetRequiredService<MedicalRecordsApiService>();
 
             var doctorManager = new DoctorManager(idoctorsDatabaseService);
             var procedureManager = new MedicalProcedureManager(imedicalProceduresDatabaseService);

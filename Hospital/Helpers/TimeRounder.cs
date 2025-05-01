@@ -1,22 +1,18 @@
-﻿using Hospital.Configs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Hospital.Helpers
 {
 
     public static class TimeRounder
     {
+        private static int SlotDuration = 30;
         public static TimeSpan RoundProcedureDuration(TimeSpan procedureDuration)
         {
             // Double slotDuration = ApplicationConfiguration.GetInstance().SlotDuration;
             //    int totalMinutes = (int)initialDuration.TotalMinutes;
             //    int roundedMinutes = (int)Math.Round(totalMinutes / slotDuration) * (int)slotDuration;
             //    return TimeSpan.FromMinutes(roundedMinutes);
-            double slotDuration = ApplicationConfiguration.GetInstance().SlotDuration;
+            double slotDuration = SlotDuration;
 
             int procedureDurationInMinutes = (int)procedureDuration.TotalMinutes;
 

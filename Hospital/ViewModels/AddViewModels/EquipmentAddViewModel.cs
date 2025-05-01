@@ -1,12 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
-using Hospital.DatabaseServices;
-using Hospital.DatabaseServices.Interfaces;
 using Hospital.Models;
 using Hospital.Utils;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Hospital.ApiClients;
 
 namespace Hospital.ViewModels.AddViewModels
 {
@@ -15,7 +14,7 @@ namespace Hospital.ViewModels.AddViewModels
     /// </summary>
     public class EquipmentAddViewModel : INotifyPropertyChanged
     {
-        private readonly IEquipmentDatabaseService equipmentModel;
+        private readonly EquipmentApiService equipmentModel;
         private string name = string.Empty;
         private string type = string.Empty;
         private string specification = string.Empty;
@@ -27,7 +26,7 @@ namespace Hospital.ViewModels.AddViewModels
         /// </summary>
         public EquipmentAddViewModel()
         {
-            this.equipmentModel = App.Services.GetRequiredService<IEquipmentDatabaseService>();
+            this.equipmentModel = App.Services.GetRequiredService<EquipmentApiService>();
             this.SaveEquipmentCommand = new RelayCommand(this.SaveEquipment);
             this.LoadEquipments();
         }
@@ -127,7 +126,7 @@ namespace Hospital.ViewModels.AddViewModels
         private async void LoadEquipments()
         {
             this.Equipments.Clear();
-            var equipments = await this.equipmentModel.GetEquipments();
+            var equipments = await this.equipmentModel.GetEquipmentsAsync();
             foreach (EquipmentModel equipment in equipments)
             {
                 this.Equipments.Add(equipment);
@@ -150,7 +149,7 @@ namespace Hospital.ViewModels.AddViewModels
 
             if (this.ValidateEquipment(equipment))
             {
-                bool success = await this.equipmentModel.AddEquipment(equipment);
+                bool success = await this.equipmentModel.AddEquipmentAsync(equipment);
                 this.ErrorMessage = success ? "Equipment added successfully" : "Failed to add equipment";
                 if (success)
                 {

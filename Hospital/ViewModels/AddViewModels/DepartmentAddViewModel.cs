@@ -4,7 +4,7 @@
     using System.ComponentModel;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Hospital.DatabaseServices;
+    using Hospital.ApiClients;
     using Hospital.Models;
     using Hospital.Utils;
     using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +14,7 @@
     /// </summary>
     public class DepartmentAddViewModel : INotifyPropertyChanged
     {
-        private readonly IDepartmentsDatabaseService departmentModel;
+        private readonly DepartmentsApiService departmentModel;
         private string name = string.Empty;
         private string errorMessage = string.Empty;
 
@@ -23,7 +23,7 @@
         /// </summary>
         public DepartmentAddViewModel()
         {
-            this.departmentModel = App.Services.GetRequiredService<IDepartmentsDatabaseService>();
+            this.departmentModel = App.Services.GetRequiredService<DepartmentsApiService>();
             this.SaveDepartmentCommand = new RelayCommand(this.SaveDepartment);
             this.LoadDepartments();
         }
@@ -84,7 +84,7 @@
         private async Task LoadDepartments()
         {
             this.Departments.Clear();
-            var list = await this.departmentModel.GetDepartments();
+            var list = await this.departmentModel.GetDepartmentsAsync();
             foreach (DepartmentModel department in list)
             {
                 this.Departments.Add(department);
@@ -100,7 +100,7 @@
 
             if (this.ValidateDepartment(department))
             {
-                bool success = await this.departmentModel.AddDepartment(department);
+                bool success = await this.departmentModel.AddDepartmentAsync(department);
                 this.ErrorMessage = success ? "Department added successfully" : "Failed to add department";
                 if (success)
                 {

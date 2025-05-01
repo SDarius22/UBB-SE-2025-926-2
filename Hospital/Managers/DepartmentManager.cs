@@ -1,4 +1,4 @@
-﻿using Hospital.DatabaseServices;
+﻿using Hospital.ApiClients;
 using Hospital.Models;
 using System;
 using System.Collections.Generic;
@@ -13,9 +13,9 @@ namespace Hospital.Managers
     {
         public static List<DepartmentModel> Departments { get; private set; }
 
-        private readonly IDepartmentsDatabaseService _departmentDatabaseService;
+        private readonly DepartmentsApiService _departmentDatabaseService;
 
-        public DepartmentManager(IDepartmentsDatabaseService departmentDatabaseService)
+        public DepartmentManager(DepartmentsApiService departmentDatabaseService)
         {
             _departmentDatabaseService = departmentDatabaseService;
             Departments = new List<DepartmentModel>();
@@ -32,7 +32,7 @@ namespace Hospital.Managers
         {
 
             Departments.Clear();
-            List<DepartmentModel> departmentList = await _departmentDatabaseService.GetDepartmentsFromDataBase().ConfigureAwait(false);
+            List<DepartmentModel> departmentList = await _departmentDatabaseService.GetDepartmentsAsync().ConfigureAwait(false);
             foreach (DepartmentModel department in departmentList)
             {
                 Departments.Add(department);

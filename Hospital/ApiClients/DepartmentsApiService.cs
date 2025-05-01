@@ -45,5 +45,17 @@ namespace Hospital.ApiClients
             var response = await _httpClient.DeleteAsync($"Departments/{departmentId}");
             return response.IsSuccessStatusCode;
         }
+
+        // Check if a department exists
+        public async Task<bool> DoesDepartmentExistAsync(int departmentId)
+        {
+            var response = await _httpClient.GetAsync($"Departments/exists/{departmentId}");
+            if (response.IsSuccessStatusCode)
+            {
+                var exists = await response.Content.ReadFromJsonAsync<bool>();
+                return exists;
+            }
+            return false;
+        }
     }
 }

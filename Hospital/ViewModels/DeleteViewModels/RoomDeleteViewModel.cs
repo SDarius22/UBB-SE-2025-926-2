@@ -6,8 +6,7 @@ namespace Hospital.ViewModels.DeleteViewModels
     using System.ComponentModel;
     using System.Linq;
     using System.Windows.Input;
-    using Hospital.DatabaseServices;
-    using Hospital.DatabaseServices.Interfaces;
+    using Hospital.ApiClients;
     using Hospital.Models;
     using Hospital.Utils;
     using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +16,7 @@ namespace Hospital.ViewModels.DeleteViewModels
     /// </summary>
     public class RoomDeleteViewModel : INotifyPropertyChanged
     {
-        private readonly IRoomDatabaseService roomModel;
+        private readonly RoomApiService roomModel;
         private ObservableCollection<RoomModel> rooms;
         private int roomID;
         private string errorMessage = string.Empty;
@@ -28,7 +27,7 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// </summary>
         public RoomDeleteViewModel()
         {
-            this.roomModel = App.Services.GetRequiredService<IRoomDatabaseService>();
+            this.roomModel = App.Services.GetRequiredService<RoomApiService>();
             LoadRooms();
             this.DeleteRoomCommand = new RelayCommand(this.RemoveRoom);
         }
@@ -36,7 +35,7 @@ namespace Hospital.ViewModels.DeleteViewModels
 
         private async void LoadRooms()
         {
-            var list = await this.roomModel.GetRooms();
+            var list = await this.roomModel.GetRoomsAsync();
             this.Rooms = new ObservableCollection<RoomModel>(list);
         }
 
@@ -134,18 +133,18 @@ namespace Hospital.ViewModels.DeleteViewModels
                 return;
             }
 
-            if (!await this.roomModel.DoesRoomExist(this.RoomID))
+            if (!await this.roomModel.DoesRoomExistAsync(this.RoomID))
             {
                 this.ErrorMessage = "RoomID doesn't exist in the records";
                 return;
             }
 
-            bool success = await this.roomModel.DeleteRoom(this.RoomID);
+            bool success = await this.roomModel.DeleteRoomAsync(this.RoomID);
             this.ErrorMessage = success ? "Room deleted successfully" : "Failed to delete room";
 
             if (success)
             {
-                this.Rooms = new ObservableCollection<RoomModel>(await this.roomModel.GetRooms() ?? Enumerable.Empty<RoomModel>());
+                this.Rooms = new ObservableCollection<RoomModel>(await this.roomModel.GetRoomsAsync() ?? Enumerable.Empty<RoomModel>());
             }
         }
 

@@ -6,9 +6,10 @@ namespace Hospital.Views.ConsultationReview
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Media;
     using Hospital.Models;
-    using Hospital.DatabaseServices;
+    
     using System.Threading.Tasks;
-    using Hospital.DbContext;
+    using Hospital.ApiClients;
+
 
     /// <summary>
     /// ConsultationReview Page.
@@ -18,7 +19,7 @@ namespace Hospital.Views.ConsultationReview
         private int reviewID;
         private int selectedRating = 0;
         private int medicalRecordID;
-        private RatingDatabaseService reviewModel;
+        private RatingApiService reviewModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConsultationReviewPage"/> class.
@@ -60,7 +61,7 @@ namespace Hospital.Views.ConsultationReview
             }
         }
 
-        private void SubmitButton_Click(object sender, RoutedEventArgs e)
+        private async void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
             if (this.FeedbackTextBox.Text.Length < 5 || this.FeedbackTextBox.Text.Length > 255)
             {
@@ -90,7 +91,7 @@ namespace Hospital.Views.ConsultationReview
                     motivation: this.FeedbackTextBox.Text,
                     numberStars: this.selectedRating);
 
-                bool isSuccess = this.reviewModel.AddRating(review).Result;
+                bool isSuccess = await this.reviewModel.AddRatingAsync(review);
 
                 if (isSuccess)
                 {

@@ -1,5 +1,4 @@
-﻿using Hospital.DatabaseServices;
-using Hospital.Exceptions;
+﻿using Hospital.ApiClients;
 using Hospital.Models;
 using System;
 using System.Collections.Generic;
@@ -15,9 +14,9 @@ namespace Hospital.Managers
     {
         public List<DoctorJointModel> Doctors { get; private set; }
 
-        private IDoctorsDatabaseService _doctorDatabaseService;
+        private DoctorApiService _doctorDatabaseService;
 
-        public DoctorManager(IDoctorsDatabaseService doctorDatabaseService)
+        public DoctorManager(DoctorApiService doctorDatabaseService)
         {
             _doctorDatabaseService = doctorDatabaseService;
             Doctors = new List<DoctorJointModel>();
@@ -29,7 +28,7 @@ namespace Hospital.Managers
             try
             {
                 Doctors.Clear();
-                List<DoctorJointModel> doctorsList = await _doctorDatabaseService.GetDoctorsByDepartment(departmentId);
+                List<DoctorJointModel> doctorsList = await _doctorDatabaseService.GetDoctorsByDepartmentAsync(departmentId);
                 foreach (DoctorJointModel doctor in doctorsList)
                 {
                     Doctors.Add(doctor);

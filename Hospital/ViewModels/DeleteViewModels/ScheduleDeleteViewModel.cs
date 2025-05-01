@@ -13,8 +13,7 @@ namespace Hospital.ViewModels.DeleteViewModels
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Windows.Input;
-    using Hospital.DatabaseServices;
-    using Hospital.DatabaseServices.Interfaces;
+    using Hospital.ApiClients;
     using Hospital.Models;
     using Hospital.Utils;
     using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +26,7 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// <summary>
         /// The model for managing schedules.
         /// </summary>
-        private readonly IScheduleDatabaseService scheduleModel;
+        private readonly ScheduleApiService scheduleModel;
 
         /// <summary>
         /// The collection of schedules displayed in the view.
@@ -54,7 +53,7 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// </summary>
         public ScheduleDeleteViewModel(  )
         {
-            this.scheduleModel = App.Services.GetRequiredService<IScheduleDatabaseService>();
+            this.scheduleModel = App.Services.GetRequiredService<ScheduleApiService>();
             this.DeleteScheduleCommand = new RelayCommand(this.RemoveSchedule);
             this.LoadSchedules();
         }
@@ -133,25 +132,25 @@ namespace Hospital.ViewModels.DeleteViewModels
                 return;
             }
 
-            if (!await this.scheduleModel.DoesScheduleExist(this.ScheduleID))
+            if (!await this.scheduleModel.DoesScheduleExistAsync(this.ScheduleID))
             {
                 this.ErrorMessage = "ScheduleID doesn't exist in the records";
                 return;
             }
 
-            bool success = await this.scheduleModel.DeleteSchedule(this.ScheduleID);
+            bool success = await this.scheduleModel.DeleteScheduleAsync(this.ScheduleID);
             this.ErrorMessage = success ? "Schedule deleted successfully" : "Failed to delete schedule";
 
             if (success)
             {
-                var schedules = await this.scheduleModel.GetSchedules();
+                var schedules = await this.scheduleModel.GetSchedulesAsync();
                 this.Schedules = new ObservableCollection<ScheduleModel>(schedules);
             }
         }
 
         private async void LoadSchedules()
         {
-            List<ScheduleModel> schedules = await this.scheduleModel.GetSchedules();
+            List<ScheduleModel> schedules = await this.scheduleModel.GetSchedulesAsync();
             this.Schedules = new ObservableCollection<ScheduleModel>(schedules);
         }
 

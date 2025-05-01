@@ -6,8 +6,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Hospital.DatabaseServices;
-    using Hospital.DatabaseServices.Interfaces;
+    using Hospital.ApiClients;
     using Hospital.Models;
     using Hospital.Utils;
     using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +16,7 @@
     /// </summary>
     public class RoomAddViewModel : INotifyPropertyChanged
     {
-        private readonly IRoomDatabaseService roomModel;
+        private readonly RoomApiService roomModel;
         private int capacity;
         private int departmentID;
         private string errorMessage = string.Empty;
@@ -28,7 +27,7 @@
         /// </summary>
         public RoomAddViewModel()
         {
-            this.roomModel = App.Services.GetRequiredService<IRoomDatabaseService>();
+            this.roomModel = App.Services.GetRequiredService<RoomApiService>();
             this.SaveRoomCommand = new RelayCommand(this.SaveRoom);
             this.LoadRooms();
         }
@@ -116,7 +115,7 @@
         {
             this.Rooms.Clear();
 
-            var list = await this.roomModel?.GetRooms();
+            var list = await this.roomModel?.GetRoomsAsync();
 
             foreach (RoomModel room in list ?? Enumerable.Empty<RoomModel>())
             {
@@ -140,7 +139,7 @@
 
             if (await this.ValidateRoom(room))
             {
-                bool success = await this.roomModel.AddRoom(room);
+                bool success = await this.roomModel.AddRoomAsync(room);
                 this.ErrorMessage = success ? "Room added successfully" : "Failed to add room";
                 if (success)
                 {
@@ -162,13 +161,13 @@
                 return false;
             }
 
-            if (!await this.roomModel.DoesDepartmentExist(room.DepartmentID))
+            if (!await this.roomModel.DoesDepartmentExistAsync(room.DepartmentID))
             {
                 this.ErrorMessage = "DepartmentID doesn’t exist in the Departments Records.";
                 return false;
             }
 
-            if (!await this.roomModel.DoesEquipmentExist(room.EquipmentID))
+            if (!await this.roomModel.DoesEquipmentExistAsync(room.EquipmentID))
             {
                 this.ErrorMessage = "EquipmentID doesn’t exist in the Equipments Records.";
                 return false;

@@ -1,25 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Hospital.Views.AddViews;
 using Hospital.Managers;
-using Hospital.DatabaseServices;
 using Hospital.ViewModels;
-using System.Threading.Tasks;
-using Hospital.DbContext;
 using Microsoft.Extensions.DependencyInjection;
-using Hospital.DatabaseServices.Interfaces;
+using Hospital.ApiClients;
 
 // To learn more about WinUI, the WinUI Hospital structure,
 // and more about our Hospital templates, see: http://aka.ms/winui-Hospital-info.
@@ -43,11 +27,11 @@ namespace Hospital.Views.AddViews
         {
             this.InitializeComponent();
 
-            var departmentsDatabaseService = App.Services.GetRequiredService<IDepartmentsDatabaseService>();
-            var proceduresDatabaseService = App.Services.GetRequiredService<IMedicalProceduresDatabaseService>();
-            var doctorsDatabaseService = App.Services.GetRequiredService<IDoctorsDatabaseService>();
-            var shiftsDatabaseService = App.Services.GetRequiredService<IShiftsDatabaseService>();
-            var appointmentsDatabaseService = App.Services.GetRequiredService<IAppointmentsDatabaseService>();
+            var departmentsDatabaseService = App.Services.GetRequiredService<DepartmentsApiService>();
+            var proceduresDatabaseService = App.Services.GetRequiredService<MedicalProceduresApiService>();
+            var doctorsDatabaseService = App.Services.GetRequiredService<DoctorApiService>();
+            var shiftsDatabaseService = App.Services.GetRequiredService<ShiftsApiService>();
+            var appointmentsDatabaseService = App.Services.GetRequiredService<AppointmentsApiService>();
 
             _departmentManager = new DepartmentManager(departmentsDatabaseService);
             _procedureManager = new MedicalProcedureManager(proceduresDatabaseService);

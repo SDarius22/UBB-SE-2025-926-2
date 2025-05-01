@@ -18,8 +18,7 @@ namespace Hospital.ViewModels.UpdateViewModels
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Hospital.DatabaseServices;
-    using Hospital.DatabaseServices.Interfaces;
+    using Hospital.ApiClients;
     using Hospital.Models;
     using Hospital.Utils;
     using Microsoft.Extensions.DependencyInjection;
@@ -29,7 +28,7 @@ namespace Hospital.ViewModels.UpdateViewModels
     /// </summary>
     public class DrugUpdateViewModel : INotifyPropertyChanged
     {
-        private readonly IDrugsDatabaseService drugModel;
+        private readonly DrugsApiService drugModel;
 
         private string errorMessage = string.Empty;
 
@@ -38,7 +37,7 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// </summary>
         public DrugUpdateViewModel()
         {
-            this.drugModel = App.Services.GetRequiredService<IDrugsDatabaseService>();
+            this.drugModel = App.Services.GetRequiredService<DrugsApiService>();
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadDrugs();
         }
@@ -73,7 +72,7 @@ namespace Hospital.ViewModels.UpdateViewModels
         {
             this.Drugs.Clear();
 
-            foreach (DrugModel drug in await this.drugModel.GetDrugs())
+            foreach (DrugModel drug in await this.drugModel.GetDrugsAsync())
             {
                 this.Drugs.Add(drug);
             }
@@ -96,7 +95,7 @@ namespace Hospital.ViewModels.UpdateViewModels
                 }
                 else
                 {
-                    bool success = await this.drugModel.UpdateDrug(drug);
+                    bool success = await this.drugModel.UpdateDrugAsync(drug.DrugID, drug);
 
                     if (!success)
                     {

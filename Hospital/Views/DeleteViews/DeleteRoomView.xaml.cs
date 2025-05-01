@@ -16,7 +16,7 @@ namespace Hospital.Views.DeleteViews
     using Hospital.ViewModels.DeleteViewModels;
     using Windows.Foundation;
     using Windows.Foundation.Collections;
-    using Hospital.DatabaseServices.Interfaces;
+    
 
     /// <summary>
     /// Represents a page for deleting a room. This page can be used either standalone or within a Frame navigation.

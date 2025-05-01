@@ -1,4 +1,4 @@
-using Hospital.DatabaseServices;
+using Hospital.ApiClients;
 using Hospital.Exceptions;
 using Hospital.Models;
 using System;
@@ -12,9 +12,9 @@ namespace Hospital.Managers
     {
         public List<AppointmentJointModel> Appointments { get; private set; }
 
-        private readonly IAppointmentsDatabaseService _appointmentsDatabaseService;
+        private readonly AppointmentsApiService _appointmentsDatabaseService;
 
-        public AppointmentManager(IAppointmentsDatabaseService appointmentsDatabaseService)
+        public AppointmentManager(AppointmentsApiService appointmentsDatabaseService)
         {
             _appointmentsDatabaseService = appointmentsDatabaseService;
             Appointments = new List<AppointmentJointModel>();
@@ -30,7 +30,7 @@ namespace Hospital.Managers
             try
             {
                 List<AppointmentJointModel> appointments = await _appointmentsDatabaseService
-                    .GetAppointmentsByDoctorAndDate(doctorId, date)
+                    .GetAppointmentsByDoctorAndDateAsync(doctorId, date)
                     .ConfigureAwait(false);
                 Appointments = new List<AppointmentJointModel>(appointments);
             }
@@ -45,7 +45,7 @@ namespace Hospital.Managers
             try
             {
                 List<AppointmentJointModel> appointments = await _appointmentsDatabaseService
-                    .GetAppointmentsForPatient(patientId)
+                    .GetAppointmentsForPatientAsync(patientId)
                     .ConfigureAwait(false);
 
                 Appointments = new List<AppointmentJointModel>(
@@ -66,7 +66,7 @@ namespace Hospital.Managers
         {
             try
             {
-                AppointmentJointModel appointment = await _appointmentsDatabaseService.GetAppointment(appointmentId);
+                AppointmentJointModel appointment = await _appointmentsDatabaseService.GetAppointmentAsync(appointmentId);
                 if (appointment == null)
                 {
                     throw new AppointmentNotFoundException($"Appointment with ID {appointmentId} not found.");
@@ -77,7 +77,7 @@ namespace Hospital.Managers
                     throw new CancellationNotAllowedException($"Appointment {appointmentId} is within 24 hours and cannot be canceled.");
                 }
 
-                if (!await _appointmentsDatabaseService.RemoveAppointmentFromDataBase(appointmentId))
+                if (!await _appointmentsDatabaseService.RemoveAppointmentAsync(appointmentId))
                 {
                     throw new DatabaseOperationException($"Failed to cancel appointment {appointmentId} due to a database error.");
                 }
@@ -108,7 +108,7 @@ namespace Hospital.Managers
             try
             {
                 List<AppointmentJointModel> appointments =
-                    await _appointmentsDatabaseService.GetAppointmentsForDoctor(doctorId).ConfigureAwait(false);
+                    await _appointmentsDatabaseService.GetAppointmentsForDoctorAsync(doctorId).ConfigureAwait(false);
                 Appointments.Clear();
 
                 foreach (AppointmentJointModel appointment in appointments)
@@ -127,7 +127,7 @@ namespace Hospital.Managers
             try
             {
                 List<AppointmentJointModel> appointments = await _appointmentsDatabaseService
-                    .GetAppointmentsByDoctorAndDate(doctorId, date)
+                    .GetAppointmentsByDoctorAndDateAsync(doctorId, date)
                     .ConfigureAwait(false);
                 Appointments.Clear();
 
@@ -149,7 +149,7 @@ namespace Hospital.Managers
             int doctorId = newAppointment.DoctorId;
             DateTime date = newAppointment.DateAndTime;
             List<AppointmentJointModel> existingAppointments = await _appointmentsDatabaseService
-                                                                .GetAppointmentsByDoctorAndDate(doctorId, date)
+                                                                .GetAppointmentsByDoctorAndDateAsync(doctorId, date)
                                                                 .ConfigureAwait(false);
 
             bool isSlotTaken = existingAppointments.Any(appointment => appointment.DateAndTime == newAppointment.DateAndTime);
@@ -161,7 +161,7 @@ namespace Hospital.Managers
 
             // Validate the patient doesn't have another appointment at the same time
             int patientId = newAppointment.PatientId;
-            List<AppointmentJointModel> patientAppointments = await _appointmentsDatabaseService.GetAppointmentsForPatient(patientId).ConfigureAwait(false);
+            List<AppointmentJointModel> patientAppointments = await _appointmentsDatabaseService.GetAppointmentsForPatientAsync(patientId).ConfigureAwait(false);
 
             bool isPatientBusy = patientAppointments.Any(appointment => appointment.DateAndTime == newAppointment.DateAndTime);
 
@@ -170,7 +170,7 @@ namespace Hospital.Managers
                 throw new AppointmentConflictException($"The patient with id {patientId} already has an appointment at the this time {newAppointment.DateAndTime}");
             }
 
-            bool isInserted = await _appointmentsDatabaseService.AddAppointmentToDataBase(newAppointment).ConfigureAwait(false);
+            bool isInserted = await _appointmentsDatabaseService.AddAppointmentAsync(newAppointment).ConfigureAwait(false);
 
             if (!isInserted)
             {

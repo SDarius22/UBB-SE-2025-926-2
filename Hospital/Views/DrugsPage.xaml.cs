@@ -25,9 +25,10 @@ namespace Hospital.Views
     using Hospital.Models;
     using Windows.Foundation;
     using Windows.Foundation.Collections;
-    using Hospital.DatabaseServices;
-    using Hospital.DatabaseServices.Interfaces;
+    
+    
     using Microsoft.Extensions.DependencyInjection;
+    using Hospital.ApiClients;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -38,14 +39,14 @@ namespace Hospital.Views
         /// Gets the collection of drugs to be displayed.
         /// </summary>
         public ObservableCollection<DrugModel> DrugsList { get; set; } = new ();
-        private readonly IDrugsDatabaseService _drugModel;
+        private readonly DrugsApiService _drugModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DrugsPage"/> class.
         /// </summary>
         public DrugsPage()
         {
-            _drugModel = App.Services.GetRequiredService<IDrugsDatabaseService>();
+            _drugModel = App.Services.GetRequiredService<DrugsApiService>();
             this.InitializeComponent();
             this.Load();
         }
@@ -56,7 +57,7 @@ namespace Hospital.Views
         private async void Load()
         {
             this.DrugsList.Clear();
-            var list = await this._drugModel.GetDrugs();
+            var list = await this._drugModel.GetDrugsAsync();
             foreach (DrugModel drug in list)
             {
                 this.DrugsList.Add(drug);

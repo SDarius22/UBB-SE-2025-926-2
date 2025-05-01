@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Threading.Tasks;
 using Hospital.Models;
 
@@ -34,28 +33,13 @@ namespace Hospital.ApiClients
             return await response.Content.ReadFromJsonAsync<List<DoctorJointModel>>();
         }
 
-        // Get shifts for a specific doctor
-        public async Task<List<ShiftModel>> GetShiftsForDoctorAsync(int doctorId)
-        {
-            var response = await _httpClient.GetAsync($"Doctors/{doctorId}/shifts");
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<List<ShiftModel>>();
-        }
-
-        // Get salary for a specific doctor
-        public async Task<double> GetDoctorSalaryAsync(int doctorId)
-        {
-            var response = await _httpClient.GetAsync($"Doctors/{doctorId}/salary");
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<double>();
-        }
-
         // Add a new doctor
         public async Task<bool> AddDoctorAsync(DoctorJointModel doctor)
         {
             var response = await _httpClient.PostAsJsonAsync("Doctors", doctor);
             return response.IsSuccessStatusCode;
         }
+
 
         // Update an existing doctor
         public async Task<bool> UpdateDoctorAsync(int doctorId, DoctorJointModel doctor)
@@ -72,9 +56,41 @@ namespace Hospital.ApiClients
         }
 
         // Check if a user is already a doctor
+        public async Task<bool> IsUserAlreadyDoctorAsync(int userId)
+        {
+            var response = await _httpClient.GetAsync($"Doctors/is-user-already-doctor/{userId}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<bool>();
+        }
+
+        // Check if a user exists in the system
+        public async Task<bool> DoesUserExistAsync(int userId)
+        {
+            var response = await _httpClient.GetAsync($"Doctors/does-user-exist/{userId}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<bool>();
+        }
+
+        // Check if a user is a doctor
         public async Task<bool> IsUserDoctorAsync(int userId)
         {
             var response = await _httpClient.GetAsync($"Doctors/check-doctor/{userId}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<bool>();
+        }
+
+        // Check if a department exists
+        public async Task<bool> DoesDepartmentExistAsync(int departmentId)
+        {
+            var response = await _httpClient.GetAsync($"Doctors/does-department-exist/{departmentId}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<bool>();
+        }
+
+        // Check if a user exists in the doctors table
+        public async Task<bool> UserExistsInDoctorsAsync(int userId, int doctorId)
+        {
+            var response = await _httpClient.GetAsync($"Doctors/user-exists-in-doctors/{userId}/{doctorId}");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
         }

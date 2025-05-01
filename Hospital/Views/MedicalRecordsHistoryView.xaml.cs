@@ -1,6 +1,7 @@
-using Hospital.DatabaseServices;
-using Hospital.DatabaseServices.Interfaces;
-using Hospital.DbContext;
+
+
+
+using Hospital.ApiClients;
 using Hospital.Managers;
 using Hospital.Models;
 using Hospital.Services;
@@ -22,12 +23,11 @@ namespace Hospital.Views
     public sealed partial class MedicalRecordsHistoryView : Page
     {
         private MedicalRecordsHistoryViewModel _viewModel;
-        private readonly AppDbContext _context;
         public MedicalRecordsHistoryView()
         {
             this.InitializeComponent();
-            var _medicalRecordDatabaseService = App.Services.GetRequiredService<IMedicalRecordsDatabaseService>();
-            var _documentDatabaseService = App.Services.GetRequiredService<IDocumentDatabaseService>();
+            var _medicalRecordDatabaseService = App.Services.GetRequiredService<MedicalRecordsApiService>();
+            var _documentDatabaseService = App.Services.GetRequiredService<DocumentsApiService>();
 
             _viewModel = new MedicalRecordsHistoryViewModel(
                 1, // This should be replaced with the actual logged-in patient ID

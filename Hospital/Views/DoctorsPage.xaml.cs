@@ -29,10 +29,11 @@ namespace Hospital.Views
     using Hospital.Models;
     using Windows.Foundation;
     using Windows.Foundation.Collections;
-    using Hospital.DatabaseServices;
-    using Hospital.DbContext;
-    using Hospital.DatabaseServices.Interfaces;
+    
+    
+    
     using Microsoft.Extensions.DependencyInjection;
+    using Hospital.ApiClients;
 
     /// <summary>
     /// A page that displays a list of doctors with sorting and search functionality.
@@ -44,11 +45,11 @@ namespace Hospital.Views
         /// </summary>
         public ObservableCollection<DoctorJointModel> Doctors { get; set; } = new ();
 
-        private readonly IDoctorsDatabaseService _doctorsService;
-        private readonly IAppointmentsDatabaseService _appointmentsService;
-        private readonly IShiftsDatabaseService _shiftsService;
-        private readonly IMedicalRecordsDatabaseService _medicalRecordsService;
-        private readonly IDocumentDatabaseService _documentService;
+        private readonly DoctorApiService _doctorsService;
+        private readonly AppointmentsApiService _appointmentsService;
+        private readonly ShiftsApiService _shiftsService;
+        private readonly MedicalRecordsApiService _medicalRecordsService;
+        private readonly DocumentsApiService _documentService;
 
         private Dictionary<string, ListSortDirection> sortingStates = new ()
         {
@@ -67,11 +68,11 @@ namespace Hospital.Views
         /// </summary>
         public DoctorsPage()
         {
-            _doctorsService = App.Services.GetRequiredService<IDoctorsDatabaseService>();
-            _appointmentsService = App.Services.GetRequiredService<IAppointmentsDatabaseService>();
-            _shiftsService = App.Services.GetRequiredService<IShiftsDatabaseService>();
-            _medicalRecordsService = App.Services.GetRequiredService<IMedicalRecordsDatabaseService>();
-            _documentService = App.Services.GetRequiredService<IDocumentDatabaseService>();
+            _doctorsService = App.Services.GetRequiredService<DoctorApiService>();
+            _appointmentsService = App.Services.GetRequiredService<AppointmentsApiService>();
+            _shiftsService = App.Services.GetRequiredService<ShiftsApiService>();
+            _medicalRecordsService = App.Services.GetRequiredService<MedicalRecordsApiService>();
+            _documentService = App.Services.GetRequiredService<DocumentsApiService>();
             this.InitializeComponent();
             this.LoadDoctors();
             this.DataContext = this;
@@ -83,7 +84,7 @@ namespace Hospital.Views
         private async void LoadDoctors()
         {
             this.Doctors.Clear();
-            List<DoctorJointModel> doctorsList = await this._doctorsService.GetDoctors();
+            List<DoctorJointModel> doctorsList = await this._doctorsService.GetDoctorsAsync();
 
             foreach (DoctorJointModel doctor in doctorsList)
             {

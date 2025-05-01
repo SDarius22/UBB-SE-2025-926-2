@@ -14,8 +14,7 @@ namespace Hospital.ViewModels.AddViewModels
     using System.ComponentModel;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Hospital.DatabaseServices;
-    using Hospital.DatabaseServices.Interfaces;
+    using Hospital.ApiClients;
     using Hospital.Models;
     using Hospital.Utils;
     using Microsoft.Extensions.DependencyInjection;
@@ -28,7 +27,7 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// The model for managing schedules.
         /// </summary>
-        private readonly IScheduleDatabaseService scheduleModel;
+        private readonly ScheduleApiService scheduleModel;
 
         /// <summary>
         /// The collection of schedules displayed in the view.
@@ -104,7 +103,7 @@ namespace Hospital.ViewModels.AddViewModels
         /// </summary>
         public ScheduleAddViewModel()
         {
-            this.scheduleModel = App.Services.GetRequiredService<IScheduleDatabaseService>();
+            this.scheduleModel = App.Services.GetRequiredService<ScheduleApiService>();
             this.SaveScheduleCommand = new RelayCommand(this.SaveSchedule);
             this.LoadSchedules();
         }
@@ -124,7 +123,7 @@ namespace Hospital.ViewModels.AddViewModels
         private async void LoadSchedules()
         {
             this.Schedules.Clear();
-            var list = await this.scheduleModel.GetSchedules();
+            var list = await this.scheduleModel.GetSchedulesAsync();
             foreach (ScheduleModel schedule in list)
             {
                 this.Schedules.Add(schedule);
@@ -143,7 +142,7 @@ namespace Hospital.ViewModels.AddViewModels
 
             if (await this.ValidateSchedule(schedule))
             {
-                bool success = await this.scheduleModel.AddSchedule(schedule);
+                bool success = await this.scheduleModel.AddScheduleAsync(schedule);
                 this.ErrorMessage = success ? "Schedule added successfully" : "Failed to add schedule";
                 if (success)
                 {
@@ -159,13 +158,13 @@ namespace Hospital.ViewModels.AddViewModels
         /// <returns>True if the schedule is valid, false otherwise.</returns>
         private async Task<bool> ValidateSchedule(ScheduleModel schedule)
         {
-            if (schedule.DoctorId == 0 || !await this.scheduleModel.DoesDoctorExist(schedule.DoctorId))
+            if (schedule.DoctorId == 0 || !await this.scheduleModel.DoesDoctorExistAsync(schedule.DoctorId))
             {
                 this.ErrorMessage = "DoctorID doesn’t exist in the Doctors Records.";
                 return false;
             }
 
-            if (schedule.ShiftId == 0 || !await this.scheduleModel.DoesShiftExist(schedule.ShiftId))
+            if (schedule.ShiftId == 0 || !await this.scheduleModel.DoesShiftExistAsync(schedule.ShiftId))
             {
                 this.ErrorMessage = "ShiftID doesn’t exist in the Shifts Records.";
                 return false;

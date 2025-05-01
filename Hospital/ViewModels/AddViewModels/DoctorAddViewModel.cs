@@ -14,7 +14,7 @@ namespace Hospital.ViewModels.AddViewModels
     using System.ComponentModel;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Hospital.DatabaseServices;
+    using Hospital.ApiClients;
     using Hospital.Models;
     using Hospital.Utils;
     using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +25,7 @@ namespace Hospital.ViewModels.AddViewModels
     public class DoctorAddViewModel : INotifyPropertyChanged
     {
         // Private fields
-        private readonly IDoctorsDatabaseService doctorModel;
+        private readonly DoctorApiService doctorModel;
         private int userID;
         private int departmentID;
         private int rating;
@@ -37,7 +37,7 @@ namespace Hospital.ViewModels.AddViewModels
         /// </summary>
         public DoctorAddViewModel()
         {
-            this.doctorModel = App.Services.GetRequiredService<IDoctorsDatabaseService>();
+            this.doctorModel = App.Services.GetRequiredService<DoctorApiService>();
             this.SaveDoctorCommand = new RelayCommand(this.SaveDoctor);
             this.LoadDoctors();
         }
@@ -123,7 +123,7 @@ namespace Hospital.ViewModels.AddViewModels
         private async void LoadDoctors()
         {
             this.Doctors.Clear();
-            var list = await this.doctorModel.GetDoctors();
+            var list = await this.doctorModel.GetDoctorsAsync();
             foreach (DoctorJointModel doctor in list)
             {
                 this.Doctors.Add(doctor);
@@ -144,7 +144,7 @@ namespace Hospital.ViewModels.AddViewModels
 
             if (await this.ValidateDoctor(doctor))
             {
-                bool success = await this.doctorModel.AddDoctor(doctor);
+                bool success = await this.doctorModel.AddDoctorAsync(doctor);
                 this.ErrorMessage = success ? "Doctor added successfully" : "Failed to add doctor";
 
                 if (success)
@@ -161,25 +161,25 @@ namespace Hospital.ViewModels.AddViewModels
         /// <returns><c>true</c> if valid; otherwise, <c>false</c>.</returns>
         private async Task<bool> ValidateDoctor(DoctorJointModel doctor)
         {
-            if (!await this.doctorModel.DoesUserExist(doctor.UserId))
+            if (!await this.doctorModel.DoesUserExistAsync(doctor.UserId))
             {
                 this.ErrorMessage = "UserID doesn’t exist in the Users Records.";
                 return false;
             }
 
-            if (!await this.doctorModel.IsUserDoctor(doctor.UserId))
+            if (!await this.doctorModel.IsUserDoctorAsync(doctor.UserId))
             {
                 this.ErrorMessage = "The user with this UserID is not a Doctor.";
                 return false;
             }
 
-            if (await this.doctorModel.IsUserAlreadyDoctor(doctor.UserId))
+            if (await this.doctorModel.IsUserDoctorAsync(doctor.UserId))
             {
                 this.ErrorMessage = "The user already exists in the Doctors Records.";
                 return false;
             }
 
-            if (!await this.doctorModel.DoesDepartmentExist(doctor.DepartmentId))
+            if (!await this.doctorModel.DoesDepartmentExistAsync(doctor.DepartmentId))
             {
                 this.ErrorMessage = "DepartmentID doesn’t exist in the Departments Records.";
                 return false;

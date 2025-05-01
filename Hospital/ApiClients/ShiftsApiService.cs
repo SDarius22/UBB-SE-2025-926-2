@@ -24,6 +24,7 @@ namespace Hospital.ApiClients
             return await response.Content.ReadFromJsonAsync<List<ShiftModel>>();
         }
 
+
         public async Task<List<ShiftModel>> GetShiftsByDoctorIdAsync(int doctorId)
         {
             var response = await _httpClient.GetAsync($"Shifts/doctor/{doctorId}");
@@ -57,6 +58,19 @@ namespace Hospital.ApiClients
             var response = await _httpClient.DeleteAsync($"Shifts/{shiftId}");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
+        }
+
+        public async Task<bool> DoesShiftExistAsync(int shiftId)
+        {
+            var response = await _httpClient.GetAsync($"Shifts/exists/{shiftId}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<bool>();
+            }
+            else
+            {
+                throw new Exception("Error checking shift existence");
+            }
         }
     }
 }

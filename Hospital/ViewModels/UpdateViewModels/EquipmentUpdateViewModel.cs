@@ -4,8 +4,7 @@
     using System.ComponentModel;
     using System.Text;
     using System.Windows.Input;
-    using Hospital.DatabaseServices;
-    using Hospital.DatabaseServices.Interfaces;
+    using Hospital.ApiClients;
     using Hospital.Models;
     using Hospital.Utils;
     using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +14,7 @@
     /// </summary>
     public class EquipmentUpdateViewModel : INotifyPropertyChanged
     {
-        private readonly IEquipmentDatabaseService equipmentModel;
+        private readonly EquipmentApiService equipmentModel;
         private string errorMessage = string.Empty;
 
         /// <summary>
@@ -23,7 +22,7 @@
         /// </summary>
         public EquipmentUpdateViewModel()
         {
-            this.equipmentModel = App.Services.GetRequiredService<IEquipmentDatabaseService>();
+            this.equipmentModel = App.Services.GetRequiredService<EquipmentApiService>();
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadEquipments();
         }
@@ -62,7 +61,7 @@
         private async void LoadEquipments()
         {
             this.Equipments.Clear();
-            var list = await this.equipmentModel.GetEquipments();
+            var list = await this.equipmentModel.GetEquipmentsAsync();
             foreach (EquipmentModel equipment in list)
             {
                 this.Equipments.Add(equipment);
@@ -86,7 +85,7 @@
                 }
                 else
                 {
-                    bool success = await this.equipmentModel.UpdateEquipment(equipment);
+                    bool success = await this.equipmentModel.UpdateEquipmentAsync(equipment.EquipmentID, equipment);
                     if (!success)
                     {
                         errorMessages.AppendLine("Failed to save changes for equipment: " + equipment.EquipmentID);

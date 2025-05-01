@@ -66,5 +66,15 @@ namespace Backend.API.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("exists/{departmentId}")]
+        public async Task<ActionResult<bool>> DoesDepartmentExist(int departmentId)
+        {
+            var exists = await _departmentsService.DoesDepartmentExist(departmentId);
+            if (!exists)
+                return NotFound();
+
+            return Ok(exists); // returns true if department exists
+        }
     }
 }

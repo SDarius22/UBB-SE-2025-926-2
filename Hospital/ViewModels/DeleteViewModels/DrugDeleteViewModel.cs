@@ -11,12 +11,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
-using Hospital.DatabaseServices;
-using Hospital.DatabaseServices.Interfaces;
 using Hospital.Models;
 using Hospital.Utils;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Hospital.ApiClients;
 
 namespace Hospital.ViewModels.DeleteViewModels
 {
@@ -25,7 +24,7 @@ namespace Hospital.ViewModels.DeleteViewModels
     /// </summary>
     public class DrugDeleteViewModel : INotifyPropertyChanged
     {
-        private readonly IDrugsDatabaseService drugModel;
+        private readonly DrugsApiService drugModel;
         private ObservableCollection<DrugModel> drugs;
         private int drugID;
         private string errorMessage;
@@ -98,7 +97,7 @@ namespace Hospital.ViewModels.DeleteViewModels
         public DrugDeleteViewModel()
         {
             // Initialize non-nullable fields
-            this.drugModel = App.Services.GetRequiredService<IDrugsDatabaseService>();
+            this.drugModel = App.Services.GetRequiredService<DrugsApiService>();
             ;
             this.errorMessage = string.Empty;
 
@@ -110,7 +109,7 @@ namespace Hospital.ViewModels.DeleteViewModels
 
         private async void LoadDrugs()
         {
-            this.drugs = new ObservableCollection<DrugModel>(await this.drugModel.GetDrugs());
+            this.drugs = new ObservableCollection<DrugModel>(await this.drugModel.GetDrugsAsync());
         }
 
         /// <summary>
@@ -133,18 +132,18 @@ namespace Hospital.ViewModels.DeleteViewModels
                 return;
             }
 
-            if (!await this.drugModel.DoesDrugExist(this.DrugID))
+            if (!await this.drugModel.DoesDrugExistAsync(this.DrugID))
             {
                 this.ErrorMessage = "DrugID doesn't exist in the records";
                 return;
             }
 
-            bool success = await this.drugModel.DeleteDrug(this.DrugID);
+            bool success = await this.drugModel.DeleteDrugAsync(this.DrugID);
             this.ErrorMessage = success ? "Drug deleted successfully" : "Failed to delete drug";
 
             if (success)
             {
-                this.Drugs = new ObservableCollection<DrugModel>(await this.drugModel.GetDrugs());
+                this.Drugs = new ObservableCollection<DrugModel>(await this.drugModel.GetDrugsAsync());
             }
         }
 

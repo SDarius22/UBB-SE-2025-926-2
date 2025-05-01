@@ -1,4 +1,4 @@
-﻿using Hospital.DatabaseServices;
+﻿
 using Hospital.Exceptions;
 using Hospital.Services;
 using System;
@@ -11,16 +11,17 @@ using System.Threading.Tasks;
 using DocumentModel = Hospital.Models.DocumentModel;
 using System.Linq;
 using System.Text;
+using Hospital.ApiClients;
 
 namespace Hospital.Managers
 {
     public class DocumentManager : IDocumentManager
     {
-        private readonly IDocumentDatabaseService _documentDatabaseService;
+        private readonly DocumentsApiService _documentDatabaseService;
         private readonly IFileService _fileService;
         private List<DocumentModel> _documents;
 
-        public DocumentManager(IDocumentDatabaseService documentDatabaseService, IFileService fileService)
+        public DocumentManager(DocumentsApiService documentDatabaseService, IFileService fileService)
         {
             _documentDatabaseService = documentDatabaseService;
             _fileService = fileService;
@@ -29,7 +30,7 @@ namespace Hospital.Managers
 
         public async Task LoadDocuments(int medicalRecordId)
         {
-            _documents = await _documentDatabaseService.GetDocumentsByMedicalRecordId(medicalRecordId);
+            _documents = await _documentDatabaseService.GetDocumentsByMedicalRecordIdAsync(medicalRecordId);
         }
 
         public List<DocumentModel> GetDocuments()
@@ -46,7 +47,7 @@ namespace Hospital.Managers
         {
             try
             {
-                bool success = await _documentDatabaseService.UploadDocumentToDataBase(document).ConfigureAwait(false);
+                bool success = await _documentDatabaseService.UploadDocumentAsync(document).ConfigureAwait(false);
                 if (success)
                 {
                     _documents.Add(document);
