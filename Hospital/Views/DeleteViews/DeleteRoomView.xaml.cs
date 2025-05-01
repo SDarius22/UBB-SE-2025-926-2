@@ -25,7 +25,6 @@ namespace Hospital.Views.DeleteViews
     public sealed partial class DeleteRoomView : Page
     {
         private RoomDeleteViewModel viewmodel;
-        private IRoomDatabaseService _roomModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DeleteRoomView"/> class.

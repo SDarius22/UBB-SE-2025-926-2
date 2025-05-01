@@ -22,8 +22,8 @@
                 <controls:DataGrid ItemsSource="{Binding Departments}" AutoGenerateColumns="False" IsReadOnly="True"  HorizontalAlignment="Stretch"  Width="Auto" SelectionMode="Single" Height="400" SelectedItem="{Binding SelectedDepartment}">
 
                     <controls:DataGrid.Columns>
-                        <controls:DataGridTextColumn Header="Department ID" Binding="{Binding DepartmentId}" Width="*" />
-                        <controls:DataGridTextColumn Header="Department Name" Binding="{Binding DepartmentName}" Width="*" />
+                        <controls:DataGridTextColumn Header="Department ID" Binding="{Binding DepartmentID}" Width="*" />
+                        <controls:DataGridTextColumn Header="Department Name" Binding="{Binding Name}" Width="*" />
                     </controls:DataGrid.Columns>
                 </controls:DataGrid>
                 <TextBox 

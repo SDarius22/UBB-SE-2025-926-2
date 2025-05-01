@@ -22,14 +22,14 @@
                 <controls:DataGrid ItemsSource="{Binding Shifts}" AutoGenerateColumns="False" IsReadOnly="True"  HorizontalAlignment="Stretch"  Width="Auto" SelectionMode="Single" Height="400" SelectedItem="{Binding SelectedShift}">
 
                     <controls:DataGrid.Columns>
-                        <controls:DataGridTextColumn Header="Shift ID" Binding="{Binding ShiftId}" Width="*" />
+                        <controls:DataGridTextColumn Header="Shift ID" Binding="{Binding ShiftID}" Width="*" />
                         <controls:DataGridTextColumn Header="Date" Binding="{Binding Date}" Width="*" />
                         <controls:DataGridTextColumn Header="Start Time" Binding="{Binding StartTime}" Width="*" />
                         <controls:DataGridTextColumn Header="End Time" Binding="{Binding EndTime}" Width="*" />
                     </controls:DataGrid.Columns>
                 </controls:DataGrid>
                 <TextBox 
-                Text="{Binding ShiftId, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ZeroToEmptyStringConverter}}" 
+                Text="{Binding ShiftID, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ZeroToEmptyStringConverter}}" 
 
                 Margin="0,10" 
                 PlaceholderText="Enter Shift ID to delete" 

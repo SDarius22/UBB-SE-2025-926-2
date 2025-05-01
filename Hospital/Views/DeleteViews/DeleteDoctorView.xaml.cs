@@ -26,7 +26,6 @@ namespace Hospital.Views.DeleteViews
     public sealed partial class DeleteDoctorView : Page
     {
         private DoctorDeleteViewModel _viewmodel;
-        private IDoctorsDatabaseService _doctorModel;
         public DeleteDoctorView()
         {
             this.InitializeComponent();

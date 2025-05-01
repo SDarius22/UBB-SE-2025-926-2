@@ -27,7 +27,6 @@ namespace Hospital.Views.DeleteViews
     public sealed partial class DeleteDrugView : Page
     {
         private DrugDeleteViewModel _viewModel;
-        private IDrugsDatabaseService _drugModel;
 
         public DeleteDrugView()
         {

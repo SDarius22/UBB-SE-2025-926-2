@@ -10,7 +10,6 @@ namespace Hospital.Views.DeleteViews
     public sealed partial class DeleteDepartmentView : Page
     {
         private DepartmentDeleteViewModel viewModel;
-        private IDepartmentsDatabaseService _departmentModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DeleteDepartmentView"/> class.
