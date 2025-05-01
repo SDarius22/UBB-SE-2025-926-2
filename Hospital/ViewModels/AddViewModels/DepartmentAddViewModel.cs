@@ -7,6 +7,7 @@
     using Hospital.DatabaseServices;
     using Hospital.Models;
     using Hospital.Utils;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// ViewModel for adding departments.
@@ -20,9 +21,9 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="DepartmentAddViewModel"/> class.
         /// </summary>
-        public DepartmentAddViewModel(IDepartmentsDatabaseService departmentModel)
+        public DepartmentAddViewModel()
         {
-            this.departmentModel = departmentModel;
+            this.departmentModel = App.Services.GetRequiredService<IDepartmentsDatabaseService>();
             this.SaveDepartmentCommand = new RelayCommand(this.SaveDepartment);
             this.LoadDepartments();
         }

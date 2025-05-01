@@ -16,6 +16,7 @@ using Hospital.DatabaseServices.Interfaces;
 using Hospital.Models;
 using Hospital.Utils;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Hospital.ViewModels.AddViewModels
 {
@@ -34,9 +35,9 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="DrugAddViewModel"/> class.
         /// </summary>
-        public DrugAddViewModel(IDrugsDatabaseService drugModel)
+        public DrugAddViewModel()
         {
-            this.drugModel = drugModel;
+            this.drugModel = App.Services.GetRequiredService<IDrugsDatabaseService>();
             this.SaveDrugCommand = new RelayCommand(this.SaveDrug);
             this.LoadDrugs();
         }

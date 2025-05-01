@@ -14,6 +14,7 @@ using System.Windows.Input;
 using Hospital.DatabaseServices;
 using Hospital.Models;
 using Hospital.Utils;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Hospital.ViewModels.AddViewModels
 {
@@ -31,12 +32,12 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ShiftAddViewModel"/> class.
         /// </summary>
-        public ShiftAddViewModel(IShiftsDatabaseService shiftModel)
+        public ShiftAddViewModel()
         {
 
             this.SaveShiftCommand = new RelayCommand(this.SaveShift);
             this.LoadShifts();
-            this.shiftModel = shiftModel;
+            this.shiftModel = App.Services.GetRequiredService<IShiftsDatabaseService>();
         }
 
         /// <summary>
