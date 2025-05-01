@@ -7,22 +7,24 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Input;
+using Hospital.DatabaseServices;
+using Hospital.DatabaseServices.Interfaces;
+using Hospital.Models;
+using Hospital.Utils;
+using System.Threading.Tasks;
+
 namespace Hospital.ViewModels.DeleteViewModels
 {
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel;
-    using System.Windows.Input;
-    using Hospital.DatabaseServices;
-    using Hospital.Models;
-    using Hospital.Utils;
-
     /// <summary>
     /// ViewModel for managing the deletion of drugs.
     /// </summary>
     public class DrugDeleteViewModel : INotifyPropertyChanged
     {
-        private readonly DrugsDatabaseService drugModel = new DrugsDatabaseService();
+        private readonly IDrugsDatabaseService drugModel;
         private ObservableCollection<DrugModel> drugs;
         private int drugID;
         private string errorMessage;
@@ -92,16 +94,21 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="DrugDeleteViewModel"/> class.
         /// </summary>
-        public DrugDeleteViewModel()
+        public DrugDeleteViewModel(IDrugsDatabaseService drugModel)
         {
             // Initialize non-nullable fields
-            this.drugs = new ObservableCollection<DrugModel>();
+            this.drugModel = drugModel;
             this.errorMessage = string.Empty;
 
             // Load drugs for the DataGrid
-            this.Drugs = new ObservableCollection<DrugModel>(this.drugModel.GetDrugs());
+            LoadDrugs();
 
             this.DeleteDrugCommand = new RelayCommand(this.RemoveDrug);
+        }
+
+        private async void LoadDrugs()
+        {
+            this.drugs = new ObservableCollection<DrugModel>(await this.drugModel.GetDrugs());
         }
 
         /// <summary>
@@ -116,7 +123,7 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// <summary>
         /// Removes the selected drug from the database.
         /// </summary>
-        private void RemoveDrug()
+        private async void RemoveDrug()
         {
             if (this.DrugID == 0)
             {
@@ -124,18 +131,18 @@ namespace Hospital.ViewModels.DeleteViewModels
                 return;
             }
 
-            if (!this.drugModel.DoesDrugExist(this.DrugID))
+            if (!await this.drugModel.DoesDrugExist(this.DrugID))
             {
                 this.ErrorMessage = "DrugID doesn't exist in the records";
                 return;
             }
 
-            bool success = this.drugModel.DeleteDrug(this.DrugID);
+            bool success = await this.drugModel.DeleteDrug(this.DrugID);
             this.ErrorMessage = success ? "Drug deleted successfully" : "Failed to delete drug";
 
             if (success)
             {
-                this.Drugs = new ObservableCollection<DrugModel>(this.drugModel.GetDrugs());
+                this.Drugs = new ObservableCollection<DrugModel>(await this.drugModel.GetDrugs());
             }
         }
 

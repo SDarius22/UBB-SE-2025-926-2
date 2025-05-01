@@ -5,6 +5,7 @@
     using System.Text;
     using System.Windows.Input;
     using Hospital.DatabaseServices;
+    using Hospital.DatabaseServices.Interfaces;
     using Hospital.Models;
     using Hospital.Utils;
 
@@ -13,14 +14,15 @@
     /// </summary>
     public class EquipmentUpdateViewModel : INotifyPropertyChanged
     {
-        private readonly EquipmentDatabaseService equipmentModel = new EquipmentDatabaseService();
+        private readonly IEquipmentDatabaseService equipmentModel;
         private string errorMessage = string.Empty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EquipmentUpdateViewModel"/> class.
         /// </summary>
-        public EquipmentUpdateViewModel()
+        public EquipmentUpdateViewModel(IEquipmentDatabaseService equipmentModel)
         {
+            this.equipmentModel = equipmentModel;
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadEquipments();
         }
@@ -69,7 +71,7 @@
         /// <summary>
         /// Saves the changes to the equipment in the database.
         /// </summary>
-        private void SaveChanges()
+        private async void SaveChanges()
         {
             bool hasErrors = false;
             StringBuilder errorMessages = new StringBuilder();
@@ -83,7 +85,7 @@
                 }
                 else
                 {
-                    bool success = this.equipmentModel.UpdateEquipment(equipment);
+                    bool success = await this.equipmentModel.UpdateEquipment(equipment);
                     if (!success)
                     {
                         errorMessages.AppendLine("Failed to save changes for equipment: " + equipment.EquipmentID);
