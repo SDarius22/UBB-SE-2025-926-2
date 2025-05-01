@@ -12,9 +12,10 @@ using Microsoft.UI;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using Hospital.ViewModels;
-using Hospital.DbContext;
+
 using Microsoft.Extensions.DependencyInjection;
-using Hospital.DatabaseServices;
+using Hospital.ApiClients;
+
 
 namespace Hospital.Views
 {
@@ -28,7 +29,7 @@ public sealed partial class PatientScheduleView : Page
             this.InitializeComponent();
 
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-            var _appointmentDatabaseService = App.Services.GetRequiredService<IAppointmentsDatabaseService>();
+            var _appointmentDatabaseService = App.Services.GetRequiredService<AppointmentsApiService>();
             _viewModel = new PatientScheduleViewModel(new AppointmentManager(_appointmentDatabaseService));
 
             DailyScheduleList.ItemsSource = _viewModel.DailyAppointments;

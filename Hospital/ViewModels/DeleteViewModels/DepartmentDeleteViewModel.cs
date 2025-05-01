@@ -4,7 +4,7 @@
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Windows.Input;
-    using Hospital.DatabaseServices;
+    using Hospital.ApiClients;
     using Hospital.Models;
     using Hospital.Utils;
     using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +14,7 @@
     /// </summary>
     public class DepartmentDeleteViewModel : INotifyPropertyChanged
     {
-        private readonly IDepartmentsDatabaseService departmentModel;
+        private readonly DepartmentsApiService departmentModel;
         private ObservableCollection<DepartmentModel> departments;
         private int departmentID;
         private string errorMessage = string.Empty;
@@ -26,14 +26,14 @@
         public DepartmentDeleteViewModel()
         {
             // Load departments for the DataGrid
-            this.departmentModel = App.Services.GetRequiredService<IDepartmentsDatabaseService>();
+            this.departmentModel = App.Services.GetRequiredService<DepartmentsApiService>();
             LoadDepartments();
             this.DeleteDepartmentCommand = new RelayCommand(this.RemoveDepartment);
         }
 
         private async void LoadDepartments()
         {
-            this.departments = new ObservableCollection<DepartmentModel>(await this.departmentModel.GetDepartments());
+            this.departments = new ObservableCollection<DepartmentModel>(await this.departmentModel.GetDepartmentsAsync());
         }
 
         /// <summary>
@@ -122,18 +122,18 @@
                 return;
             }
 
-            if (!await this.departmentModel.DoesDepartmentExist(this.DepartmentID))
+            if (!await this.departmentModel.DoesDepartmentExistAsync(this.DepartmentID))
             {
                 this.ErrorMessage = "DepartmentID doesn't exist in the records";
                 return;
             }
 
-            bool success = await this.departmentModel.DeleteDepartment(this.DepartmentID);
+            bool success = await this.departmentModel.DeleteDepartmentAsync(this.DepartmentID);
             this.ErrorMessage = success ? "Department deleted successfully" : "Failed to delete department";
 
             if (success)
             {
-                this.Departments = new ObservableCollection<DepartmentModel>(await this.departmentModel.GetDepartments());
+                this.Departments = new ObservableCollection<DepartmentModel>(await this.departmentModel.GetDepartmentsAsync());
             }
         }
 

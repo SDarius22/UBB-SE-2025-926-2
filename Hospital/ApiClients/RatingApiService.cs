@@ -22,7 +22,6 @@ namespace Hospital.ApiClients
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<RatingModel>();
         }
-
         public async Task<bool> AddRatingAsync(RatingModel rating)
         {
             var response = await _httpClient.PostAsJsonAsync("Rating", rating);

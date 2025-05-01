@@ -32,6 +32,7 @@ namespace Hospital.ApiClients
             return response.IsSuccessStatusCode;
         }
 
+
         // Update an existing drug
         public async Task<bool> UpdateDrugAsync(int drugId, DrugModel drug)
         {
@@ -44,6 +45,13 @@ namespace Hospital.ApiClients
         {
             var response = await _httpClient.DeleteAsync($"Drugs/{drugId}");
             return response.IsSuccessStatusCode;
+        }
+
+        // Check if a drug exists
+        public async Task<bool> DoesDrugExistAsync(int drugId)
+        {
+            var response = await _httpClient.GetAsync($"Drugs/{drugId}");
+            return response.IsSuccessStatusCode; // If it exists, it returns a 200 OK
         }
     }
 }

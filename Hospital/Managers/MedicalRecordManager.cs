@@ -1,5 +1,4 @@
-﻿using Hospital.DatabaseServices;
-using Hospital.DatabaseServices.Interfaces;
+﻿using Hospital.ApiClients;
 using Hospital.Exceptions;
 using Hospital.Models;
 using System;
@@ -17,9 +16,9 @@ namespace Hospital.Managers
     {
         public List<MedicalRecordJointModel> MedicalRecords { get; private set; }
 
-        private readonly IMedicalRecordsDatabaseService _medicalRecordsDatabaseService;
+        private readonly MedicalRecordsApiService _medicalRecordsDatabaseService;
 
-        public MedicalRecordManager(IMedicalRecordsDatabaseService medicalRecordsDatabaseService)
+        public MedicalRecordManager(MedicalRecordsApiService medicalRecordsDatabaseService)
         {
             _medicalRecordsDatabaseService = medicalRecordsDatabaseService;
             MedicalRecords = new List<MedicalRecordJointModel>();
@@ -30,7 +29,7 @@ namespace Hospital.Managers
             try
             {
                 List<MedicalRecordJointModel> medicalRecords = await _medicalRecordsDatabaseService
-                    .GetMedicalRecordsForPatient(patientId)
+                    .GetMedicalRecordsForPatientAsync(patientId)
                     .ConfigureAwait(false);
                 MedicalRecords.Clear();
                 if (medicalRecords == null)
@@ -53,7 +52,7 @@ namespace Hospital.Managers
         {
             try
             {
-                return await _medicalRecordsDatabaseService.GetMedicalRecordById(medicalRecordId);
+                return await _medicalRecordsDatabaseService.GetMedicalRecordByIdAsync(medicalRecordId);
             }
             catch (MedicalRecordNotFoundException)
             {
@@ -71,7 +70,7 @@ namespace Hospital.Managers
             try
             {
                 // Insert the new record into the database and get the generated ID.
-                int newMedicalRecordId = await _medicalRecordsDatabaseService.AddMedicalRecord(medicalRecord)
+                int newMedicalRecordId = await _medicalRecordsDatabaseService.AddMedicalRecordAsync(medicalRecord)
                                                              .ConfigureAwait(false);
 
                 // If the record was successfully added, update the in-memory list.
@@ -97,7 +96,7 @@ namespace Hospital.Managers
             try
             {
                 List<MedicalRecordJointModel> medicalRecords = await _medicalRecordsDatabaseService
-                    .GetMedicalRecordsForDoctor(doctorId)
+                    .GetMedicalRecordsForDoctorAsync(doctorId)
                     .ConfigureAwait(false);
                 MedicalRecords.Clear();
                 foreach (MedicalRecordJointModel medicalRecord in medicalRecords)

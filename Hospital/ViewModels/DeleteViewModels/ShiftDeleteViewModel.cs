@@ -17,7 +17,7 @@ namespace Hospital.ViewModels.DeleteViewModels
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Hospital.DatabaseServices;
+    using Hospital.ApiClients;
     using Hospital.Models;
     using Hospital.Utils;
     using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +31,7 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// <summary>
         /// The model for managing shifts.
         /// </summary>
-        private readonly IShiftsDatabaseService shiftModel;
+        private readonly ShiftsApiService shiftModel;
 
         /// <summary>
         /// The collection of shifts displayed in the view.
@@ -58,14 +58,14 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// </summary>
         public ShiftDeleteViewModel()
         {
-            this.shiftModel = App.Services.GetRequiredService<IShiftsDatabaseService>();
+            this.shiftModel = App.Services.GetRequiredService<ShiftsApiService>();
             this.DeleteShiftCommand = new RelayCommand(this.RemoveShift);
             this.LoadShifts();
         }
 
         private async void LoadShifts()
         {
-            var shifts = await this.shiftModel.GetShifts();
+            var shifts = await this.shiftModel.GetShiftsAsync();
             this.Shifts = new ObservableCollection<ShiftModel>(shifts);
         }
 
@@ -141,17 +141,17 @@ namespace Hospital.ViewModels.DeleteViewModels
                 return;
             }
 
-            if (!await this.shiftModel.DoesShiftExist(this.ShiftID))
+            if (!await this.shiftModel.DoesShiftExistAsync(this.ShiftID))
             {
                 this.ErrorMessage = "ShiftID doesn't exist in the records";
                 return;
             }
 
-            bool succes = await this.shiftModel.DeleteShift(this.ShiftID);
+            bool succes = await this.shiftModel.DeleteShiftAsync(this.ShiftID);
             this.ErrorMessage = succes ? "Shift was successfully deleted" : "Shift was not deleted";
             if (succes)
             {
-                var list = await this.shiftModel.GetShifts();
+                var list = await this.shiftModel.GetShiftsAsync();
                 this.Shifts = new ObservableCollection<ShiftModel>(list);
             }
         }

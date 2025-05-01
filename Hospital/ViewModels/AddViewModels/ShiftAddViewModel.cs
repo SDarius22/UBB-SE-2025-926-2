@@ -11,7 +11,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
-using Hospital.DatabaseServices;
+using Hospital.ApiClients;
 using Hospital.Models;
 using Hospital.Utils;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,14 +27,14 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Gets or sets the model for managing shifts.
         /// </summary>
-        private readonly IShiftsDatabaseService shiftModel;
+        private readonly ShiftsApiService shiftModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ShiftAddViewModel"/> class.
         /// </summary>
         public ShiftAddViewModel()
         {
-            this.shiftModel = App.Services.GetRequiredService<IShiftsDatabaseService>();
+            this.shiftModel = App.Services.GetRequiredService<ShiftsApiService>();
             this.Shifts = new ObservableCollection<ShiftModel>();
             this.SaveShiftCommand = new RelayCommand(this.SaveShift);
             this.LoadShifts();
@@ -128,7 +128,7 @@ namespace Hospital.ViewModels.AddViewModels
         private async void LoadShifts()
         {
             this.Shifts.Clear();
-            var list = await this.shiftModel.GetShifts();
+            var list = await this.shiftModel.GetShiftsAsync();
             foreach (ShiftModel shift in list)
             {
                 this.Shifts.Add(shift);
@@ -148,7 +148,7 @@ namespace Hospital.ViewModels.AddViewModels
 
             if (this.ValidateShift(shift))
             {
-                bool success = await this.shiftModel.AddShift(shift);
+                bool success = await this.shiftModel.AddShiftAsync(shift);
                 this.ErrorMessage = success ? "Shift added successfully" : "Failed to add shift";
                 if (success)
                 {

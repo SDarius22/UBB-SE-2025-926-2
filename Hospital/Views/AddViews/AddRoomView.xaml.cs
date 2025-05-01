@@ -1,21 +1,7 @@
 namespace Hospital.Views.AddViews
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.InteropServices.WindowsRuntime;
-    using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using Microsoft.UI.Xaml.Controls.Primitives;
-    using Microsoft.UI.Xaml.Data;
-    using Microsoft.UI.Xaml.Input;
-    using Microsoft.UI.Xaml.Media;
-    using Microsoft.UI.Xaml.Navigation;
     using Hospital.ViewModels.AddViewModels;
-    using Windows.Foundation;
-    using Windows.Foundation.Collections;
-    using Hospital.DatabaseServices.Interfaces;
 
     /// <summary>
     /// Represents a page for adding a room. This page can be used either standalone or within a Frame navigation.

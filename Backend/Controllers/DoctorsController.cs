@@ -94,5 +94,37 @@ namespace Backend.API.Controllers
             var isDoctor = await _doctorsService.IsUserDoctor(userId);
             return Ok(isDoctor);
         }
+
+        // CHECK: api/doctors/is-user-already-doctor/5
+        [HttpGet("is-user-already-doctor/{userId}")]
+        public async Task<ActionResult<bool>> IsUserAlreadyDoctor(int userId)
+        {
+            var isAlreadyDoctor = await _doctorsService.IsUserAlreadyDoctor(userId);
+            return Ok(isAlreadyDoctor);
+        }
+
+        // GET: api/doctors/does-user-exist/5
+        [HttpGet("does-user-exist/{userId}")]
+        public async Task<ActionResult<bool>> DoesUserExist(int userId)
+        {
+            var userExists = await _doctorsService.DoesUserExist(userId);
+            return Ok(userExists);
+        }
+
+        // GET: api/doctors/does-department-exist/5
+        [HttpGet("does-department-exist/{departmentId}")]
+        public async Task<ActionResult<bool>> DoesDepartmentExist(int departmentId)
+        {
+            var departmentExists = await _doctorsService.DoesDepartmentExist(departmentId);
+            return Ok(departmentExists);
+        }
+
+        // GET: api/doctors/user-exists-in-doctors/5
+        [HttpGet("user-exists-in-doctors/{userId}/{doctorId}")]
+        public async Task<ActionResult<bool>> UserExistsInDoctors(int userId, int doctorId)
+        {
+            var userExists = await _doctorsService.UserExistsInDoctors(userId, doctorId);
+            return Ok(userExists);
+        }
     }
 }

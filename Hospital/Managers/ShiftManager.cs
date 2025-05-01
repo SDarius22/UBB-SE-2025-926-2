@@ -1,5 +1,4 @@
-﻿using Hospital.DatabaseServices;
-using System;
+﻿using System;
 using Hospital.Exceptions;
 using Hospital.Models;
 using System.Collections.Generic;
@@ -8,15 +7,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI;
+using Hospital.ApiClients;
 
 namespace Hospital.Managers
 {
     public class ShiftManager : IShiftManager
     {
-        private readonly IShiftsDatabaseService _shiftsDatabaseService;
+        private readonly ShiftsApiService _shiftsDatabaseService;
         private List<ShiftModel> _shifts;
 
-        public ShiftManager(IShiftsDatabaseService shiftsDatabaseService)
+        public ShiftManager(ShiftsApiService shiftsDatabaseService)
         {
             _shiftsDatabaseService = shiftsDatabaseService;
             _shifts = new List<ShiftModel>();
@@ -24,7 +24,7 @@ namespace Hospital.Managers
 
         public async Task LoadShifts(int doctorID)
         {
-            _shifts = await _shiftsDatabaseService.GetShiftsByDoctorId(doctorID);
+            _shifts = await _shiftsDatabaseService.GetShiftsByDoctorIdAsync(doctorID);
         }
 
         public List<ShiftModel> GetShifts()
@@ -42,7 +42,7 @@ namespace Hospital.Managers
 
         public async Task LoadUpcomingDoctorDayshifts(int doctorID)
         {
-            _shifts = await _shiftsDatabaseService.GetDoctorDaytimeShifts(doctorID);
+            _shifts = await _shiftsDatabaseService.GetDoctorDaytimeShiftsAsync(doctorID);
         }
 
         public (DateTimeOffset start, DateTimeOffset end) GetMonthlyCalendarRange()

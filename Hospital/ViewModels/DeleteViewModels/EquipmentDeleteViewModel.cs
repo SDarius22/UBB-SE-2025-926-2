@@ -4,8 +4,7 @@
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Windows.Input;
-    using Hospital.DatabaseServices;
-    using Hospital.DatabaseServices.Interfaces;
+    using Hospital.ApiClients;
     using Hospital.Models;
     using Hospital.Utils;
     using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +14,7 @@
     /// </summary>
     public class EquipmentDeleteViewModel : INotifyPropertyChanged
     {
-        private readonly IEquipmentDatabaseService equipmentModel;
+        private readonly EquipmentApiService equipmentModel;
         private ObservableCollection<EquipmentModel> equipments = new ObservableCollection<EquipmentModel>();
         private int equipmentID;
         private string errorMessage = string.Empty;
@@ -27,7 +26,7 @@
         public EquipmentDeleteViewModel()
         {
             // Load equipment for the DataGrid
-            this.equipmentModel = App.Services.GetRequiredService<IEquipmentDatabaseService>();
+            this.equipmentModel = App.Services.GetRequiredService<EquipmentApiService>();
             LoadEquipments();
             this.DeleteEquipmentCommand = new RelayCommand(this.RemoveEquipment);
         }
@@ -118,25 +117,25 @@
                 return;
             }
 
-            if (!await this.equipmentModel.DoesEquipmentExist(this.EquipmentID))
+            if (!await this.equipmentModel.DoesEquipmentExistAsync(this.EquipmentID))
             {
                 this.ErrorMessage = "EquipmentID doesn't exist in the records";
                 return;
             }
 
-            bool success = await this.equipmentModel.DeleteEquipment(this.EquipmentID);
+            bool success = await this.equipmentModel.DeleteEquipmentAsync(this.EquipmentID);
             this.ErrorMessage = success ? "Equipment deleted successfully" : "Failed to delete equipment";
 
             if (success)
             {
-                var list = await this.equipmentModel.GetEquipments();
+                var list = await this.equipmentModel.GetEquipmentsAsync();
                 this.Equipments = new ObservableCollection<EquipmentModel>(list);
             }
         }
 
         private async void LoadEquipments()
         {
-            var list = await this.equipmentModel.GetEquipments();
+            var list = await this.equipmentModel.GetEquipmentsAsync();
             this.Equipments = new ObservableCollection<EquipmentModel>(list);
         }
 

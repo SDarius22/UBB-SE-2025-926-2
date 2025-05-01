@@ -1,16 +1,11 @@
-﻿using Hospital.Configs;
-using Microsoft.EntityFrameworkCore;
-
-namespace Hospital
+﻿namespace Hospital
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices.WindowsRuntime;
-    using Hospital.DatabaseServices;
-    using Hospital.DatabaseServices.Interfaces;
-    using Hospital.DbContext;
+    using Hospital.ApiClients;
     using Hospital.ViewModel;
     using Hospital.ViewModels;
     using Hospital.ViewModels.AddViewModels;
@@ -42,25 +37,20 @@ namespace Hospital
 
         private void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>(options =>
-            {
-                options.UseSqlServer(ApplicationConfiguration.GetInstance().DatabaseConnection);
-            });
+            services.AddSingleton<AppointmentsApiService>();
+            services.AddSingleton<DepartmentsApiService>();
+            services.AddSingleton<DoctorApiService>();
+            services.AddSingleton<DocumentsApiService>();
+            services.AddSingleton<DrugsApiService>();
+            services.AddSingleton<EquipmentApiService>();
+            services.AddSingleton<MedicalProceduresApiService>();
+            services.AddSingleton<MedicalRecordsApiService>();
+            services.AddSingleton<RatingApiService>();
+            services.AddSingleton<RoomApiService>();
+            services.AddSingleton<ScheduleApiService>();
+            services.AddSingleton<ShiftsApiService>();
+            services.AddSingleton<UserApiService>();
 
-            services.AddTransient<IAppointmentsDatabaseService, AppointmentsDatabaseService>();
-            services.AddTransient<IDepartmentsDatabaseService, DepartmentsDatabaseService>();
-            services.AddTransient<IDoctorInformationDatabaseService, DoctorInformationDatabaseService>();
-            services.AddTransient<IDoctorsDatabaseService, DoctorsDatabaseService>();
-            services.AddTransient<IDocumentDatabaseService, DocumentDatabaseService>();
-            services.AddTransient<IDrugsDatabaseService, DrugsDatabaseService>();
-            services.AddTransient<IEquipmentDatabaseService, EquipmentDatabaseService>();
-            services.AddTransient<IMedicalProceduresDatabaseService, MedicalProceduresDatabaseService>();
-            services.AddTransient<IMedicalRecordsDatabaseService, MedicalRecordsDatabaseService>();
-            services.AddTransient<IRatingDatabaseService, RatingDatabaseService>();
-            services.AddTransient<IRoomDatabaseService, RoomDatabaseService>();
-            services.AddTransient<IScheduleDatabaseService, ScheduleDatabaseService>();
-            services.AddTransient<IShiftsDatabaseService, ShiftsDatabaseService>();
-            services.AddTransient<IUserDatabaseService, UserDatabaseService>();
 
             services.AddTransient<DepartmentAddViewModel>();
             services.AddTransient<DoctorAddViewModel>();

@@ -11,12 +11,11 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
-using Hospital.DatabaseServices;
-using Hospital.DatabaseServices.Interfaces;
 using Hospital.Models;
 using Hospital.Utils;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Hospital.ApiClients;
 
 namespace Hospital.ViewModels.AddViewModels
 {
@@ -25,7 +24,7 @@ namespace Hospital.ViewModels.AddViewModels
     /// </summary>
     public class DrugAddViewModel : INotifyPropertyChanged
     {
-        private readonly IDrugsDatabaseService drugModel;
+        private readonly DrugsApiService drugModel;
         private string name = string.Empty;
         private string administration = string.Empty;
         private string specification = string.Empty;
@@ -37,7 +36,7 @@ namespace Hospital.ViewModels.AddViewModels
         /// </summary>
         public DrugAddViewModel()
         {
-            this.drugModel = App.Services.GetRequiredService<IDrugsDatabaseService>();
+            this.drugModel = App.Services.GetRequiredService<DrugsApiService>();
             this.SaveDrugCommand = new RelayCommand(this.SaveDrug);
             this.LoadDrugs();
         }
@@ -124,7 +123,7 @@ namespace Hospital.ViewModels.AddViewModels
         {
             this.Drugs.Clear();
 
-            var list = await this.drugModel.GetDrugs();
+            var list = await this.drugModel.GetDrugsAsync();
             foreach (DrugModel drug in list)
             {
                 this.Drugs.Add(drug);
@@ -148,7 +147,7 @@ namespace Hospital.ViewModels.AddViewModels
 
             if (this.ValidateDrug(drug))
             {
-                bool success = await this.drugModel.AddDrug(drug);
+                bool success = await this.drugModel.AddDrugAsync(drug);
                 this.ErrorMessage = success ? "Drug added successfully" : "Failed to add drug";
 
                 if (success)

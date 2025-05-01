@@ -1,4 +1,4 @@
-﻿using Hospital.DatabaseServices.Interfaces;
+﻿using Hospital.ApiClients;
 using Hospital.Managers;
 using Hospital.Models;
 using System;
@@ -128,9 +128,9 @@ namespace Hospital.ViewModels
         }
 
         // Constructor
-        private readonly IMedicalRecordsDatabaseService _medicalRecordsDbService;
+        private readonly MedicalRecordsApiService _medicalRecordsDbService;
 
-        public MedicalRecordCreationFormViewModel(IDoctorManager doctorManager, IMedicalProcedureManager procedureManager, IMedicalRecordsDatabaseService medicalRecordsDbService)
+        public MedicalRecordCreationFormViewModel(IDoctorManager doctorManager, IMedicalProcedureManager procedureManager, MedicalRecordsApiService medicalRecordsDbService)
         {
             _doctorManager = doctorManager;
             _procedureManager = procedureManager;

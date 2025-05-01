@@ -12,7 +12,7 @@ namespace Hospital.ViewModels.DeleteViewModels
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Windows.Input;
-    using Hospital.DatabaseServices;
+    using Hospital.ApiClients;
     using Hospital.Models;
     using Hospital.Utils;
     using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +22,7 @@ namespace Hospital.ViewModels.DeleteViewModels
     /// </summary>
     public class DoctorDeleteViewModel : INotifyPropertyChanged
     {
-        private readonly IDoctorsDatabaseService doctorModel;
+        private readonly DoctorApiService doctorModel;
         private ObservableCollection<DoctorJointModel> doctors;
         private int doctorID;
         private string errorMessage;
@@ -33,7 +33,7 @@ namespace Hospital.ViewModels.DeleteViewModels
         /// </summary>
         public DoctorDeleteViewModel()
         {
-            this.doctorModel = App.Services.GetRequiredService<IDoctorsDatabaseService>();
+            this.doctorModel = App.Services.GetRequiredService<DoctorApiService>();
 
             // Initialize non-nullable fields
             this.doctors = new ObservableCollection<DoctorJointModel>();
@@ -50,7 +50,7 @@ namespace Hospital.ViewModels.DeleteViewModels
 
         private async void LoadDoctors()
         {
-            this.Doctors = new ObservableCollection<DoctorJointModel>(await this.doctorModel.GetDoctors());
+            this.Doctors = new ObservableCollection<DoctorJointModel>(await this.doctorModel.GetDoctorsAsync());
         }
 
         /// <summary>
@@ -165,18 +165,18 @@ namespace Hospital.ViewModels.DeleteViewModels
                 return;
             }
 
-            if (!await this.doctorModel.DoesDoctorExist(this.DoctorID))
+            if (!await this.doctorModel.DoesDepartmentExistAsync(this.DoctorID))
             {
                 this.ErrorMessage = "DoctorID doesn't exist in the records";
                 return;
             }
 
-            bool success = await this.doctorModel.DeleteDoctor(this.DoctorID);
+            bool success = await this.doctorModel.DeleteDoctorAsync(this.DoctorID);
             this.ErrorMessage = success ? "Doctor deleted successfully" : "Failed to delete doctor";
 
             if (success)
             {
-                this.Doctors = new ObservableCollection<DoctorJointModel>(await this.doctorModel.GetDoctors());
+                this.Doctors = new ObservableCollection<DoctorJointModel>(await this.doctorModel.GetDoctorsAsync());
             }
         }
     }

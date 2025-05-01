@@ -3,10 +3,9 @@ namespace Hospital.Views
     using System.Collections.ObjectModel;
     using Microsoft.UI.Xaml.Controls;
     using Hospital.Models;
-    using Hospital.DatabaseServices;
     using System.Threading.Tasks;
-    using Hospital.DatabaseServices.Interfaces;
     using Microsoft.Extensions.DependencyInjection;
+    using Hospital.ApiClients;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -14,16 +13,16 @@ namespace Hospital.Views
     ///
     public sealed partial class ScheduleAndShifts : Page
     {
-        private readonly IShiftsDatabaseService shiftModel;
-        private readonly IScheduleDatabaseService scheduleModel;
+        private readonly ShiftsApiService shiftModel;
+        private readonly ScheduleApiService scheduleModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleAndShifts"/> class.
         /// </summary>
         public ScheduleAndShifts()
         {
-            shiftModel = App.Services.GetRequiredService<IShiftsDatabaseService>();
-            scheduleModel = App.Services.GetRequiredService<IScheduleDatabaseService>();
+            shiftModel = App.Services.GetRequiredService<ShiftsApiService>();
+            scheduleModel = App.Services.GetRequiredService<ScheduleApiService>();
             this.InitializeComponent();
             this.LoadAsync();
         }
@@ -41,14 +40,14 @@ namespace Hospital.Views
         private async Task LoadAsync()
         {
             this.Shifts.Clear();
-            var shifts = await this.shiftModel.GetShifts();
+            var shifts = await this.shiftModel.GetShiftsAsync();
             foreach (ShiftModel shift in shifts)
             {
                 this.Shifts.Add(shift);
             }
 
             this.Schedules.Clear();
-            var schedules = await this.scheduleModel.GetSchedules();
+            var schedules = await this.scheduleModel.GetSchedulesAsync();
             foreach (ScheduleModel schedule in schedules)
             {
                 this.Schedules.Add(schedule);

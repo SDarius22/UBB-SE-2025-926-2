@@ -1,6 +1,4 @@
-﻿using Hospital.DatabaseServices.Interfaces;
-
-namespace Hospital.ViewModels.UpdateViewModels
+﻿namespace Hospital.ViewModels.UpdateViewModels
 {
     using System;
     using System.Collections.Generic;
@@ -10,7 +8,7 @@ namespace Hospital.ViewModels.UpdateViewModels
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Hospital.DatabaseServices;
+    using Hospital.ApiClients;
     using Hospital.Models;
     using Hospital.Utils;
     using Hospital.ViewModel;
@@ -21,7 +19,7 @@ namespace Hospital.ViewModels.UpdateViewModels
     /// </summary>
     public class RoomUpdateViewModel : INotifyPropertyChanged
     {
-        private readonly IRoomDatabaseService roomModel;
+        private readonly RoomApiService roomModel;
         private string errorMessage;
 
         /// <summary>
@@ -29,7 +27,7 @@ namespace Hospital.ViewModels.UpdateViewModels
         /// </summary>
         public RoomUpdateViewModel()
         {
-            this.roomModel = App.Services.GetRequiredService<IRoomDatabaseService>();
+            this.roomModel = App.Services.GetRequiredService<RoomApiService>();
             this.errorMessage = string.Empty;
             this.SaveChangesCommand = new RelayCommand(this.SaveChanges);
             this.LoadRooms();
@@ -78,7 +76,7 @@ namespace Hospital.ViewModels.UpdateViewModels
         private async void LoadRooms()
         {
             this.Rooms.Clear();
-            foreach (RoomModel room in await this.roomModel.GetRooms() ?? Enumerable.Empty<RoomModel>())
+            foreach (RoomModel room in await this.roomModel.GetRoomsAsync() ?? Enumerable.Empty<RoomModel>())
             {
                 this.Rooms.Add(room);
             }
@@ -102,7 +100,7 @@ namespace Hospital.ViewModels.UpdateViewModels
                 }
                 else
                 {
-                    bool success = await this.roomModel.UpdateRoom(room);
+                    bool success = await this.roomModel.UpdateRoomAsync(room.RoomID, room);
                     if (!success)
                     {
                         errorMessages.AppendLine("Failed to save changes for room: " + room.RoomID);
@@ -134,14 +132,14 @@ namespace Hospital.ViewModels.UpdateViewModels
                 return false;
             }
 
-            bool departmentExists = await this.roomModel.DoesDepartmentExist(room.DepartmentID);
+            bool departmentExists = await this.roomModel.DoesDepartmentExistAsync(room.DepartmentID);
             if (!departmentExists)
             {
                 this.ErrorMessage = "Department ID doesn’t exist in the Departments Records";
                 return false;
             }
 
-            bool equipmentExists = await this.roomModel.DoesEquipmentExist(room.EquipmentID);
+            bool equipmentExists = await this.roomModel.DoesEquipmentExistAsync(room.EquipmentID);
             if (!equipmentExists)
             {
                 this.ErrorMessage = "Equipment ID doesn’t exist in the Equipment Records";

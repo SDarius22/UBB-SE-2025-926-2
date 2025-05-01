@@ -1,5 +1,4 @@
-﻿using Hospital.DatabaseServices;
-using Hospital.DatabaseServices.Interfaces;
+﻿using Hospital.ApiClients;
 using Hospital.Models;
 using System;
 using System.Collections.Generic;
@@ -13,9 +12,9 @@ namespace Hospital.Managers
     public class MedicalProcedureManager : IMedicalProcedureManager
     {
         public static List<ProcedureModel> Procedures { get; private set; }
-        private readonly IMedicalProceduresDatabaseService _medicalProcedureDatabaseService;
+        private readonly MedicalProceduresApiService _medicalProcedureDatabaseService;
 
-        public MedicalProcedureManager(IMedicalProceduresDatabaseService medicalProcedureDatabaseService)
+        public MedicalProcedureManager(MedicalProceduresApiService medicalProcedureDatabaseService)
         {
             _medicalProcedureDatabaseService = medicalProcedureDatabaseService;
             Procedures = new List<ProcedureModel>();
@@ -33,7 +32,7 @@ namespace Hospital.Managers
             try
             {
                 Procedures.Clear();
-                List<ProcedureModel> procedures = await _medicalProcedureDatabaseService.GetProceduresByDepartmentId(departmentId).ConfigureAwait(false);
+                List<ProcedureModel> procedures = await _medicalProcedureDatabaseService.GetProceduresByDepartmentAsync(departmentId).ConfigureAwait(false);
                 foreach (ProcedureModel procedure in procedures)
                 {
                     Procedures.Add(procedure);

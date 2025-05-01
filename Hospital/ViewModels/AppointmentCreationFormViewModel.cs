@@ -1,6 +1,4 @@
-﻿using Hospital.Configs;
-using Hospital.DatabaseServices;
-using Hospital.Exceptions;
+﻿using Hospital.Exceptions;
 using Hospital.Helpers;
 using Hospital.Managers;
 using Hospital.Models;
@@ -356,7 +354,7 @@ namespace Hospital.ViewModels
                 while (currentTime + procedureDuration <= appointmentStartTime)
                 {
                     availableTimeSlots.Add(currentTime.ToString(@"hh\:mm")); // Format as HH:mm
-                    currentTime = currentTime.Add(TimeSpan.FromMinutes(ApplicationConfiguration.GetInstance().SlotDuration));// Move to the next possible slot
+                    currentTime = currentTime.Add(TimeSpan.FromMinutes(30));// Move to the next possible slot
                 }
 
                 // Move past the current appointment
@@ -367,7 +365,7 @@ namespace Hospital.ViewModels
             while (currentTime + procedureDuration <= endTimeShift)
             {
                 availableTimeSlots.Add(currentTime.ToString(@"hh\:mm"));
-                currentTime = currentTime.Add(TimeSpan.FromMinutes(ApplicationConfiguration.GetInstance().SlotDuration));
+                currentTime = currentTime.Add(TimeSpan.FromMinutes(30));
             }
 
             // Update the list of available time slots
@@ -405,7 +403,7 @@ namespace Hospital.ViewModels
             var newAppointment = new Models.AppointmentModel(
                 DefaultAppointmentId, // Appointment ID (0 so SQL Server auto-generates it)
                 SelectedDoctor.DoctorId,
-                ApplicationConfiguration.GetInstance().patientId, // Patient ID (adjust as needed)
+                1, // Patient ID (adjust as needed)
                 actualDate,
                 DefaultAppointmentIsFinished,   // Finished (initially false)
                 SelectedProcedure.ProcedureId);
