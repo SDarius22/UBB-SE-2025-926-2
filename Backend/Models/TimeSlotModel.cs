@@ -1,4 +1,9 @@
-﻿namespace Backend.Models
+﻿using System;
+using Microsoft.UI;
+using Microsoft.UI.Xaml.Media;
+using Windows.UI;
+
+namespace Backend.Models
 {
     public class TimeSlotModel
     {

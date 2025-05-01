@@ -33,7 +33,13 @@ namespace Backend.DatabaseServices
         {
             try
             {
-                var entity = new EquipmentModel(equipment.EquipmentID, equipment.Name, equipment.Type, equipment.Specification, equipment.Stock);
+                var entity = new EquipmentModel
+                {
+                    Name = equipment.Name,
+                    Type = equipment.Type,
+                    Specification = equipment.Specification,
+                    Stock = equipment.Stock
+                };
 
                 await _context.Equipments.AddAsync(entity);
                 await _context.SaveChangesAsync();

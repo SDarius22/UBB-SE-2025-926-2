@@ -56,7 +56,7 @@
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" Spacing="10">
-                            <TextBlock Text="{Binding Name}" FontWeight="Bold" Width="100"/>
+                            <TextBlock Text="{Binding DoctorId}" FontWeight="Bold" Width="100"/>
                             <TextBlock Text="{Binding Rating}" Foreground="DarkGray" Width="30"/>
                             <FontIcon Glyph="&#xE734;" FontSize="14" Foreground="Gold"/>
                         </StackPanel>

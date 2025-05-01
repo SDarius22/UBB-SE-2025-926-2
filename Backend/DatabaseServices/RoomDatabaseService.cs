@@ -30,7 +30,12 @@ namespace Backend.DatabaseServices
         {
             try
             {
-                var entity = new RoomModel(room.RoomID, room.Capacity, room.DepartmentID, room.EquipmentID);
+                var entity = new RoomModel
+                {
+                    Capacity = room.Capacity,
+                    DepartmentID = room.DepartmentID,
+                    EquipmentID = room.EquipmentID,
+                };
 
                 await _context.Rooms.AddAsync(entity);
                 await _context.SaveChangesAsync();

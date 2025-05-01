@@ -10,7 +10,7 @@
         public int DepartmentId { get; set; }
 
         // Properties from database
-        public double DoctorRating { get; set; }
+        public double Rating { get; set; }
         public string LicenseNumber { get; set; }
 
         // Navigation properties
@@ -28,7 +28,7 @@
             DoctorId = doctorId;
             UserId = userId;
             DepartmentId = departmentId;
-            DoctorRating = rating;
+            Rating = rating;
             LicenseNumber = licenseNumber;
         }
     }

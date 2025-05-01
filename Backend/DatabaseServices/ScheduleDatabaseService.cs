@@ -34,9 +34,14 @@ namespace Backend.DatabaseServices
         /// <returns>True if the schedule was added successfully, false otherwise.</returns>
         public async Task<bool> AddSchedule(ScheduleModel schedule)
         {
+
             try
             {
-                var entity = new ScheduleModel(schedule.ScheduleId, schedule.DoctorId, schedule.ShiftId);
+                var entity = new ScheduleModel
+                {
+                    DoctorId = schedule.DoctorId,
+                    ShiftId = schedule.ShiftId,
+                };
 
                 await _context.Schedules.AddAsync(entity);
                 await _context.SaveChangesAsync();
@@ -73,9 +78,8 @@ namespace Backend.DatabaseServices
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.WriteLine("Error updating schedule to the database." + e.Message);
                 return false;
             }
         }

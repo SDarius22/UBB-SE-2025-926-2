@@ -42,7 +42,10 @@ namespace Backend.DatabaseServices
         {
             try
             {
-                var entity = new DepartmentModel(department.DepartmentID, department.Name);
+                var entity = new DepartmentModel
+                {
+                    Name = department.Name
+                };
 
                 await _context.Departments.AddAsync(entity);
                 await _context.SaveChangesAsync();
