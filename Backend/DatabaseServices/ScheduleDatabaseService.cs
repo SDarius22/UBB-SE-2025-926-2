@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,8 +45,9 @@ namespace Backend.DatabaseServices
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine("Error adding schedule to the database." + e.Message);
                 return false;
             }
         }
@@ -71,8 +73,9 @@ namespace Backend.DatabaseServices
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine("Error updating schedule to the database." + e.Message);
                 return false;
             }
         }

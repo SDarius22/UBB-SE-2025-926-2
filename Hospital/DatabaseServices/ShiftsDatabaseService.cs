@@ -121,7 +121,12 @@ namespace Hospital.DatabaseServices
         {
             try
             {
-                var entity = new ShiftModel(shift.ShiftID, shift.Date, shift.StartTime, shift.EndTime);
+                var entity = new ShiftModel
+                {
+                    Date = shift.Date,
+                    StartTime = shift.StartTime,
+                    EndTime = shift.EndTime
+                };
 
                 _context.Shifts.Add(entity);
                 await _context.SaveChangesAsync();
