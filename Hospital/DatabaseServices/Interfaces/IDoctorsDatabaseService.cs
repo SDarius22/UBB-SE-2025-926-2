@@ -30,6 +30,6 @@ namespace Hospital.DatabaseServices
 
         public Task<double> ComputeDoctorSalary(int doctorID);
 
-        public List<DoctorJointModel> GetDoctors();
+        public Task<List<DoctorJointModel>> GetDoctors();
     }
 }

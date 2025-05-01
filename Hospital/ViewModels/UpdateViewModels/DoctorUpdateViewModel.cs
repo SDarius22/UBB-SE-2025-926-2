@@ -70,11 +70,11 @@ namespace Hospital.ViewModel
         /// <summary>
         /// Loads the doctors from the model into the view model.
         /// </summary>
-        private void LoadDoctors()
+        private async void LoadDoctors()
         {
             this.Doctors.Clear();
-
-            foreach (DoctorJointModel doctor in this.doctorModel.GetDoctors())
+            var list = await this.doctorModel.GetDoctors();
+            foreach (DoctorJointModel doctor in list)
             {
                 this.Doctors.Add(doctor);
             }

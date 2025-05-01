@@ -401,7 +401,7 @@
         /// Retrieves all doctors from the database.
         /// </summary>
         /// <returns>A list of all doctors.</returns>
-        public List<DoctorJointModel> GetDoctors()
+        public async Task<List<DoctorJointModel>> GetDoctors()
         {
             List<DoctorJointModel> doctors = new List<DoctorJointModel>();
             using (SqlConnection connection = new SqlConnection(this._configuration.DatabaseConnection))

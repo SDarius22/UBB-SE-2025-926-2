@@ -31,6 +31,8 @@ namespace Hospital.Views
     using Windows.Foundation.Collections;
     using Hospital.DatabaseServices;
     using Hospital.DbContext;
+    using Hospital.DatabaseServices.Interfaces;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// A page that displays a list of doctors with sorting and search functionality.
@@ -42,9 +44,11 @@ namespace Hospital.Views
         /// </summary>
         public ObservableCollection<DoctorJointModel> Doctors { get; set; } = new ();
 
-        private readonly AppDbContext _context;
-
-        private DoctorsDatabaseService doctorModel;
+        private readonly IDoctorsDatabaseService _doctorsService;
+        private readonly IAppointmentsDatabaseService _appointmentsService;
+        private readonly IShiftsDatabaseService _shiftsService;
+        private readonly IMedicalRecordsDatabaseService _medicalRecordsService;
+        private readonly IDocumentDatabaseService _documentService;
 
         private Dictionary<string, ListSortDirection> sortingStates = new ()
         {
@@ -63,6 +67,11 @@ namespace Hospital.Views
         /// </summary>
         public DoctorsPage()
         {
+            _doctorsService = App.Services.GetRequiredService<IDoctorsDatabaseService>();
+            _appointmentsService = App.Services.GetRequiredService<IAppointmentsDatabaseService>();
+            _shiftsService = App.Services.GetRequiredService<IShiftsDatabaseService>();
+            _medicalRecordsService = App.Services.GetRequiredService<IMedicalRecordsDatabaseService>();
+            _documentService = App.Services.GetRequiredService<IDocumentDatabaseService>();
             this.InitializeComponent();
             this.LoadDoctors();
             this.DataContext = this;
@@ -71,10 +80,10 @@ namespace Hospital.Views
         /// <summary>
         /// Loads and sorts the list of doctors.
         /// </summary>
-        private void LoadDoctors()
+        private async void LoadDoctors()
         {
             this.Doctors.Clear();
-            List<DoctorJointModel> doctorsList = this.doctorModel.GetDoctors();
+            List<DoctorJointModel> doctorsList = await this._doctorsService.GetDoctors();
 
             foreach (DoctorJointModel doctor in doctorsList)
             {
@@ -98,17 +107,17 @@ namespace Hospital.Views
             if (sender is Button button && button.Tag is DoctorJointModel doctor)
             {
                 // Create instances of the required services
-                var appointmentsDatabaseService = new AppointmentsDatabaseService(_context); // Replace with actual implementation
-                var shiftsDatabaseService = new ShiftsDatabaseService(_context); // Replace with actual implementation
-                var medicalRecordsDatabaseService = new MedicalRecordsDatabaseService(_context); // Replace with actual implementation
-                var documentDatabaseService = new DocumentDatabaseService(_context); // Replace with actual implementation
+                //var appointmentsDatabaseService = new AppointmentsDatabaseService(_context); // Replace with actual implementation
+                //var shiftsDatabaseService = new ShiftsDatabaseService(_context); // Replace with actual implementation
+                //var medicalRecordsDatabaseService = new MedicalRecordsDatabaseService(_context); // Replace with actual implementation
+                //var documentDatabaseService = new DocumentDatabaseService(_context); // Replace with actual implementation
                 var fileService = new FileService(); // Replace with actual implementation
 
                 // Create instances of the required managers
-                IAppointmentManager appointmentManager = new AppointmentManager(appointmentsDatabaseService);
-                IShiftManager shiftManager = new ShiftManager(shiftsDatabaseService);
-                IMedicalRecordManager medicalRecordManager = new MedicalRecordManager(medicalRecordsDatabaseService);
-                IDocumentManager documentManager = new DocumentManager(documentDatabaseService, fileService);
+                IAppointmentManager appointmentManager = new AppointmentManager(_appointmentsService);
+                IShiftManager shiftManager = new ShiftManager(_shiftsService);
+                IMedicalRecordManager medicalRecordManager = new MedicalRecordManager(_medicalRecordsService);
+                IDocumentManager documentManager = new DocumentManager(_documentService, fileService);
 
                 // Create and show the DoctorScheduleView window
                 var scheduleWindow = new DoctorScheduleView(appointmentManager, shiftManager, medicalRecordManager, documentManager);

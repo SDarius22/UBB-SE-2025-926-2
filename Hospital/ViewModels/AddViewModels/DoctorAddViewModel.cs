@@ -119,10 +119,11 @@ namespace Hospital.ViewModels.AddViewModels
         /// <summary>
         /// Loads all doctors into the ObservableCollection.
         /// </summary>
-        private void LoadDoctors()
+        private async void LoadDoctors()
         {
             this.Doctors.Clear();
-            foreach (DoctorJointModel doctor in this.doctorModel.GetDoctors())
+            var list = await this.doctorModel.GetDoctors(); 
+            foreach (DoctorJointModel doctor in list)
             {
                 this.Doctors.Add(doctor);
             }
