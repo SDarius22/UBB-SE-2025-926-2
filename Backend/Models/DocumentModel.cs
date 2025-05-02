@@ -12,7 +12,7 @@ namespace Backend.Models
         public int MedicalRecordId { get; set; }
         public string Files { get; set; }
 
-        public virtual MedicalRecordModel MedicalRecord { get; set; }
+        public virtual MedicalRecordModel? MedicalRecord { get; set; }
         public DocumentModel()
         {
         }

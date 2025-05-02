@@ -165,7 +165,7 @@ namespace Hospital.ViewModels.DeleteViewModels
                 return;
             }
 
-            if (!await this.doctorModel.DoesDepartmentExistAsync(this.DoctorID))
+            if (!await this.doctorModel.DoesDoctorExistAsync(this.DoctorID))
             {
                 this.ErrorMessage = "DoctorID doesn't exist in the records";
                 return;

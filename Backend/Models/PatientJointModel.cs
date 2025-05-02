@@ -27,7 +27,7 @@ namespace Backend.Models
         // Height in cm
         public int Height { get; set; }
 
-        public virtual UserModel User { get; set; }
+        public virtual UserModel? User { get; set; }
 
         // Parameterless constructor for EF Core
         public PatientJointModel() { }

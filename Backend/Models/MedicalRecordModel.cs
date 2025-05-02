@@ -20,9 +20,9 @@ namespace Backend.Models
 
         public string Conclusion { get; set; }
 
-        public virtual PatientJointModel Patient { get; set; }
-        public virtual DoctorJointModel Doctor { get; set; }
-        public virtual ProcedureModel Procedure { get; set; }
+        public virtual PatientJointModel? Patient { get; set; }
+        public virtual DoctorJointModel? Doctor { get; set; }
+        public virtual ProcedureModel? Procedure { get; set; }
 
         public MedicalRecordModel()
         {

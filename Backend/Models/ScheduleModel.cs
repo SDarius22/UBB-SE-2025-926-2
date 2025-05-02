@@ -14,9 +14,9 @@ namespace Backend.Models
 
         public int ScheduleId { get; set; }
 
-        public virtual DoctorJointModel Doctor { get; set; }
+        public virtual DoctorJointModel? Doctor { get; set; }
 
-        public virtual ShiftModel Shift { get; set; }
+        public virtual ShiftModel? Shift { get; set; }
 
         public ScheduleModel()
         {

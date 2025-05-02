@@ -53,7 +53,7 @@
         /// </summary>
         public int EquipmentID { get; set; }
 
-        public virtual EquipmentModel Equipment { get; set; }
-        public virtual DepartmentModel Department { get; set; }
+        public virtual EquipmentModel? Equipment { get; set; }
+        public virtual DepartmentModel? Department { get; set; }
     }
 }

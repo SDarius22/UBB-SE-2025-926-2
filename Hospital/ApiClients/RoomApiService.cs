@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -48,21 +49,30 @@ namespace Hospital.ApiClients
         // Check if a room exists
         public async Task<bool> DoesRoomExistAsync(int roomId)
         {
-            var response = await _httpClient.GetAsync($"Room/{roomId}/exists");
+            var response = await _httpClient.GetAsync($"Room/room-exists/{roomId}");
             return response.IsSuccessStatusCode;
         }
 
         // Check if equipment exists
         public async Task<bool> DoesEquipmentExistAsync(int equipmentId)
         {
-            var response = await _httpClient.GetAsync($"Equipment/{equipmentId}/exists");
+            var response = await _httpClient.GetAsync($"Room/exists/{equipmentId}");
             return response.IsSuccessStatusCode;
         }
 
         // Check if department exists
         public async Task<bool> DoesDepartmentExistAsync(int departmentId)
         {
-            var response = await _httpClient.GetAsync($"Department/{departmentId}/exists");
+            var response = await _httpClient.GetAsync($"Room/department-exists/{departmentId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"Error message: {errorMessage}");
+            }
+            else
+            {
+                Debug.WriteLine($"Department ID: {departmentId}, Exists: {await response.Content.ReadFromJsonAsync<bool>()}");
+            }
             return response.IsSuccessStatusCode;
         }
     }
