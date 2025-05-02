@@ -2,6 +2,7 @@
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Backend.API.Controllers
@@ -11,10 +12,12 @@ namespace Backend.API.Controllers
     public class DoctorsController : ControllerBase
     {
         private readonly IDoctorsDatabaseService _doctorsService;
+        private readonly ILogger<DoctorsController> _logger;
 
-        public DoctorsController(IDoctorsDatabaseService doctorsService)
+        public DoctorsController(IDoctorsDatabaseService doctorsService, ILogger<DoctorsController> logger)
         {
             _doctorsService = doctorsService;
+            _logger = logger;
         }
 
         // GET: api/doctors
@@ -37,6 +40,9 @@ namespace Backend.API.Controllers
         [HttpPost]
         public async Task<ActionResult<DoctorJointModel>> AddDoctor([FromBody] DoctorJointModel doctor)
         {
+            Debug.WriteLine($"Adding doctor with UserId: {doctor.UserId}, DepartmentId: {doctor.DepartmentId}, LicenseNumber: {doctor.LicenseNumber}");
+            Console.WriteLine($"Adding doctor with UserId: {doctor.UserId}, DepartmentId: {doctor.DepartmentId}, LicenseNumber: {doctor.LicenseNumber}");
+            _logger.LogInformation($"Adding doctor with UserId: {doctor.UserId}, DepartmentId: {doctor.DepartmentId}, LicenseNumber: {doctor.LicenseNumber}");
             if (!await _doctorsService.DoesUserExist(doctor.UserId))
                 return BadRequest("User does not exist");
 
@@ -125,6 +131,14 @@ namespace Backend.API.Controllers
         {
             var userExists = await _doctorsService.UserExistsInDoctors(userId, doctorId);
             return Ok(userExists);
+        }
+
+        // GET: api/doctors/doctor-exists/5
+        [HttpGet("doctor-exists/{doctorId}")]
+        public async Task<ActionResult<bool>> DoesDoctorExist(int doctorId)
+        {
+            var doctorExists = await _doctorsService.DoesDoctorExist(doctorId);
+            return Ok(doctorExists);
         }
     }
 }

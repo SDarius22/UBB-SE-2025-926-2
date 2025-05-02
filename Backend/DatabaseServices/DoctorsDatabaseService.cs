@@ -89,10 +89,12 @@
             }
             catch (DbUpdateException ex)
             {
+                Debug.WriteLine($"SQL Error: {ex.Message}");
                 throw new DatabaseOperationException($"SQL Error: {ex.Message}");
             }
             catch (Exception ex)
             {
+                Debug.WriteLine($"General Error: {ex.Message}");
                 throw new DatabaseOperationException($"General Error: {ex.Message}");
             }
         }
@@ -145,8 +147,8 @@
         /// <returns>True if the doctor was deleted successfully; otherwise, false.</returns>
         public async Task<bool> DeleteDoctor(int doctorID)
         {
-            try
-            {
+            //try
+            //{
                 var doctor = await _context.DoctorJoints
                     .FirstOrDefaultAsync(d => d.DoctorId == doctorID);
 
@@ -158,15 +160,15 @@
                 _context.DoctorJoints.Remove(doctor);
                 var rowsAffected = await _context.SaveChangesAsync();
                 return rowsAffected > 0;
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new DatabaseOperationException($"SQL Error deleting doctor: {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                throw new DatabaseOperationException($"Error deleting doctor: {ex.Message}");
-            }
+            //}
+            //catch (DbUpdateException ex)
+            //{
+            //    throw new DatabaseOperationException($"SQL Error deleting doctor: {ex.Message}");
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new DatabaseOperationException($"Error deleting doctor: {ex.Message}");
+            //}
         }
 
         /// <summary>

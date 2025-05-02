@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -36,7 +37,19 @@ namespace Hospital.ApiClients
         // Add a new doctor
         public async Task<bool> AddDoctorAsync(DoctorJointModel doctor)
         {
+            Debug.WriteLine($"Adding doctor with UserId: {doctor.UserId}, DepartmentId: {doctor.DepartmentId}, LicenseNumber: {doctor.LicenseNumber}");
+            //Debug.WriteLine($"Doctor user: {doctor.User.Name}");
             var response = await _httpClient.PostAsJsonAsync("Doctors", doctor);
+            Debug.WriteLine($"Response status code: {response.StatusCode}");
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"Error message: {errorMessage}");
+            }
+            else
+            {
+                Debug.WriteLine($"Doctor added successfully");
+            }
             return response.IsSuccessStatusCode;
         }
 
@@ -84,13 +97,23 @@ namespace Hospital.ApiClients
         {
             var response = await _httpClient.GetAsync($"Doctors/does-department-exist/{departmentId}");
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<bool>();
+            var res = await response.Content.ReadFromJsonAsync<bool>();
+            Debug.WriteLine($"Department ID: {departmentId}, Exists: {res}");
+            return res;
         }
 
         // Check if a user exists in the doctors table
         public async Task<bool> UserExistsInDoctorsAsync(int userId, int doctorId)
         {
             var response = await _httpClient.GetAsync($"Doctors/user-exists-in-doctors/{userId}/{doctorId}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<bool>();
+        }
+
+        // Check if a doctor exists
+        public async Task<bool> DoesDoctorExistAsync(int doctorId)
+        {
+            var response = await _httpClient.GetAsync($"Doctors/doctor-exists/{doctorId}");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
         }

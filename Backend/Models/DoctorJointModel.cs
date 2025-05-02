@@ -1,4 +1,6 @@
-﻿namespace Backend.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Backend.Models
 {
     public class DoctorJointModel
     {
@@ -14,8 +16,8 @@
         public string LicenseNumber { get; set; }
 
         // Navigation properties
-        public virtual UserModel User { get; set; }
-        public virtual DepartmentModel Department { get; set; }
+        public virtual UserModel? User { get; set; }
+        public virtual DepartmentModel? Department { get; set; }
 
 
         // Parameterless constructor required by EF Core

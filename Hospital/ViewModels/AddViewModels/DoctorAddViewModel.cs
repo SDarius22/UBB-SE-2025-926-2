@@ -12,12 +12,15 @@ namespace Hospital.ViewModels.AddViewModels
     using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
+    using System.Diagnostics;
+    using System.Security.Cryptography;
     using System.Threading.Tasks;
     using System.Windows.Input;
     using Hospital.ApiClients;
     using Hospital.Models;
     using Hospital.Utils;
     using Microsoft.Extensions.DependencyInjection;
+    using Windows.System;
 
     /// <summary>
     /// ViewModel for adding a new doctor.
@@ -135,22 +138,20 @@ namespace Hospital.ViewModels.AddViewModels
         /// </summary>
         private async void SaveDoctor()
         {
-            var doctor = new DoctorJointModel(
-                0,
-                this.UserID,
-                this.DepartmentID,
-                this.Rating,
-                this.LicenseNumber);
-
-            if (await this.ValidateDoctor(doctor))
+            var doctor = new DoctorJointModel
             {
-                bool success = await this.doctorModel.AddDoctorAsync(doctor);
-                this.ErrorMessage = success ? "Doctor added successfully" : "Failed to add doctor";
+                UserId = this.UserID,
+                DepartmentId = this.DepartmentID,
+                LicenseNumber = this.LicenseNumber,
+                Rating = this.Rating,
+            };
 
-                if (success)
-                {
-                    this.LoadDoctors();
-                }
+            bool success = await this.doctorModel.AddDoctorAsync(doctor);
+            this.ErrorMessage = success ? "Doctor added successfully" : "Failed to add doctor";
+
+            if (success)
+            {
+                this.LoadDoctors();
             }
         }
 
@@ -173,12 +174,12 @@ namespace Hospital.ViewModels.AddViewModels
                 return false;
             }
 
-            if (await this.doctorModel.IsUserDoctorAsync(doctor.UserId))
+            if (await this.doctorModel.IsUserAlreadyDoctorAsync(doctor.UserId))
             {
                 this.ErrorMessage = "The user already exists in the Doctors Records.";
                 return false;
             }
-
+            Debug.WriteLine($"Department ID: {doctor.DepartmentId}");
             if (!await this.doctorModel.DoesDepartmentExistAsync(doctor.DepartmentId))
             {
                 this.ErrorMessage = "DepartmentID doesn’t exist in the Departments Records.";

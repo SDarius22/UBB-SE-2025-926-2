@@ -15,7 +15,7 @@ namespace Backend.Models
         public int UserId { get; set; }
 
         // Navigation property (optional but recommended)
-        public virtual UserModel User { get; set; }
+        public virtual UserModel? User { get; set; }
 
         // Parameterless constructor required by EF Core
         public AdminModel() { }

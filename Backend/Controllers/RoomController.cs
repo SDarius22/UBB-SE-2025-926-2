@@ -112,21 +112,21 @@ namespace Backend.API.Controllers
         }
 
         // Helper Method 1: Check if Room Exists
-        [HttpGet("{roomId}/exists")]
+        [HttpGet("room-exists/{roomID}")]
         public async Task<bool> DoesRoomExist(int roomID)
         {
             return await _roomService.DoesRoomExist(roomID);
         }
 
         // Helper Method 2: Check if Equipment Exists
-        [HttpGet("{equipmentId}/exists")]
+        [HttpGet("exists/{equipmentID}")]
         public async Task<bool> DoesEquipmentExist(int equipmentID)
         {
             return await _roomService.DoesEquipmentExist(equipmentID);
         }
 
         // Helper Method 3: Check if Department Exists
-        [HttpGet("{departmentId}/exists")]
+        [HttpGet("department-exists/{departmentID}")]
         public async Task<bool> DoesDepartmentExist(int departmentID)
         {
             return await _roomService.DoesDepartmentExist(departmentID);
