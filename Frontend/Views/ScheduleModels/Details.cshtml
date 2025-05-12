@@ -1,0 +1,30 @@
+﻿@model Frontend.Models.ScheduleModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>ScheduleModel</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Doctor)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Doctor.DoctorId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Shift)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Shift.ShiftID)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.ScheduleId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
