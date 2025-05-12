@@ -1,0 +1,76 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using Frontend.Models;
+
+namespace Hospital.ApiClients
+{
+    public class ShiftsApiService
+    {
+        private readonly HttpClient _httpClient;
+        private const string BaseUrl = "https://localhost:5035/api/";
+
+        public ShiftsApiService()
+        {
+            _httpClient = new HttpClient { BaseAddress = new Uri(BaseUrl) };
+        }
+
+        public async Task<List<ShiftModel>> GetShiftsAsync()
+        {
+            var response = await _httpClient.GetAsync("Shifts");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<ShiftModel>>();
+        }
+
+
+        public async Task<List<ShiftModel>> GetShiftsByDoctorIdAsync(int doctorId)
+        {
+            var response = await _httpClient.GetAsync($"Shifts/doctor/{doctorId}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<ShiftModel>>();
+        }
+
+        public async Task<List<ShiftModel>> GetDoctorDaytimeShiftsAsync(int doctorId)
+        {
+            var response = await _httpClient.GetAsync($"Shifts/doctor/{doctorId}/daytime");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<ShiftModel>>();
+        }
+
+        public async Task<bool> AddShiftAsync(ShiftModel shift)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Shifts", shift);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<bool>();
+        }
+
+        public async Task<bool> UpdateShiftAsync(int shiftId, ShiftModel shift)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"Shifts/{shiftId}", shift);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<bool>();
+        }
+
+        public async Task<bool> DeleteShiftAsync(int shiftId)
+        {
+            var response = await _httpClient.DeleteAsync($"Shifts/{shiftId}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<bool>();
+        }
+
+        public async Task<bool> DoesShiftExistAsync(int shiftId)
+        {
+            var response = await _httpClient.GetAsync($"Shifts/exists/{shiftId}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<bool>();
+            }
+            else
+            {
+                throw new Exception("Error checking shift existence");
+            }
+        }
+    }
+}

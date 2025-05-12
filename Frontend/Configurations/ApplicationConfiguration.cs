@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Backend.Configs
+namespace Frontend.Configs
 {
     using System;
     using System.Collections.Generic;
