@@ -26,9 +26,13 @@ namespace Hospital.Views
 
             if (token == null)
             {
-                // error message
+                this.errorMessage.Text = "Invalid username or password.";
+                this.errorMessage.Visibility = Visibility.Visible;
                 return;
             }
+
+
+            this.errorMessage.Visibility = Visibility.Collapsed;
 
             App.Token = token;
             // Navigate back to the main page
