@@ -24,6 +24,12 @@ namespace Hospital.Views
         {
             string token = await this.userApiService.Login(this.Username.Text, this.Password.Password);
 
+            if (token == null)
+            {
+                // error message
+                return;
+            }
+
             // Navigate back to the main page
             var adminMainPage = new AdminMainPage();
             adminMainPage.Activate();

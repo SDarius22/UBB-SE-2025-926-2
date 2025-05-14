@@ -28,8 +28,15 @@ namespace Hospital.ApiClients
         public async Task<string> Login(string username, string password)
         {
             var response = await _httpClient.GetAsync($"User/login?username={username}&password={password}");
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
+            try
+            {
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadAsStringAsync();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
     }
 }

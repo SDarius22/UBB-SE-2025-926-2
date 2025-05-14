@@ -1,5 +1,6 @@
 ﻿using Backend.DatabaseServices;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,6 +23,7 @@ namespace Backend.API.Controllers
 
         // GET: api/doctors
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<DoctorJointModel>>> GetDoctors()
         {
             var doctors = await _doctorsService.GetDoctors();

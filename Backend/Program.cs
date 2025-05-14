@@ -44,7 +44,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         o.TokenValidationParameters = new TokenValidationParameters
         {
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ApplicationConfiguration.GetInstance().JwtSecret)),
-            ClockSkew = TimeSpan.Zero
+            ValidIssuer = ApplicationConfiguration.GetInstance().Issuer,
+            ValidAudience = ApplicationConfiguration.GetInstance().Audience,
+            ClockSkew = TimeSpan.Zero,
         };
     });
 
@@ -58,8 +60,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 

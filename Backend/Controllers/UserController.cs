@@ -47,9 +47,10 @@ namespace Backend.API.Controllers
             if (userId != 0)
             {
                 token = tokenProvider.Create(userId);
+                return Ok(token);
             }
 
-            return Ok(token);
+            return BadRequest("user doesn't exist");
         }
     }
 }

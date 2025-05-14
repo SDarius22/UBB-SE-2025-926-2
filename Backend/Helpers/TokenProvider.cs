@@ -28,8 +28,8 @@
                 ]),
                 Expires = DateTime.UtcNow.AddMinutes(ApplicationConfiguration.GetInstance().TokenExpirationMinutes),
                 SigningCredentials = credentials,
-                //Issuer
-                //Audience
+                Issuer = ApplicationConfiguration.GetInstance().Issuer,
+                Audience = ApplicationConfiguration.GetInstance().Audience,
             };
 
             var handler = new JsonWebTokenHandler();

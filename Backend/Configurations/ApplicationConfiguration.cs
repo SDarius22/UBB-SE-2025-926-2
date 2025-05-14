@@ -30,6 +30,8 @@ namespace Backend.Configs
 
         private string jwtSecret = "axbc32-asdhfghjdgsai-ashjdfgbdksjahghjdhas-rujilqahgierqhwglk";
         private int tokenExpirationMinutes = 60;
+        private string issuer = "appointmentmanager";
+        private string audience = "account";
 
         private ApplicationConfiguration()
         {
@@ -72,6 +74,22 @@ namespace Backend.Configs
             get
             {
                 return this.tokenExpirationMinutes;
+            }
+        }
+
+        public string Issuer
+        {
+            get
+            {
+                return this.issuer;
+            }
+        }
+
+        public string Audience
+        {
+            get
+            {
+                return this.audience;
             }
         }
     }
