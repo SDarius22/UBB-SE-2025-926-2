@@ -18,30 +18,51 @@ namespace Hospital.ApiClients
             _httpClient = new HttpClient { BaseAddress = new Uri(BaseUrl) };
         }
 
+        // Helper method to create an HttpRequestMessage with the Authorization header
+        private HttpRequestMessage CreateRequest(HttpMethod method, string url)
+        {
+            if (string.IsNullOrEmpty(App.Token))
+                throw new InvalidOperationException("JWT token is missing. Please log in first.");
+
+            var request = new HttpRequestMessage(method, url);
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", App.Token);
+            return request;
+        }
+
+        // Get all rooms
         public async Task<List<RoomModel>> GetRoomsAsync()
         {
-            var response = await _httpClient.GetAsync("Room");
+            var request = CreateRequest(HttpMethod.Get, "Room");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<RoomModel>>();
         }
 
+        // Add a new room
         public async Task<bool> AddRoomAsync(RoomModel room)
         {
-            var response = await _httpClient.PostAsJsonAsync("Room", room);
+            var request = CreateRequest(HttpMethod.Post, "Room");
+            request.Content = JsonContent.Create(room);
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
         }
 
+        // Update an existing room
         public async Task<bool> UpdateRoomAsync(int roomId, RoomModel room)
         {
-            var response = await _httpClient.PutAsJsonAsync($"Room/{roomId}", room);
+            var request = CreateRequest(HttpMethod.Put, $"Room/{roomId}");
+            request.Content = JsonContent.Create(room);
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
         }
 
+        // Delete a room
         public async Task<bool> DeleteRoomAsync(int roomId)
         {
-            var response = await _httpClient.DeleteAsync($"Room/{roomId}");
+            var request = CreateRequest(HttpMethod.Delete, $"Room/{roomId}");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
         }
@@ -49,21 +70,24 @@ namespace Hospital.ApiClients
         // Check if a room exists
         public async Task<bool> DoesRoomExistAsync(int roomId)
         {
-            var response = await _httpClient.GetAsync($"Room/room-exists/{roomId}");
+            var request = CreateRequest(HttpMethod.Get, $"Room/room-exists/{roomId}");
+            var response = await _httpClient.SendAsync(request);
             return response.IsSuccessStatusCode;
         }
 
         // Check if equipment exists
         public async Task<bool> DoesEquipmentExistAsync(int equipmentId)
         {
-            var response = await _httpClient.GetAsync($"Room/exists/{equipmentId}");
+            var request = CreateRequest(HttpMethod.Get, $"Room/exists/{equipmentId}");
+            var response = await _httpClient.SendAsync(request);
             return response.IsSuccessStatusCode;
         }
 
         // Check if department exists
         public async Task<bool> DoesDepartmentExistAsync(int departmentId)
         {
-            var response = await _httpClient.GetAsync($"Room/department-exists/{departmentId}");
+            var request = CreateRequest(HttpMethod.Get, $"Room/department-exists/{departmentId}");
+            var response = await _httpClient.SendAsync(request);
             if (!response.IsSuccessStatusCode)
             {
                 var errorMessage = await response.Content.ReadAsStringAsync();
