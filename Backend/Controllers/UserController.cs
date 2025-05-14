@@ -1,5 +1,7 @@
 ﻿using Backend.DatabaseServices;
 using Backend.DatabaseServices.Interfaces;
+using Backend.Helpers;
+using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -10,10 +12,12 @@ namespace Backend.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserDatabaseService _userService;
+        private TokenProvider tokenProvider;
 
         public UserController(IUserDatabaseService userService)
         {
             _userService = userService;
+            tokenProvider = new TokenProvider();
         }
 
         // GET: api/user/check-role/5?role=doctor
@@ -29,6 +33,17 @@ namespace Backend.API.Controllers
             {
                 return BadRequest($"Error checking user role: {ex.Message}");
             }
+        }
+
+        // GET: api/user/login
+        [HttpGet("login")]
+        public async Task<string> Login(string username, string password)
+        {
+            // verify if user exists
+            UserModel user = new UserModel();
+            string token = tokenProvider.Create(user);
+
+            return token;
         }
     }
 }
