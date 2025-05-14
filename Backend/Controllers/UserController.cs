@@ -2,6 +2,7 @@
 using Backend.DatabaseServices.Interfaces;
 using Backend.Helpers;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -22,6 +23,7 @@ namespace Backend.API.Controllers
 
         // GET: api/user/check-role/5?role=doctor
         [HttpGet("check-role/{userId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> CheckUserRole(int userId, [FromQuery] string role)
         {
             try
