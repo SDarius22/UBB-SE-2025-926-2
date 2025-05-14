@@ -1,5 +1,6 @@
 ﻿using Backend.DatabaseServices.Interfaces;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -18,6 +19,7 @@ namespace Backend.API.Controllers
 
         // GET: api/doctorinformation/{doctorId}
         [HttpGet("{doctorId}")]
+        [Authorize]
         public async Task<ActionResult<DoctorInformationModel>> GetDoctorInformation(int doctorId)
         {
             var info = await _doctorInfoService.GetDoctorInformation(doctorId);

@@ -1,5 +1,6 @@
 ﻿using Backend.DatabaseServices;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace Backend.API.Controllers
 
         // GET: api/departments
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<DepartmentModel>>> GetDepartments()
         {
             var departments = await _departmentsService.GetDepartments();
@@ -27,6 +29,7 @@ namespace Backend.API.Controllers
 
         // POST: api/departments
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<DepartmentModel>> AddDepartment([FromBody] DepartmentModel department)
         {
             var success = await _departmentsService.AddDepartment(department);
@@ -38,6 +41,7 @@ namespace Backend.API.Controllers
 
         // PUT: api/departments/{departmentId}
         [HttpPut("{departmentId}")]
+        [Authorize]
         public async Task<IActionResult> UpdateDepartment(int departmentId, [FromBody] DepartmentModel department)
         {
             if (departmentId != department.DepartmentID)
@@ -55,6 +59,7 @@ namespace Backend.API.Controllers
 
         // DELETE: api/departments/{departmentId}
         [HttpDelete("{departmentId}")]
+        [Authorize]
         public async Task<IActionResult> DeleteDepartment(int departmentId)
         {
             if (!await _departmentsService.DoesDepartmentExist(departmentId))
@@ -68,6 +73,7 @@ namespace Backend.API.Controllers
         }
 
         [HttpGet("exists/{departmentId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> DoesDepartmentExist(int departmentId)
         {
             var exists = await _departmentsService.DoesDepartmentExist(departmentId);

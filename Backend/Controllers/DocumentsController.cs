@@ -1,5 +1,6 @@
 ﻿using Backend.DatabaseServices;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace Backend.API.Controllers
 
         // POST: api/documents
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> UploadDocument([FromBody] DocumentModel document)
         {
             var success = await _documentService.UploadDocumentToDataBase(document);
@@ -30,6 +32,7 @@ namespace Backend.API.Controllers
 
         // GET: api/documents/medicalRecord/{medicalRecordId}
         [HttpGet("medicalRecord/{medicalRecordId}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<DocumentModel>>> GetDocumentsByMedicalRecordId(int medicalRecordId)
         {
             var documents = await _documentService.GetDocumentsByMedicalRecordId(medicalRecordId);
