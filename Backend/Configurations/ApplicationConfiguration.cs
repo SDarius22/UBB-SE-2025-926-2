@@ -22,14 +22,16 @@ namespace Backend.Configs
         private static ApplicationConfiguration? _instance;
 
 
-        private string _databaseConnection = "Data Source=(localdb)\\localDB1;Initial Catalog=HospitalManagement;Integrated Security=True;TrustServerCertificate=True";
+        private string _databaseConnection = "Data Source=ATHOS;Initial Catalog=HospitalManagement;Integrated Security=True;TrustServerCertificate=True";
 
         public int patientId = 1;
         public int doctorId = 1;
         public int SlotDuration = 30;
 
-        private string jwtSecret = "axbc32";
+        private string jwtSecret = "axbc32-fdashuf-dfashjifduijlsa-sdajhfgasdhjg-fdaujihgfdj";
         private int tokenExpirationMinutes = 60;
+        private string issuer = "appointmentmanager";
+        private string audience = "account";
 
         private ApplicationConfiguration()
         {
@@ -74,5 +76,8 @@ namespace Backend.Configs
                 return this.tokenExpirationMinutes;
             }
         }
+
+        public string Issuer { get => this.issuer;}
+        public string Audience { get => this.audience;}
     }
 }

@@ -39,7 +39,6 @@ namespace Backend.API.Controllers
 
         // GET: api/user/login
         [HttpGet("login")]
-        [Authorize]
         public async Task<ActionResult<string>> Login([FromQuery] string username, [FromQuery] string password)
         {
             int userId = await _userService.GetUserId(username, password);
