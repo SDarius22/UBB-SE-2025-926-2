@@ -1,8 +1,10 @@
 ﻿using Backend.DatabaseServices;
 using Backend.DatabaseServices.Interfaces;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace Backend.API.Controllers
@@ -20,6 +22,7 @@ namespace Backend.API.Controllers
 
         // GET: api/room
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<RoomModel>>> GetRooms()
         {
             try
@@ -38,6 +41,7 @@ namespace Backend.API.Controllers
 
         // POST: api/room
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<bool>> AddRoom([FromBody] RoomModel room)
         {
             try
@@ -62,6 +66,7 @@ namespace Backend.API.Controllers
 
         // PUT: api/room/5
         [HttpPut("{roomId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> UpdateRoom(int roomId, [FromBody] RoomModel room)
         {
             try
@@ -92,6 +97,7 @@ namespace Backend.API.Controllers
 
         // DELETE: api/room/5
         [HttpDelete("{roomId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> DeleteRoom(int roomId)
         {
             try
@@ -113,6 +119,7 @@ namespace Backend.API.Controllers
 
         // Helper Method 1: Check if Room Exists
         [HttpGet("room-exists/{roomID}")]
+        [Authorize]
         public async Task<bool> DoesRoomExist(int roomID)
         {
             return await _roomService.DoesRoomExist(roomID);
@@ -120,6 +127,7 @@ namespace Backend.API.Controllers
 
         // Helper Method 2: Check if Equipment Exists
         [HttpGet("exists/{equipmentID}")]
+        [Authorize]
         public async Task<bool> DoesEquipmentExist(int equipmentID)
         {
             return await _roomService.DoesEquipmentExist(equipmentID);
@@ -127,6 +135,7 @@ namespace Backend.API.Controllers
 
         // Helper Method 3: Check if Department Exists
         [HttpGet("department-exists/{departmentID}")]
+        [Authorize]
         public async Task<bool> DoesDepartmentExist(int departmentID)
         {
             return await _roomService.DoesDepartmentExist(departmentID);

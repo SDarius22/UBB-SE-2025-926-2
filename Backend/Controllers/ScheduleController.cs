@@ -1,6 +1,7 @@
 ﻿using Backend.DatabaseServices;
 using Backend.DatabaseServices.Interfaces;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ namespace Backend.API.Controllers
 
         // GET: api/schedule
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ScheduleModel>>> GetSchedules()
         {
             try
@@ -39,6 +41,7 @@ namespace Backend.API.Controllers
 
         // POST: api/schedule
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<bool>> AddSchedule([FromBody] ScheduleModel schedule)
         {
             try
@@ -64,6 +67,7 @@ namespace Backend.API.Controllers
             }
         } // PUT: api/schedule/5
         [HttpPut("{scheduleId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> UpdateSchedule(int scheduleId, [FromBody] ScheduleModel schedule)
         {
             try
@@ -99,6 +103,7 @@ namespace Backend.API.Controllers
 
         // DELETE: api/schedule/5
         [HttpDelete("{scheduleId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> DeleteSchedule(int scheduleId)
         {
             try
@@ -122,6 +127,7 @@ namespace Backend.API.Controllers
 
         // Check if the schedule exists
         [HttpGet("exists/{scheduleId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> DoesScheduleExist(int scheduleId)
         {
             try
@@ -137,6 +143,7 @@ namespace Backend.API.Controllers
 
         // Check if the doctor exists
         [HttpGet("doctor-exists/{doctorId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> DoesDoctorExist(int doctorId)
         {
             try
@@ -152,6 +159,7 @@ namespace Backend.API.Controllers
 
         // Check if the shift exists
         [HttpGet("shift-exists/{shiftId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> DoesShiftExist(int shiftId)
         {
             try
