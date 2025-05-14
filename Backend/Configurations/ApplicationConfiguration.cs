@@ -28,7 +28,7 @@ namespace Backend.Configs
         public int doctorId = 1;
         public int SlotDuration = 30;
 
-        private string jwtSecret = "axbc32";
+        private string jwtSecret = "axbc32-asdhfghjdgsai-ashjdfgbdksjahghjdhas-rujilqahgierqhwglk";
         private int tokenExpirationMinutes = 60;
 
         private ApplicationConfiguration()

@@ -13,7 +13,7 @@
 
     internal sealed class TokenProvider
     {
-        public string Create(UserModel user)
+        public string Create(int userId)
         {
             string secretKey = ApplicationConfiguration.GetInstance().JwtSecret;
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
@@ -24,7 +24,7 @@
             {
                 Subject = new ClaimsIdentity(
                 [
-                    new Claim(Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames.Sub, user.UserID.ToString()),
+                    new Claim(Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames.Sub, userId.ToString()),
                 ]),
                 Expires = DateTime.UtcNow.AddMinutes(ApplicationConfiguration.GetInstance().TokenExpirationMinutes),
                 SigningCredentials = credentials,

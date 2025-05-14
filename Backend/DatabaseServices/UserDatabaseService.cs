@@ -24,5 +24,20 @@ namespace Backend.DatabaseServices
         {
             return await _context.Users.AnyAsync(u => u.UserID == userID && u.Role == role);
         }
+
+        public async Task<int> GetUserId(string username, string password)
+        {
+            try
+            {
+                return await _context.Users
+                    .Where(u => u.Username == username && u.Password == password)
+                    .Select(u => u.UserID)
+                    .FirstOrDefaultAsync();
+            }
+            catch (Exception exception)
+            {
+                throw new Exception("wtf");
+            }
+        }
     }
 }

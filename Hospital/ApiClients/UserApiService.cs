@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Data;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Runtime.Intrinsics.X86;
 using System.Threading.Tasks;
+using Windows.System;
 
 namespace Hospital.ApiClients
 {
@@ -20,6 +23,13 @@ namespace Hospital.ApiClients
             var response = await _httpClient.GetAsync($"User/check-role/{userId}?role={role}");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
+        }
+
+        public async Task<string> Login(string username, string password)
+        {
+            var response = await _httpClient.GetAsync($"User/login?username={username}&password={password}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
         }
     }
 }

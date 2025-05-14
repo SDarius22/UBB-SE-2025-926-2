@@ -23,7 +23,6 @@ namespace Backend.API.Controllers
 
         // GET: api/user/check-role/5?role=doctor
         [HttpGet("check-role/{userId}")]
-        [Authorize]
         public async Task<ActionResult<bool>> CheckUserRole(int userId, [FromQuery] string role)
         {
             try
@@ -39,13 +38,18 @@ namespace Backend.API.Controllers
 
         // GET: api/user/login
         [HttpGet("login")]
-        public async Task<string> Login(string username, string password)
+        public async Task<ActionResult<string>> Login([FromQuery] string username, [FromQuery] string password)
         {
-            // verify if user exists
-            UserModel user = new UserModel();
-            string token = tokenProvider.Create(user);
+            int userId = await _userService.GetUserId(username, password);
 
-            return token;
+            string token = "";
+
+            if (userId != 0)
+            {
+                token = tokenProvider.Create(userId);
+            }
+
+            return Ok(token);
         }
     }
 }

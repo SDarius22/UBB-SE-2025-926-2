@@ -1,5 +1,6 @@
 ﻿using Backend.DatabaseServices;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace Backend.API.Controllers
 
         // GET: api/appointments
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<AppointmentJointModel>>> GetAllAppointments()
         {
             var appointments = await _appointmentsService.GetAllAppointments();
