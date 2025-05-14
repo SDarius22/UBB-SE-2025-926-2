@@ -30,6 +30,7 @@ namespace Hospital.Views
                 return;
             }
 
+            App.Token = token;
             // Navigate back to the main page
             var adminMainPage = new AdminMainPage();
             adminMainPage.Activate();

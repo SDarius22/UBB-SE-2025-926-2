@@ -21,8 +21,13 @@ namespace Hospital.ApiClients
         // Get all doctors
         public async Task<List<DoctorJointModel>> GetDoctorsAsync()
         {
-            var response = await _httpClient.GetAsync("Doctors");
+            var request = new HttpRequestMessage(HttpMethod.Get, "Doctors");
+
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", App.Token);
+
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
+
             return await response.Content.ReadFromJsonAsync<List<DoctorJointModel>>();
         }
 

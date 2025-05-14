@@ -32,6 +32,7 @@ namespace Backend.API.Controllers
 
         // GET: api/doctors/department/5
         [HttpGet("department/{departmentId}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<DoctorJointModel>>> GetDoctorsByDepartment(int departmentId)
         {
             var doctors = await _doctorsService.GetDoctorsByDepartment(departmentId);
@@ -40,6 +41,7 @@ namespace Backend.API.Controllers
 
         // POST: api/doctors
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<DoctorJointModel>> AddDoctor([FromBody] DoctorJointModel doctor)
         {
             Debug.WriteLine($"Adding doctor with UserId: {doctor.UserId}, DepartmentId: {doctor.DepartmentId}, LicenseNumber: {doctor.LicenseNumber}");
@@ -63,6 +65,7 @@ namespace Backend.API.Controllers
 
         // PUT: api/doctors/5
         [HttpPut("{doctorId}")]
+        [Authorize]
         public async Task<IActionResult> UpdateDoctor(int doctorId, [FromBody] DoctorJointModel doctor)
         {
             if (doctorId != doctor.DoctorId)
@@ -83,6 +86,7 @@ namespace Backend.API.Controllers
 
         // DELETE: api/doctors/5
         [HttpDelete("{doctorId}")]
+        [Authorize]
         public async Task<IActionResult> DeleteDoctor(int doctorId)
         {
             if (!await _doctorsService.DoesDoctorExist(doctorId))
@@ -97,6 +101,7 @@ namespace Backend.API.Controllers
 
         // GET: api/doctors/check-doctor/5
         [HttpGet("check-doctor/{userId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> IsUserDoctor(int userId)
         {
             var isDoctor = await _doctorsService.IsUserDoctor(userId);
@@ -105,6 +110,7 @@ namespace Backend.API.Controllers
 
         // CHECK: api/doctors/is-user-already-doctor/5
         [HttpGet("is-user-already-doctor/{userId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> IsUserAlreadyDoctor(int userId)
         {
             var isAlreadyDoctor = await _doctorsService.IsUserAlreadyDoctor(userId);
@@ -113,6 +119,7 @@ namespace Backend.API.Controllers
 
         // GET: api/doctors/does-user-exist/5
         [HttpGet("does-user-exist/{userId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> DoesUserExist(int userId)
         {
             var userExists = await _doctorsService.DoesUserExist(userId);
@@ -121,6 +128,7 @@ namespace Backend.API.Controllers
 
         // GET: api/doctors/does-department-exist/5
         [HttpGet("does-department-exist/{departmentId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> DoesDepartmentExist(int departmentId)
         {
             var departmentExists = await _doctorsService.DoesDepartmentExist(departmentId);
@@ -129,6 +137,7 @@ namespace Backend.API.Controllers
 
         // GET: api/doctors/user-exists-in-doctors/5
         [HttpGet("user-exists-in-doctors/{userId}/{doctorId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> UserExistsInDoctors(int userId, int doctorId)
         {
             var userExists = await _doctorsService.UserExistsInDoctors(userId, doctorId);
@@ -137,6 +146,7 @@ namespace Backend.API.Controllers
 
         // GET: api/doctors/doctor-exists/5
         [HttpGet("doctor-exists/{doctorId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> DoesDoctorExist(int doctorId)
         {
             var doctorExists = await _doctorsService.DoesDoctorExist(doctorId);
