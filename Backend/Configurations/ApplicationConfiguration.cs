@@ -22,11 +22,14 @@ namespace Backend.Configs
         private static ApplicationConfiguration? _instance;
 
 
-        private string _databaseConnection = "Data Source=DESKTOP-CL1KD74\\SQLEXPRESS01;Initial Catalog=HospitalManagement;Integrated Security=True;TrustServerCertificate=True";
+        private string _databaseConnection = "Data Source=ATHOS;Initial Catalog=HospitalManagement;Integrated Security=True;TrustServerCertificate=True";
 
         public int patientId = 1;
         public int doctorId = 1;
         public int SlotDuration = 30;
+
+        private string jwtSecret = "axbc32";
+        private int tokenExpirationMinutes = 60;
 
         private ApplicationConfiguration()
         {
@@ -53,6 +56,22 @@ namespace Backend.Configs
             get
             {
                 return this._databaseConnection;
+            }
+        }
+
+        public string JwtSecret
+        {
+            get
+            {
+                return this.jwtSecret;
+            }
+        }
+
+        public int TokenExpirationMinutes
+        {
+            get
+            {
+                return this.tokenExpirationMinutes;
             }
         }
     }

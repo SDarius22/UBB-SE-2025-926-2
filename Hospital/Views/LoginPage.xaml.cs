@@ -17,6 +17,7 @@ namespace Hospital.Views
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
+            // AUTH NEEDED - SEND REQUEST
             // Navigate back to the main page
             var adminMainPage = new AdminMainPage();
             adminMainPage.Activate();
