@@ -4,11 +4,12 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Frontend.ApiClients.Interface;
 using Frontend.Models;
 
 namespace Hospital.ApiClients
 {
-    public class DoctorApiService
+    public class DoctorApiService : IDoctorApiService
     {
         private readonly HttpClient _httpClient;
         private const string BaseUrl = "https://localhost:5035/api/";
@@ -24,6 +25,16 @@ namespace Hospital.ApiClients
             var response = await _httpClient.GetAsync("Doctors");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<DoctorJointModel>>();
+        }
+
+        public async Task<DoctorJointModel> GetDoctorAsync(int id)
+        {
+            var response = await _httpClient.GetAsync("Doctors");
+            response.EnsureSuccessStatusCode();
+
+            var doctors = await response.Content.ReadFromJsonAsync<List<DoctorJointModel>>();
+
+            return doctors.FirstOrDefault(d => d.DoctorId== id);
         }
 
         // Get doctors by department

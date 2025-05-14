@@ -1,11 +1,28 @@
+using Frontend.ApiClients.Interface;
 using Frontend.Configs;
 using Frontend.DbContext;
-using Microsoft.EntityFrameworkCore;
+using Hospital.ApiClients;
+
+//using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(ApplicationConfiguration.GetInstance().DatabaseConnection));
+//builder.Services.AddDbContext<AppDbContext>(options =>
+//    options.UseSqlServer(ApplicationConfiguration.GetInstance().DatabaseConnection));
+
+builder.Services.AddScoped<IAppointmentsApiService, AppointmentsApiService>();
+builder.Services.AddScoped<IDepartmentsApiService, DepartmentsApiService>();
+builder.Services.AddScoped<IDoctorApiService, DoctorApiService>();
+builder.Services.AddScoped<IDocumentsApiService, DocumentsApiService>();
+builder.Services.AddScoped<IDrugsApiService, DrugsApiService>();
+builder.Services.AddScoped<IEquipmentApiService, EquipmentApiService>();
+builder.Services.AddScoped<IMedicalProceduresApiService, MedicalProceduresApiService>();
+builder.Services.AddScoped<IMedicalRecordsApiService, MedicalRecordsApiService>();
+builder.Services.AddScoped<IRatingApiService, RatingApiService>();
+builder.Services.AddScoped<IRoomApiService, RoomApiService>();
+builder.Services.AddScoped<IScheduleApiService, ScheduleApiService>();
+builder.Services.AddScoped<IShiftsApiService, ShiftsApiService>();
+builder.Services.AddScoped<IUserApiService, UserApiService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

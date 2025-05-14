@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Frontend.ApiClients.Interface;
 using Frontend.Models;
 
 namespace Hospital.ApiClients
 {
-    public class ScheduleApiService
+    public class ScheduleApiService : IScheduleApiService
     {
         private readonly HttpClient _httpClient;
         private const string BaseUrl = "https://localhost:5035/api/";
@@ -22,6 +23,15 @@ namespace Hospital.ApiClients
             var response = await _httpClient.GetAsync("Schedule");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<ScheduleModel>>();
+        }
+
+        public async Task<ScheduleModel> GetScheduleAsync(int id)
+        {
+            var response = await _httpClient.GetAsync("Schedule");
+            response.EnsureSuccessStatusCode();
+            var schedules = await response.Content.ReadFromJsonAsync<List<ScheduleModel>>();
+
+            return schedules.FirstOrDefault(s => s.ScheduleId == id);
         }
 
         public async Task<bool> AddScheduleAsync(ScheduleModel schedule)

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Frontend.ApiClients.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Frontend.DbContext;
 using Frontend.Models;
 
@@ -12,35 +12,32 @@ namespace Frontend.Controllers
 {
     public class EquipmentModelsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IEquipmentApiService _equipmentService;
 
-        public EquipmentModelsController(AppDbContext context)
+        public EquipmentModelsController(IEquipmentApiService equipmentService)
         {
-            _context = context;
+            _equipmentService = equipmentService;
+        }
+
+        private async Task<IActionResult> GetEquipmentActionResult(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var model = await _equipmentService.GetEquipmentAsync(id.Value);
+
+            return model == null ? NotFound() : View(model);
         }
 
         // GET: EquipmentModels
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Equipments.ToListAsync());
+            return View(await _equipmentService.GetEquipmentsAsync());
         }
 
         // GET: EquipmentModels/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var equipmentModel = await _context.Equipments
-                .FirstOrDefaultAsync(m => m.EquipmentID == id);
-            if (equipmentModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(equipmentModel);
+            return await GetEquipmentActionResult(id);
         }
 
         // GET: EquipmentModels/Create
@@ -54,31 +51,22 @@ namespace Frontend.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EquipmentID,Name,Type,Specification,Stock")] EquipmentModel equipmentModel)
+        public async Task<IActionResult> Create([Bind("EquipmentID,Name,Type,Specification,Stock")] EquipmentModel equipment)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(equipmentModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(equipment);
             }
-            return View(equipmentModel);
+
+            bool response = await _equipmentService.AddEquipmentAsync(equipment);
+
+            return response ? RedirectToAction(nameof(Index)) : View(equipment);
         }
 
         // GET: EquipmentModels/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var equipmentModel = await _context.Equipments.FindAsync(id);
-            if (equipmentModel == null)
-            {
-                return NotFound();
-            }
-            return View(equipmentModel);
+            return await GetEquipmentActionResult(id);
         }
 
         // POST: EquipmentModels/Edit/5
@@ -86,52 +74,27 @@ namespace Frontend.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EquipmentID,Name,Type,Specification,Stock")] EquipmentModel equipmentModel)
+        public async Task<IActionResult> Edit(int id, [Bind("EquipmentID,Name,Type,Specification,Stock")] EquipmentModel equipment)
         {
-            if (id != equipmentModel.EquipmentID)
+            if (id != equipment.EquipmentID)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(equipmentModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EquipmentModelExists(equipmentModel.EquipmentID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(equipment);
             }
-            return View(equipmentModel);
+
+            var response = await _equipmentService.UpdateEquipmentAsync(id, equipment);
+
+            return response ? RedirectToAction(nameof(Index)) : View(equipment);
         }
 
         // GET: EquipmentModels/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var equipmentModel = await _context.Equipments
-                .FirstOrDefaultAsync(m => m.EquipmentID == id);
-            if (equipmentModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(equipmentModel);
+            return await GetEquipmentActionResult(id);
         }
 
         // POST: EquipmentModels/Delete/5
@@ -139,19 +102,11 @@ namespace Frontend.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var equipmentModel = await _context.Equipments.FindAsync(id);
-            if (equipmentModel != null)
-            {
-                _context.Equipments.Remove(equipmentModel);
-            }
+            var response = await _equipmentService.DeleteEquipmentAsync(id);
 
-            await _context.SaveChangesAsync();
+            // return daca da fail?
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EquipmentModelExists(int id)
-        {
-            return _context.Equipments.Any(e => e.EquipmentID == id);
-        }
     }
 }

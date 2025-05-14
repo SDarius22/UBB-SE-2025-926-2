@@ -1,170 +1,158 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Frontend.DbContext;
-using Frontend.Models;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Threading.Tasks;
+//using Frontend.ApiClients.Interface;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.AspNetCore.Mvc.Rendering;
+//using Frontend.DbContext;
+//using Frontend.Models;
 
-namespace Frontend.Controllers
-{
-    public class DoctorJointModelsController : Controller
-    {
-        private readonly AppDbContext _context;
+//// Nu vad sa trebuiasca
+//namespace Frontend.Controllers
+//{
+//    public class DoctorJointModelsController : Controller
+//    {
+//        private readonly IDoctorApiService _doctorService;
 
-        public DoctorJointModelsController(AppDbContext context)
-        {
-            _context = context;
-        }
+//        public DoctorJointModelsController(IDoctorApiService doctorService)
+//        {
+//            _doctorService = doctorService;
+//        }
 
-        // GET: DoctorJointModels
-        public async Task<IActionResult> Index()
-        {
-            var appDbContext = _context.DoctorJoints.Include(d => d.Department).Include(d => d.User);
-            return View(await appDbContext.ToListAsync());
-        }
+//        // GET: DoctorJointModels
+//        public async Task<IActionResult> Index()
+//        {
+//            return View(await _doctorService.GetDoctorsAsync());
+//        }
 
-        // GET: DoctorJointModels/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+//        private async Task<IActionResult> GetDoctor(int? id)
+//        {
+//            if (id == null) return NotFound();
 
-            var doctorJointModel = await _context.DoctorJoints
-                .Include(d => d.Department)
-                .Include(d => d.User)
-                .FirstOrDefaultAsync(m => m.DoctorId == id);
-            if (doctorJointModel == null)
-            {
-                return NotFound();
-            }
+//            var doctor = await _doctorService.GetDoctorAsync(id.Value);
 
-            return View(doctorJointModel);
-        }
+//            return doctor == null ? NotFound() : View(doctor);
+//        }
 
-        // GET: DoctorJointModels/Create
-        public IActionResult Create()
-        {
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "DepartmentID", "DepartmentID");
-            ViewData["UserId"] = new SelectList(_context.Users, "UserID", "Role");
-            return View();
-        }
+//        // GET: DoctorJointModels/Details/5
+//        public async Task<IActionResult> Details(int? id)
+//        {
+//            return await GetDoctor(id);
+//        }
 
-        // POST: DoctorJointModels/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DoctorId,UserId,DepartmentId,Rating,LicenseNumber")] DoctorJointModel doctorJointModel)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(doctorJointModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "DepartmentID", "DepartmentID", doctorJointModel.DepartmentId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserID", "Role", doctorJointModel.UserId);
-            return View(doctorJointModel);
-        }
+//        // GET: DoctorJointModels/Create
+//        public IActionResult Create()
+//        {
+//            //ViewData["DepartmentId"] = new SelectList(_context.Departments, "DepartmentID", "DepartmentID");
+//            //ViewData["UserId"] = new SelectList(_context.Users, "UserID", "Role");
+//            return View();
+//        }
 
-        // GET: DoctorJointModels/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+//        // POST: DoctorJointModels/Create
+//        // To protect from overposting attacks, enable the specific properties you want to bind to.
+//        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+//        [HttpPost]
+//        [ValidateAntiForgeryToken]
+//        public async Task<IActionResult> Create([Bind("DoctorId,UserId,DepartmentId,Rating,LicenseNumber")] DoctorJointModel doctorJoint)
+//        {
+//            if (!ModelState.IsValid)
+//            {
+//                //ViewData["DepartmentId"] = new SelectList(_context.Departments, "DepartmentID", "DepartmentID", doctorJointModel.DepartmentId);
+//                //ViewData["UserId"] = new SelectList(_context.Users, "UserID", "Role", doctorJointModel.UserId);
 
-            var doctorJointModel = await _context.DoctorJoints.FindAsync(id);
-            if (doctorJointModel == null)
-            {
-                return NotFound();
-            }
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "DepartmentID", "DepartmentID", doctorJointModel.DepartmentId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserID", "Role", doctorJointModel.UserId);
-            return View(doctorJointModel);
-        }
+//                return View(doctorJoint);
+//            }
 
-        // POST: DoctorJointModels/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DoctorId,UserId,DepartmentId,Rating,LicenseNumber")] DoctorJointModel doctorJointModel)
-        {
-            if (id != doctorJointModel.DoctorId)
-            {
-                return NotFound();
-            }
+//            bool response = await _doctorService.AddDoctorAsync(doctorJoint);
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(doctorJointModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DoctorJointModelExists(doctorJointModel.DoctorId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "DepartmentID", "DepartmentID", doctorJointModel.DepartmentId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserID", "Role", doctorJointModel.UserId);
-            return View(doctorJointModel);
-        }
+//            //ViewData["DepartmentId"] = new SelectList(_context.Departments, "DepartmentID", "DepartmentID", doctorJointModel.DepartmentId);
+//            //ViewData["UserId"] = new SelectList(_context.Users, "UserID", "Role", doctorJointModel.UserId);
 
-        // GET: DoctorJointModels/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+//            return response ? RedirectToAction(nameof(Index)) : View(doctorJoint);
 
-            var doctorJointModel = await _context.DoctorJoints
-                .Include(d => d.Department)
-                .Include(d => d.User)
-                .FirstOrDefaultAsync(m => m.DoctorId == id);
-            if (doctorJointModel == null)
-            {
-                return NotFound();
-            }
+//        }
 
-            return View(doctorJointModel);
-        }
+//        // GET: DoctorJointModels/Edit/5
+//        public async Task<IActionResult> Edit(int? id)
+//        {
+//            return await GetDoctor(id);
+//        }
 
-        // POST: DoctorJointModels/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var doctorJointModel = await _context.DoctorJoints.FindAsync(id);
-            if (doctorJointModel != null)
-            {
-                _context.DoctorJoints.Remove(doctorJointModel);
-            }
+//        // POST: DoctorJointModels/Edit/5
+//        // To protect from overposting attacks, enable the specific properties you want to bind to.
+//        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+//        [HttpPost]
+//        [ValidateAntiForgeryToken]
+//        public async Task<IActionResult> Edit(int id, [Bind("DoctorId,UserId,DepartmentId,Rating,LicenseNumber")] DoctorJointModel doctorJoint)
+//        {
+//            if (id != doctorJoint.D)
+//            {
+//                return NotFound();
+//            }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+//            if (!ModelState.IsValid)
+//            {
+//                //ViewData["DepartmentId"] = new SelectList(_context.Departments, "DepartmentID", "DepartmentID", doctorJointModel.DepartmentId);
+//                //ViewData["UserId"] = new SelectList(_context.Users, "UserID", "Role", doctorJointModel.UserId);
 
-        private bool DoctorJointModelExists(int id)
-        {
-            return _context.DoctorJoints.Any(e => e.DoctorId == id);
-        }
-    }
-}
+//                return View(department);
+//            }
+
+//            var response = await _departmentsService.UpdateDepartmentAsync(id, department);
+
+//            return response ? RedirectToAction(nameof(Index)) : View(department);
+
+//            //if (id != doctorJointModel.DoctorId)
+//            //{
+//            //    return NotFound();
+//            //}
+
+//            //if (ModelState.IsValid)
+//            //{
+//            //    try
+//            //    {
+//            //        _context.Update(doctorJointModel);
+//            //        await _context.SaveChangesAsync();
+//            //    }
+//            //    catch (DbUpdateConcurrencyException)
+//            //    {
+//            //        if (!DoctorJointModelExists(doctorJointModel.DoctorId))
+//            //        {
+//            //            return NotFound();
+//            //        }
+//            //        else
+//            //        {
+//            //            throw;
+//            //        }
+//            //    }
+//            //    return RedirectToAction(nameof(Index));
+//            //}
+//            //ViewData["DepartmentId"] = new SelectList(_context.Departments, "DepartmentID", "DepartmentID", doctorJointModel.DepartmentId);
+//            //ViewData["UserId"] = new SelectList(_context.Users, "UserID", "Role", doctorJointModel.UserId);
+//            //return View(doctorJointModel);
+//        }
+
+//        // GET: DoctorJointModels/Delete/5
+//        public async Task<IActionResult> Delete(int? id)
+//        {
+//            return await GetDoctor(id);
+//        }
+
+//        // POST: DoctorJointModels/Delete/5
+//        [HttpPost, ActionName("Delete")]
+//        [ValidateAntiForgeryToken]
+//        public async Task<IActionResult> DeleteConfirmed(int id)
+//        {
+//            var doctorJointModel = await _context.DoctorJoints.FindAsync(id);
+//            if (doctorJointModel != null)
+//            {
+//                _context.DoctorJoints.Remove(doctorJointModel);
+//            }
+
+//            await _context.SaveChangesAsync();
+//            return RedirectToAction(nameof(Index));
+//        }
+        
+//    }
+//}

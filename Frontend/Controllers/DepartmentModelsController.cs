@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Frontend.ApiClients.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Frontend.DbContext;
 using Frontend.Models;
 
@@ -12,35 +12,23 @@ namespace Frontend.Controllers
 {
     public class DepartmentModelsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IDepartmentsApiService _departmentsService;
 
-        public DepartmentModelsController(AppDbContext context)
+        public DepartmentModelsController(IDepartmentsApiService departmentsService)
         {
-            _context = context;
+            _departmentsService = departmentsService;
         }
 
         // GET: DepartmentModels
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Departments.ToListAsync());
+            return View(await _departmentsService.GetDepartmentsAsync());
         }
 
         // GET: DepartmentModels/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var departmentModel = await _context.Departments
-                .FirstOrDefaultAsync(m => m.DepartmentID == id);
-            if (departmentModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(departmentModel);
+            return await GetDepartmentActionResult(id);
         }
 
         // GET: DepartmentModels/Create
@@ -54,31 +42,23 @@ namespace Frontend.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DepartmentID,Name")] DepartmentModel departmentModel)
+        public async Task<IActionResult> Create([Bind("DepartmentID,Name")] DepartmentModel department)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(departmentModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(department);
             }
-            return View(departmentModel);
+            
+            bool response = await _departmentsService.AddDepartmentAsync(department);
+
+            return response ? RedirectToAction(nameof(Index)) : View(department);
+
         }
 
         // GET: DepartmentModels/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var departmentModel = await _context.Departments.FindAsync(id);
-            if (departmentModel == null)
-            {
-                return NotFound();
-            }
-            return View(departmentModel);
+            return await GetDepartmentActionResult(id);
         }
 
         // POST: DepartmentModels/Edit/5
@@ -86,52 +66,27 @@ namespace Frontend.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DepartmentID,Name")] DepartmentModel departmentModel)
+        public async Task<IActionResult> Edit(int id, [Bind("DepartmentID,Name")] DepartmentModel department)
         {
-            if (id != departmentModel.DepartmentID)
+            if (id != department.DepartmentID)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(departmentModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DepartmentModelExists(departmentModel.DepartmentID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(department);
             }
-            return View(departmentModel);
+
+            var response = await _departmentsService.UpdateDepartmentAsync(id, department);
+
+            return response ? RedirectToAction(nameof(Index)) : View(department);
         }
 
         // GET: DepartmentModels/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var departmentModel = await _context.Departments
-                .FirstOrDefaultAsync(m => m.DepartmentID == id);
-            if (departmentModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(departmentModel);
+            return await GetDepartmentActionResult(id);
         }
 
         // POST: DepartmentModels/Delete/5
@@ -139,19 +94,21 @@ namespace Frontend.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var departmentModel = await _context.Departments.FindAsync(id);
-            if (departmentModel != null)
-            {
-                _context.Departments.Remove(departmentModel);
-            }
+            var response = await _departmentsService.DeleteDepartmentAsync(id);
 
-            await _context.SaveChangesAsync();
+            // return daca da fail?
             return RedirectToAction(nameof(Index));
+
         }
 
-        private bool DepartmentModelExists(int id)
+        private async Task<IActionResult> GetDepartmentActionResult(int? id)
         {
-            return _context.Departments.Any(e => e.DepartmentID == id);
+            if (id == null) return NotFound();
+
+            var model = await _departmentsService.GetDepartmentAsync(id.Value);
+
+            return model == null ? NotFound() : View(model);
         }
+
     }
 }

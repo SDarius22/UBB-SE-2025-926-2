@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Frontend.ApiClients.Interface;
 using Frontend.Models;
 
 namespace Hospital.ApiClients
 {
-    public class AppointmentsApiService
+    public class AppointmentsApiService : IAppointmentsApiService
     {
         private readonly HttpClient _httpClient;
         private const string BaseUrl = "https://localhost:5035/api/";
