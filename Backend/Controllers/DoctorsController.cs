@@ -27,6 +27,7 @@ namespace Backend.API.Controllers
         public async Task<ActionResult<IEnumerable<DoctorJointModel>>> GetDoctors()
         {
             var doctors = await _doctorsService.GetDoctors();
+
             return Ok(doctors);
         }
 

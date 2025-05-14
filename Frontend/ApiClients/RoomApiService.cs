@@ -4,11 +4,12 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Frontend.ApiClients.Interface;
 using Frontend.Models;
 
 namespace Hospital.ApiClients
 {
-    public class RoomApiService
+    public class RoomApiService : IRoomApiService
     {
         private readonly HttpClient _httpClient;
         private const string BaseUrl = "https://localhost:5035/api/";
@@ -23,6 +24,15 @@ namespace Hospital.ApiClients
             var response = await _httpClient.GetAsync("Room");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<RoomModel>>();
+        }
+
+        public async Task<RoomModel> GetRoomAsync(int id)
+        {
+            var response = await _httpClient.GetAsync("Room");
+            response.EnsureSuccessStatusCode();
+            var rooms = await response.Content.ReadFromJsonAsync<List<RoomModel>>();
+
+            return rooms.FirstOrDefault(r => r.RoomID == id);
         }
 
         public async Task<bool> AddRoomAsync(RoomModel room)

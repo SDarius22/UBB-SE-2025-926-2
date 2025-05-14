@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Frontend.ApiClients.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore;
 using Frontend.DbContext;
 using Frontend.Models;
 
@@ -12,18 +13,24 @@ namespace Frontend.Controllers
 {
     public class AppointmentModelsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IDoctorApiService _doctorService;
+        private readonly IAppointmentsApiService _appointmentsService;
 
-        public AppointmentModelsController(AppDbContext context)
+        public AppointmentModelsController(IDoctorApiService doctorService, IAppointmentsApiService appointmentsService)
         {
-            _context = context;
+            _doctorService = doctorService;
+            _appointmentsService = appointmentsService;
         }
 
         // GET: AppointmentModels
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Appointments.Include(a => a.Doctor).Include(a => a.Patient);
-            return View(await appDbContext.ToListAsync());
+            //var appDbContext = _context.Appointments.Include(a => a.Doctor).Include(a => a.Patient);
+            //return View(await appDbContext.ToListAsync());
+
+            var appointments = await _appointmentsService.GetAllAppointmentsAsync();
+
+            return View(appointments.Select(a => a.ToModel()));
         }
 
         // GET: AppointmentModels/Details/5
@@ -34,23 +41,17 @@ namespace Frontend.Controllers
                 return NotFound();
             }
 
-            var appointmentModel = await _context.Appointments
-                .Include(a => a.Doctor)
-                .Include(a => a.Patient)
-                .FirstOrDefaultAsync(m => m.AppointmentId == id);
-            if (appointmentModel == null)
-            {
-                return NotFound();
-            }
+            var appointment = await _appointmentsService.GetAppointmentAsync(id.Value);
 
-            return View(appointmentModel);
+            return appointment == null ? NotFound() : View(appointment.ToModel());
+
         }
 
         // GET: AppointmentModels/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["DoctorId"] = new SelectList(_context.DoctorJoints, "DoctorId", "DoctorId");
-            ViewData["PatientId"] = new SelectList(_context.PatientJoints, "PatientId", "PatientId");
+            //ViewData["DoctorId"] = new SelectList(_context.DoctorJoints, "DoctorId", "DoctorId");
+            //ViewData["PatientId"] = new SelectList(_context.PatientJoints, "PatientId", "PatientId");
             return View();
         }
 
@@ -61,33 +62,30 @@ namespace Frontend.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("AppointmentId,DoctorId,PatientId,DateAndTime,Finished,ProcedureId")] AppointmentModel appointmentModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(appointmentModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //ViewData["DoctorId"] = new SelectList(_context.DoctorJoints, "DoctorId", "DoctorId", appointmentModel.DoctorId);
+                //ViewData["PatientId"] = new SelectList(_context.PatientJoints, "PatientId", "PatientId", appointmentModel.PatientId);
+                //return View(appointmentModel);
             }
-            ViewData["DoctorId"] = new SelectList(_context.DoctorJoints, "DoctorId", "DoctorId", appointmentModel.DoctorId);
-            ViewData["PatientId"] = new SelectList(_context.PatientJoints, "PatientId", "PatientId", appointmentModel.PatientId);
-            return View(appointmentModel);
+
+            bool response = await _appointmentsService.AddAppointmentAsync(appointmentModel);
+
+            if (!response)
+            {
+                //ViewData["DoctorId"] = new SelectList(_context.DoctorJoints, "DoctorId", "DoctorId", appointmentModel.DoctorId);
+                //ViewData["PatientId"] = new SelectList(_context.PatientJoints, "PatientId", "PatientId", appointmentModel.PatientId);
+                //return View(appointmentModel);
+            }
+
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: AppointmentModels/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var appointmentModel = await _context.Appointments.FindAsync(id);
-            if (appointmentModel == null)
-            {
-                return NotFound();
-            }
-            ViewData["DoctorId"] = new SelectList(_context.DoctorJoints, "DoctorId", "DoctorId", appointmentModel.DoctorId);
-            ViewData["PatientId"] = new SelectList(_context.PatientJoints, "PatientId", "PatientId", appointmentModel.PatientId);
-            return View(appointmentModel);
+            return NotFound();
         }
 
         // POST: AppointmentModels/Edit/5
@@ -97,34 +95,7 @@ namespace Frontend.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("AppointmentId,DoctorId,PatientId,DateAndTime,Finished,ProcedureId")] AppointmentModel appointmentModel)
         {
-            if (id != appointmentModel.AppointmentId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(appointmentModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AppointmentModelExists(appointmentModel.AppointmentId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["DoctorId"] = new SelectList(_context.DoctorJoints, "DoctorId", "DoctorId", appointmentModel.DoctorId);
-            ViewData["PatientId"] = new SelectList(_context.PatientJoints, "PatientId", "PatientId", appointmentModel.PatientId);
-            return View(appointmentModel);
+            return NotFound();
         }
 
         // GET: AppointmentModels/Delete/5
@@ -135,16 +106,10 @@ namespace Frontend.Controllers
                 return NotFound();
             }
 
-            var appointmentModel = await _context.Appointments
-                .Include(a => a.Doctor)
-                .Include(a => a.Patient)
-                .FirstOrDefaultAsync(m => m.AppointmentId == id);
-            if (appointmentModel == null)
-            {
-                return NotFound();
-            }
+            var appointment = await _appointmentsService.GetAppointmentAsync(id.Value);
 
-            return View(appointmentModel);
+            return appointment == null ? NotFound() : View(appointment.ToModel());
+
         }
 
         // POST: AppointmentModels/Delete/5
@@ -152,19 +117,11 @@ namespace Frontend.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var appointmentModel = await _context.Appointments.FindAsync(id);
-            if (appointmentModel != null)
-            {
-                _context.Appointments.Remove(appointmentModel);
-            }
-
-            await _context.SaveChangesAsync();
+            var result = await _appointmentsService.RemoveAppointmentAsync(id);
+            
+            // Do smth if we couldnt delete?
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AppointmentModelExists(int id)
-        {
-            return _context.Appointments.Any(e => e.AppointmentId == id);
-        }
     }
 }

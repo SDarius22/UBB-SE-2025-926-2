@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Frontend.ApiClients.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Frontend.DbContext;
 using Frontend.Models;
 
@@ -12,35 +12,32 @@ namespace Frontend.Controllers
 {
     public class ShiftModelsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IShiftsApiService _shiftService;
 
-        public ShiftModelsController(AppDbContext context)
+        public ShiftModelsController(IShiftsApiService shiftService)
         {
-            _context = context;
+            _shiftService = shiftService;
         }
 
         // GET: ShiftModels
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Shifts.ToListAsync());
+            return View(await _shiftService.GetShiftsAsync());
+        }
+
+        private async Task<IActionResult> GetShiftActionResult(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var model = await _shiftService.GetShiftAsync(id.Value);
+
+            return model == null ? NotFound() : View(model);
         }
 
         // GET: ShiftModels/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var shiftModel = await _context.Shifts
-                .FirstOrDefaultAsync(m => m.ShiftID == id);
-            if (shiftModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(shiftModel);
+            return await GetShiftActionResult(id);
         }
 
         // GET: ShiftModels/Create
@@ -54,31 +51,23 @@ namespace Frontend.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ShiftID,Date,StartTime,EndTime")] ShiftModel shiftModel)
+        public async Task<IActionResult> Create([Bind("ShiftID,Date,StartTime,EndTime")] ShiftModel shift)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(shiftModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(shift);
             }
-            return View(shiftModel);
+
+            bool response = await _shiftService.AddShiftAsync(shift);
+
+            return response ? RedirectToAction(nameof(Index)) : View(shift);
+
         }
 
         // GET: ShiftModels/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var shiftModel = await _context.Shifts.FindAsync(id);
-            if (shiftModel == null)
-            {
-                return NotFound();
-            }
-            return View(shiftModel);
+            return await GetShiftActionResult(id);
         }
 
         // POST: ShiftModels/Edit/5
@@ -86,52 +75,27 @@ namespace Frontend.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ShiftID,Date,StartTime,EndTime")] ShiftModel shiftModel)
+        public async Task<IActionResult> Edit(int id, [Bind("ShiftID,Date,StartTime,EndTime")] ShiftModel shift)
         {
-            if (id != shiftModel.ShiftID)
+            if (id != shift.ShiftID)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(shiftModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ShiftModelExists(shiftModel.ShiftID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(shift);
             }
-            return View(shiftModel);
+
+            var response = await _shiftService.UpdateShiftAsync(id, shift);
+
+            return response ? RedirectToAction(nameof(Index)) : View(shift);
         }
 
         // GET: ShiftModels/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var shiftModel = await _context.Shifts
-                .FirstOrDefaultAsync(m => m.ShiftID == id);
-            if (shiftModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(shiftModel);
+            return await GetShiftActionResult(id);
         }
 
         // POST: ShiftModels/Delete/5
@@ -139,19 +103,10 @@ namespace Frontend.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var shiftModel = await _context.Shifts.FindAsync(id);
-            if (shiftModel != null)
-            {
-                _context.Shifts.Remove(shiftModel);
-            }
+            var response = await _shiftService.DeleteShiftAsync(id);
 
-            await _context.SaveChangesAsync();
+            // return daca da fail?
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ShiftModelExists(int id)
-        {
-            return _context.Shifts.Any(e => e.ShiftID == id);
         }
     }
 }
