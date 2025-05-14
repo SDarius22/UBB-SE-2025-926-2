@@ -40,4 +40,19 @@ namespace Frontend.Models
             Finished = finished;
         }
     }
+
+    public static class AppoinmentModelExtensions
+    {
+        public static AppointmentModel ToModel(this AppointmentJointModel appointment)
+        {
+            return new AppointmentModel
+            {
+                AppointmentId = appointment.AppointmentId,
+                PatientId = appointment.PatientId,
+                DoctorId = appointment.DoctorId,
+                DateAndTime = appointment.DateAndTime,
+                Finished = appointment.Finished
+            };
+        }
+    }
 }

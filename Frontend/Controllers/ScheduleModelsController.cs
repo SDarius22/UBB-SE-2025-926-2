@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Frontend.ApiClients.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Frontend.DbContext;
 using Frontend.Models;
 
@@ -12,45 +12,39 @@ namespace Frontend.Controllers
 {
     public class ScheduleModelsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IScheduleApiService _scheduleService;
 
-        public ScheduleModelsController(AppDbContext context)
+        public ScheduleModelsController(IScheduleApiService scheduleService)
         {
-            _context = context;
+            _scheduleService = scheduleService;
         }
 
         // GET: ScheduleModels
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Schedules.Include(s => s.Doctor).Include(s => s.Shift);
-            return View(await appDbContext.ToListAsync());
+            return View(await _scheduleService.GetSchedulesAsync());
+        }
+
+        private async Task<IActionResult> GetScheduleActionResult(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var model = await _scheduleService.GetScheduleAsync(id.Value);
+
+            return model == null ? NotFound() : View(model);
         }
 
         // GET: ScheduleModels/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var scheduleModel = await _context.Schedules
-                .Include(s => s.Doctor)
-                .Include(s => s.Shift)
-                .FirstOrDefaultAsync(m => m.ScheduleId == id);
-            if (scheduleModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(scheduleModel);
+            return await GetScheduleActionResult(id);
         }
 
         // GET: ScheduleModels/Create
         public IActionResult Create()
         {
-            ViewData["DoctorId"] = new SelectList(_context.DoctorJoints, "DoctorId", "DoctorId");
-            ViewData["ShiftId"] = new SelectList(_context.Shifts, "ShiftID", "ShiftID");
+            //ViewData["DoctorId"] = new SelectList(_context.DoctorJoints, "DoctorId", "DoctorId");
+            //ViewData["ShiftId"] = new SelectList(_context.Shifts, "ShiftID", "ShiftID");
             return View();
         }
 
@@ -59,35 +53,38 @@ namespace Frontend.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DoctorId,ShiftId,ScheduleId")] ScheduleModel scheduleModel)
+        public async Task<IActionResult> Create([Bind("DoctorId,ShiftId,ScheduleId")] ScheduleModel schedule)
         {
-            if (ModelState.IsValid)
+            
+            if (!ModelState.IsValid)
             {
-                _context.Add(scheduleModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //ViewData["DoctorId"] = new SelectList(_context.DoctorJoints, "DoctorId", "DoctorId", schedule.DoctorId);
+                //ViewData["ShiftId"] = new SelectList(_context.Shifts, "ShiftID", "ShiftID", schedule.ShiftId);
+             
+                return View(schedule);
             }
-            ViewData["DoctorId"] = new SelectList(_context.DoctorJoints, "DoctorId", "DoctorId", scheduleModel.DoctorId);
-            ViewData["ShiftId"] = new SelectList(_context.Shifts, "ShiftID", "ShiftID", scheduleModel.ShiftId);
-            return View(scheduleModel);
+
+            bool response = await _scheduleService.AddScheduleAsync(schedule);
+
+            if (!response)
+            {
+                //ViewData["DoctorId"] = new SelectList(_context.DoctorJoints, "DoctorId", "DoctorId", schedule.DoctorId);
+                //ViewData["ShiftId"] = new SelectList(_context.Shifts, "ShiftID", "ShiftID", schedule.ShiftId);
+
+                return View(schedule);
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: ScheduleModels/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            //ViewData["DoctorId"] = new SelectList(_context.DoctorJoints, "DoctorId", "DoctorId", schedule.DoctorId);
+            //ViewData["ShiftId"] = new SelectList(_context.Shifts, "ShiftID", "ShiftID", schedule.ShiftId);
+            
+            // poate trebuie facut ceva extra cu alea de mai sus?
 
-            var scheduleModel = await _context.Schedules.FindAsync(id);
-            if (scheduleModel == null)
-            {
-                return NotFound();
-            }
-            ViewData["DoctorId"] = new SelectList(_context.DoctorJoints, "DoctorId", "DoctorId", scheduleModel.DoctorId);
-            ViewData["ShiftId"] = new SelectList(_context.Shifts, "ShiftID", "ShiftID", scheduleModel.ShiftId);
-            return View(scheduleModel);
+            return await GetScheduleActionResult(id);
         }
 
         // POST: ScheduleModels/Edit/5
@@ -95,56 +92,37 @@ namespace Frontend.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DoctorId,ShiftId,ScheduleId")] ScheduleModel scheduleModel)
+        public async Task<IActionResult> Edit(int id, [Bind("DoctorId,ShiftId,ScheduleId")] ScheduleModel schedule)
         {
-            if (id != scheduleModel.ScheduleId)
+            if (id != schedule.ScheduleId)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(scheduleModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ScheduleModelExists(scheduleModel.ScheduleId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                //ViewData["DoctorId"] = new SelectList(_context.DoctorJoints, "DoctorId", "DoctorId", schedule.DoctorId);
+                //ViewData["ShiftId"] = new SelectList(_context.Shifts, "ShiftID", "ShiftID", schedule.ShiftId);
+
+                return View(schedule);
             }
-            ViewData["DoctorId"] = new SelectList(_context.DoctorJoints, "DoctorId", "DoctorId", scheduleModel.DoctorId);
-            ViewData["ShiftId"] = new SelectList(_context.Shifts, "ShiftID", "ShiftID", scheduleModel.ShiftId);
-            return View(scheduleModel);
+
+            var response = await _scheduleService.UpdateScheduleAsync(id, schedule);
+
+            if (!response)
+            {
+                //ViewData["DoctorId"] = new SelectList(_context.DoctorJoints, "DoctorId", "DoctorId", schedule.DoctorId);
+                //ViewData["ShiftId"] = new SelectList(_context.Shifts, "ShiftID", "ShiftID", schedule.ShiftId);
+
+                return View(schedule);
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: ScheduleModels/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var scheduleModel = await _context.Schedules
-                .Include(s => s.Doctor)
-                .Include(s => s.Shift)
-                .FirstOrDefaultAsync(m => m.ScheduleId == id);
-            if (scheduleModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(scheduleModel);
+            return await GetScheduleActionResult(id);
         }
 
         // POST: ScheduleModels/Delete/5
@@ -152,19 +130,11 @@ namespace Frontend.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var scheduleModel = await _context.Schedules.FindAsync(id);
-            if (scheduleModel != null)
-            {
-                _context.Schedules.Remove(scheduleModel);
-            }
+            var response = await _scheduleService.DeleteScheduleAsync(id);
 
-            await _context.SaveChangesAsync();
+            // return daca da fail?
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ScheduleModelExists(int id)
-        {
-            return _context.Schedules.Any(e => e.ScheduleId == id);
-        }
     }
 }

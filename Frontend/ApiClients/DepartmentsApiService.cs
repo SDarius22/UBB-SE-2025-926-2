@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Frontend.ApiClients.Interface;
 using Frontend.Models;
 
 namespace Hospital.ApiClients
 {
-    public class DepartmentsApiService
+    public class DepartmentsApiService : IDepartmentsApiService
     {
         private readonly HttpClient _httpClient;
         private const string BaseUrl = "https://localhost:5035/api/";
@@ -23,6 +24,16 @@ namespace Hospital.ApiClients
             var response = await _httpClient.GetAsync("Departments");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<DepartmentModel>>();
+        }
+
+        public async Task<DepartmentModel> GetDepartmentAsync(int id)
+        {
+            var response = await _httpClient.GetAsync("Departments");
+            response.EnsureSuccessStatusCode();
+            
+            var departments = await response.Content.ReadFromJsonAsync<List<DepartmentModel>>();
+
+            return departments.FirstOrDefault(d => d.DepartmentID == id);
         }
 
         // Add a new department
