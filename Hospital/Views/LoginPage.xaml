@@ -13,6 +13,7 @@
             <TextBox x:Name="Username" PlaceholderText="Username" Margin="0,0,0,10"/>
             <PasswordBox x:Name="Password" PlaceholderText="Password" Margin="0,0,0,10"/>
             <Button x:Name="loginButton" Content="Login" Click="LoginButton_Click"/>
+            <TextBlock x:Name="errorMessage" Foreground="Red" Margin="0,10,0,0" Visibility="Collapsed"/>
         </StackPanel>
     </Grid>
 </Window>

@@ -33,6 +33,7 @@
     public partial class App : Application
     {
         public static IServiceProvider Services { get; private set; }
+        public static string Token { get; set; }
         public static Window MainWindow { get; private set; }
 
         private void ConfigureServices(IServiceCollection services)

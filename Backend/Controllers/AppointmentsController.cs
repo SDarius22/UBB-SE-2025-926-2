@@ -1,5 +1,6 @@
 ﻿using Backend.DatabaseServices;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace Backend.API.Controllers
 
         // GET: api/appointments
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<AppointmentJointModel>>> GetAllAppointments()
         {
             var appointments = await _appointmentsService.GetAllAppointments();
@@ -28,6 +30,7 @@ namespace Backend.API.Controllers
 
         // GET: api/appointments/{appointmentId}
         [HttpGet("{appointmentId}")]
+        [Authorize]
         public async Task<ActionResult<AppointmentJointModel>> GetAppointment(int appointmentId)
         {
             var appointment = await _appointmentsService.GetAppointment(appointmentId);
@@ -39,6 +42,7 @@ namespace Backend.API.Controllers
 
         // GET: api/appointments/doctor/{doctorId}/date/{date}
         [HttpGet("doctor/{doctorId}/date/{date}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<AppointmentJointModel>>> GetAppointmentsByDoctorAndDate(int doctorId, DateTime date)
         {
             var appointments = await _appointmentsService.GetAppointmentsByDoctorAndDate(doctorId, date);
@@ -47,6 +51,7 @@ namespace Backend.API.Controllers
 
         // GET: api/appointments/patient/{patientId}
         [HttpGet("patient/{patientId}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<AppointmentJointModel>>> GetAppointmentsForPatient(int patientId)
         {
             var appointments = await _appointmentsService.GetAppointmentsForPatient(patientId);
@@ -55,6 +60,7 @@ namespace Backend.API.Controllers
 
         // GET: api/appointments/doctor/{doctorId}
         [HttpGet("doctor/{doctorId}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<AppointmentJointModel>>> GetAppointmentsForDoctor(int doctorId)
         {
             var appointments = await _appointmentsService.GetAppointmentsForDoctor(doctorId);
@@ -63,6 +69,7 @@ namespace Backend.API.Controllers
 
         // POST: api/appointments
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddAppointment([FromBody] AppointmentModel appointment)
         {
             var success = await _appointmentsService.AddAppointmentToDataBase(appointment);
@@ -74,6 +81,7 @@ namespace Backend.API.Controllers
 
         // DELETE: api/appointments/{appointmentId}
         [HttpDelete("{appointmentId}")]
+        [Authorize]
         public async Task<IActionResult> RemoveAppointment(int appointmentId)
         {
             var success = await _appointmentsService.RemoveAppointmentFromDataBase(appointmentId);

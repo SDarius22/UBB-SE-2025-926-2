@@ -1,5 +1,6 @@
 ﻿using Backend.DatabaseServices.Interfaces;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace Backend.API.Controllers
 
         // GET: api/drugs
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<DrugModel>>> GetDrugs()
         {
             var drugs = await _drugsService.GetDrugs();
@@ -27,6 +29,7 @@ namespace Backend.API.Controllers
 
         // POST: api/drugs
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddDrug([FromBody] DrugModel drug)
         {
             var success = await _drugsService.AddDrug(drug);
@@ -38,6 +41,7 @@ namespace Backend.API.Controllers
 
         // PUT: api/drugs/{drugId}
         [HttpPut("{drugId}")]
+        [Authorize]
         public async Task<IActionResult> UpdateDrug(int drugId, [FromBody] DrugModel drug)
         {
             if (drugId != drug.DrugID)
@@ -55,6 +59,7 @@ namespace Backend.API.Controllers
 
         // DELETE: api/drugs/{drugId}
         [HttpDelete("{drugId}")]
+        [Authorize]
         public async Task<IActionResult> DeleteDrug(int drugId)
         {
             if (!await _drugsService.DoesDrugExist(drugId))
@@ -68,6 +73,7 @@ namespace Backend.API.Controllers
         }
 
         [HttpGet("exists/{drugId}")]
+        [Authorize]
         public async Task<bool> DoesDrugExist(int drugId)
         {
             return await _drugsService.DoesDrugExist(drugId);

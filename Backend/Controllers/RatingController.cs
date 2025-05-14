@@ -1,6 +1,7 @@
 ﻿using Backend.DatabaseServices;
 using Backend.DatabaseServices.Interfaces;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -19,6 +20,7 @@ namespace Backend.API.Controllers
 
         // GET: api/rating/medicalrecord/5
         [HttpGet("medicalrecord/{medicalRecordId}")]
+        [Authorize]
         public async Task<ActionResult<RatingModel>> GetRatingByMedicalRecord(int medicalRecordId)
         {
             try
@@ -37,6 +39,7 @@ namespace Backend.API.Controllers
 
         // POST: api/rating
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<bool>> AddRating([FromBody] RatingModel rating)
         {
             try
@@ -55,6 +58,7 @@ namespace Backend.API.Controllers
 
         // DELETE: api/rating/5
         [HttpDelete("{ratingId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> RemoveRating(int ratingId)
         {
             try

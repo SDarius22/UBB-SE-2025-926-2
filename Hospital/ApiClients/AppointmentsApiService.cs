@@ -17,10 +17,22 @@ namespace Hospital.ApiClients
             _httpClient = new HttpClient { BaseAddress = new Uri(BaseUrl) };
         }
 
+        // Helper method to create an HttpRequestMessage with the Authorization header
+        private HttpRequestMessage CreateRequest(HttpMethod method, string url)
+        {
+            if (string.IsNullOrEmpty(App.Token))
+                throw new InvalidOperationException("JWT token is missing. Please log in first.");
+
+            var request = new HttpRequestMessage(method, url);
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", App.Token);
+            return request;
+        }
+
         // Get all appointments
         public async Task<List<AppointmentJointModel>> GetAllAppointmentsAsync()
         {
-            var response = await _httpClient.GetAsync("Appointments");
+            var request = CreateRequest(HttpMethod.Get, "Appointments");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<AppointmentJointModel>>();
         }
@@ -28,7 +40,8 @@ namespace Hospital.ApiClients
         // Get appointment by ID
         public async Task<AppointmentJointModel> GetAppointmentAsync(int appointmentId)
         {
-            var response = await _httpClient.GetAsync($"Appointments/{appointmentId}");
+            var request = CreateRequest(HttpMethod.Get, $"Appointments/{appointmentId}");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<AppointmentJointModel>();
         }
@@ -36,7 +49,8 @@ namespace Hospital.ApiClients
         // Get appointments for a doctor by date
         public async Task<List<AppointmentJointModel>> GetAppointmentsByDoctorAndDateAsync(int doctorId, DateTime date)
         {
-            var response = await _httpClient.GetAsync($"Appointments/doctor/{doctorId}/date/{date:yyyy-MM-dd}");
+            var request = CreateRequest(HttpMethod.Get, $"Appointments/doctor/{doctorId}/date/{date:yyyy-MM-dd}");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<AppointmentJointModel>>();
         }
@@ -44,7 +58,8 @@ namespace Hospital.ApiClients
         // Get appointments for a specific doctor
         public async Task<List<AppointmentJointModel>> GetAppointmentsForDoctorAsync(int doctorId)
         {
-            var response = await _httpClient.GetAsync($"Appointments/doctor/{doctorId}");
+            var request = CreateRequest(HttpMethod.Get, $"Appointments/doctor/{doctorId}");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<AppointmentJointModel>>();
         }
@@ -52,7 +67,8 @@ namespace Hospital.ApiClients
         // Get appointments for a patient
         public async Task<List<AppointmentJointModel>> GetAppointmentsForPatientAsync(int patientId)
         {
-            var response = await _httpClient.GetAsync($"Appointments/patient/{patientId}");
+            var request = CreateRequest(HttpMethod.Get, $"Appointments/patient/{patientId}");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<AppointmentJointModel>>();
         }
@@ -60,14 +76,17 @@ namespace Hospital.ApiClients
         // Add a new appointment
         public async Task<bool> AddAppointmentAsync(AppointmentModel appointment)
         {
-            var response = await _httpClient.PostAsJsonAsync("Appointments", appointment);
+            var request = CreateRequest(HttpMethod.Post, "Appointments");
+            request.Content = JsonContent.Create(appointment);
+            var response = await _httpClient.SendAsync(request);
             return response.IsSuccessStatusCode;
         }
 
         // Remove an appointment
         public async Task<bool> RemoveAppointmentAsync(int appointmentId)
         {
-            var response = await _httpClient.DeleteAsync($"Appointments/{appointmentId}");
+            var request = CreateRequest(HttpMethod.Delete, $"Appointments/{appointmentId}");
+            var response = await _httpClient.SendAsync(request);
             return response.IsSuccessStatusCode;
         }
     }

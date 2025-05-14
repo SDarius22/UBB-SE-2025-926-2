@@ -1,5 +1,6 @@
 ﻿using Backend.DatabaseServices.Interfaces;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace Backend.API.Controllers
 
         // GET: api/equipment
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<EquipmentModel>>> GetEquipments()
         {
             var equipments = await _equipmentService.GetEquipments();
@@ -27,6 +29,7 @@ namespace Backend.API.Controllers
 
         // POST: api/equipment
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddEquipment([FromBody] EquipmentModel equipment)
         {
             var success = await _equipmentService.AddEquipment(equipment);
@@ -38,6 +41,7 @@ namespace Backend.API.Controllers
 
         // PUT: api/equipment/{equipmentId}
         [HttpPut("{equipmentId}")]
+        [Authorize]
         public async Task<IActionResult> UpdateEquipment(int equipmentId, [FromBody] EquipmentModel equipment)
         {
             if (equipmentId != equipment.EquipmentID)
@@ -55,6 +59,7 @@ namespace Backend.API.Controllers
 
         // DELETE: api/equipment/{equipmentId}
         [HttpDelete("{equipmentId}")]
+        [Authorize]
         public async Task<IActionResult> DeleteEquipment(int equipmentId)
         {
             if (!await _equipmentService.DoesEquipmentExist(equipmentId))
@@ -69,6 +74,7 @@ namespace Backend.API.Controllers
 
         // GET: api/equipment/exists/{equipmentId}
         [HttpGet("exists/{equipmentId}")]
+        [Authorize]
         public async Task<IActionResult> DoesEquipmentExist(int equipmentId)
         {
             var exists = await _equipmentService.DoesEquipmentExist(equipmentId);

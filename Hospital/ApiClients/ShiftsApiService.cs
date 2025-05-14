@@ -17,52 +17,78 @@ namespace Hospital.ApiClients
             _httpClient = new HttpClient { BaseAddress = new Uri(BaseUrl) };
         }
 
+        // Helper method to create an HttpRequestMessage with the Authorization header
+        private HttpRequestMessage CreateRequest(HttpMethod method, string url)
+        {
+            if (string.IsNullOrEmpty(App.Token))
+                throw new InvalidOperationException("JWT token is missing. Please log in first.");
+
+            var request = new HttpRequestMessage(method, url);
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", App.Token);
+            return request;
+        }
+
+        // Get all shifts
         public async Task<List<ShiftModel>> GetShiftsAsync()
         {
-            var response = await _httpClient.GetAsync("Shifts");
+            var request = CreateRequest(HttpMethod.Get, "Shifts");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<ShiftModel>>();
         }
 
-
+        // Get shifts by doctor ID
         public async Task<List<ShiftModel>> GetShiftsByDoctorIdAsync(int doctorId)
         {
-            var response = await _httpClient.GetAsync($"Shifts/doctor/{doctorId}");
+            var request = CreateRequest(HttpMethod.Get, $"Shifts/doctor/{doctorId}");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<ShiftModel>>();
         }
 
+        // Get doctor's daytime shifts
         public async Task<List<ShiftModel>> GetDoctorDaytimeShiftsAsync(int doctorId)
         {
-            var response = await _httpClient.GetAsync($"Shifts/doctor/{doctorId}/daytime");
+            var request = CreateRequest(HttpMethod.Get, $"Shifts/doctor/{doctorId}/daytime");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<ShiftModel>>();
         }
 
+        // Add a new shift
         public async Task<bool> AddShiftAsync(ShiftModel shift)
         {
-            var response = await _httpClient.PostAsJsonAsync("Shifts", shift);
+            var request = CreateRequest(HttpMethod.Post, "Shifts");
+            request.Content = JsonContent.Create(shift);
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
         }
 
+        // Update an existing shift
         public async Task<bool> UpdateShiftAsync(int shiftId, ShiftModel shift)
         {
-            var response = await _httpClient.PutAsJsonAsync($"Shifts/{shiftId}", shift);
+            var request = CreateRequest(HttpMethod.Put, $"Shifts/{shiftId}");
+            request.Content = JsonContent.Create(shift);
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
         }
 
+        // Delete a shift
         public async Task<bool> DeleteShiftAsync(int shiftId)
         {
-            var response = await _httpClient.DeleteAsync($"Shifts/{shiftId}");
+            var request = CreateRequest(HttpMethod.Delete, $"Shifts/{shiftId}");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
         }
 
+        // Check if a shift exists
         public async Task<bool> DoesShiftExistAsync(int shiftId)
         {
-            var response = await _httpClient.GetAsync($"Shifts/exists/{shiftId}");
+            var request = CreateRequest(HttpMethod.Get, $"Shifts/exists/{shiftId}");
+            var response = await _httpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<bool>();

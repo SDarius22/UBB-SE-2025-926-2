@@ -1,6 +1,7 @@
 ﻿using Backend.DatabaseServices;
 using Backend.DatabaseServices.Interfaces;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,6 +21,8 @@ namespace Backend.API.Controllers
 
         // GET: api/medicalprocedures/department/5
         [HttpGet("department/{departmentId}")]
+        [Authorize]
+
         public async Task<ActionResult<IEnumerable<ProcedureModel>>> GetProceduresByDepartment(int departmentId)
         {
             try

@@ -16,10 +16,22 @@ namespace Hospital.ApiClients
             _httpClient = new HttpClient { BaseAddress = new Uri(BaseUrl) };
         }
 
+        // Helper method to create an HttpRequestMessage with the Authorization header
+        private HttpRequestMessage CreateRequest(HttpMethod method, string url)
+        {
+            if (string.IsNullOrEmpty(App.Token))
+                throw new InvalidOperationException("JWT token is missing. Please log in first.");
+
+            var request = new HttpRequestMessage(method, url);
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", App.Token);
+            return request;
+        }
+
         // Get doctor information by doctorId
         public async Task<DoctorInformationModel> GetDoctorInformationAsync(int doctorId)
         {
-            var response = await _httpClient.GetAsync($"DoctorInformation/{doctorId}");
+            var request = CreateRequest(HttpMethod.Get, $"DoctorInformation/{doctorId}");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<DoctorInformationModel>();
         }

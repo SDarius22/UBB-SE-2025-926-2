@@ -1,6 +1,7 @@
 ﻿using Backend.DatabaseServices;
 using Backend.DatabaseServices.Interfaces;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,6 +21,8 @@ namespace Backend.API.Controllers
 
         // POST: api/medicalrecords
         [HttpPost]
+        [Authorize]
+
         public async Task<ActionResult<int>> AddMedicalRecord([FromBody] MedicalRecordModel medicalRecord)
         {
             try
@@ -35,6 +38,7 @@ namespace Backend.API.Controllers
 
         // GET: api/medicalrecords/patient/5
         [HttpGet("patient/{patientId}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<MedicalRecordJointModel>>> GetMedicalRecordsForPatient(int patientId)
         {
             try
@@ -50,6 +54,7 @@ namespace Backend.API.Controllers
 
         // GET: api/medicalrecords/5
         [HttpGet("{medicalRecordId}")]
+        [Authorize]
         public async Task<ActionResult<MedicalRecordJointModel>> GetMedicalRecordById(int medicalRecordId)
         {
             try
@@ -65,6 +70,7 @@ namespace Backend.API.Controllers
 
         // GET: api/medicalrecords/doctor/5
         [HttpGet("doctor/{doctorId}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<MedicalRecordJointModel>>> GetMedicalRecordsForDoctor(int doctorId)
         {
             try

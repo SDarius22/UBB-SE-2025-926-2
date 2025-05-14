@@ -17,10 +17,22 @@ namespace Hospital.ApiClients
             _httpClient = new HttpClient { BaseAddress = new Uri(BaseUrl) };
         }
 
+        // Helper method to create an HttpRequestMessage with the Authorization header
+        private HttpRequestMessage CreateRequest(HttpMethod method, string url)
+        {
+            if (string.IsNullOrEmpty(App.Token))
+                throw new InvalidOperationException("JWT token is missing. Please log in first.");
+
+            var request = new HttpRequestMessage(method, url);
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", App.Token);
+            return request;
+        }
+
         // Get all equipment
         public async Task<List<EquipmentModel>> GetEquipmentsAsync()
         {
-            var response = await _httpClient.GetAsync("Equipment");
+            var request = CreateRequest(HttpMethod.Get, "Equipment");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<EquipmentModel>>();
         }
@@ -28,28 +40,34 @@ namespace Hospital.ApiClients
         // Add a new equipment
         public async Task<bool> AddEquipmentAsync(EquipmentModel equipment)
         {
-            var response = await _httpClient.PostAsJsonAsync("Equipment", equipment);
+            var request = CreateRequest(HttpMethod.Post, "Equipment");
+            request.Content = JsonContent.Create(equipment);
+            var response = await _httpClient.SendAsync(request);
             return response.IsSuccessStatusCode;
         }
 
         // Update an existing equipment
         public async Task<bool> UpdateEquipmentAsync(int equipmentId, EquipmentModel equipment)
         {
-            var response = await _httpClient.PutAsJsonAsync($"Equipment/{equipmentId}", equipment);
+            var request = CreateRequest(HttpMethod.Put, $"Equipment/{equipmentId}");
+            request.Content = JsonContent.Create(equipment);
+            var response = await _httpClient.SendAsync(request);
             return response.IsSuccessStatusCode;
         }
 
         // Delete equipment
         public async Task<bool> DeleteEquipmentAsync(int equipmentId)
         {
-            var response = await _httpClient.DeleteAsync($"Equipment/{equipmentId}");
+            var request = CreateRequest(HttpMethod.Delete, $"Equipment/{equipmentId}");
+            var response = await _httpClient.SendAsync(request);
             return response.IsSuccessStatusCode;
         }
 
         // Check if equipment exists
         public async Task<bool> DoesEquipmentExistAsync(int equipmentId)
         {
-            var response = await _httpClient.GetAsync($"Equipment/exists/{equipmentId}");
+            var request = CreateRequest(HttpMethod.Get, $"Equipment/exists/{equipmentId}");
+            var response = await _httpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
                 // Assuming that the response content will be a boolean value indicating existence
