@@ -18,23 +18,31 @@ namespace Hospital.ApiClients
             _httpClient = new HttpClient { BaseAddress = new Uri(BaseUrl) };
         }
 
+        // Helper method to create an HttpRequestMessage with the Authorization header
+        private HttpRequestMessage CreateRequest(HttpMethod method, string url)
+        {
+            if (string.IsNullOrEmpty(App.Token))
+                throw new InvalidOperationException("JWT token is missing. Please log in first.");
+
+            var request = new HttpRequestMessage(method, url);
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", App.Token);
+            return request;
+        }
+
         // Get all doctors
         public async Task<List<DoctorJointModel>> GetDoctorsAsync()
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "Doctors");
-
-            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", App.Token);
-
+            var request = CreateRequest(HttpMethod.Get, "Doctors");
             var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
-
             return await response.Content.ReadFromJsonAsync<List<DoctorJointModel>>();
         }
 
         // Get doctors by department
         public async Task<List<DoctorJointModel>> GetDoctorsByDepartmentAsync(int departmentId)
         {
-            var response = await _httpClient.GetAsync($"Doctors/department/{departmentId}");
+            var request = CreateRequest(HttpMethod.Get, $"Doctors/department/{departmentId}");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<DoctorJointModel>>();
         }
@@ -43,40 +51,45 @@ namespace Hospital.ApiClients
         public async Task<bool> AddDoctorAsync(DoctorJointModel doctor)
         {
             Debug.WriteLine($"Adding doctor with UserId: {doctor.UserId}, DepartmentId: {doctor.DepartmentId}, LicenseNumber: {doctor.LicenseNumber}");
-            //Debug.WriteLine($"Doctor user: {doctor.User.Name}");
-            var response = await _httpClient.PostAsJsonAsync("Doctors", doctor);
+            var request = CreateRequest(HttpMethod.Post, "Doctors");
+            request.Content = JsonContent.Create(doctor);
+            var response = await _httpClient.SendAsync(request);
+
             Debug.WriteLine($"Response status code: {response.StatusCode}");
             if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
                 var errorMessage = await response.Content.ReadAsStringAsync();
                 Debug.WriteLine($"Error message: {errorMessage}");
             }
-            else
+            else if (response.IsSuccessStatusCode)
             {
                 Debug.WriteLine($"Doctor added successfully");
             }
             return response.IsSuccessStatusCode;
         }
 
-
         // Update an existing doctor
         public async Task<bool> UpdateDoctorAsync(int doctorId, DoctorJointModel doctor)
         {
-            var response = await _httpClient.PutAsJsonAsync($"Doctors/{doctorId}", doctor);
+            var request = CreateRequest(HttpMethod.Put, $"Doctors/{doctorId}");
+            request.Content = JsonContent.Create(doctor);
+            var response = await _httpClient.SendAsync(request);
             return response.IsSuccessStatusCode;
         }
 
         // Delete a doctor
         public async Task<bool> DeleteDoctorAsync(int doctorId)
         {
-            var response = await _httpClient.DeleteAsync($"Doctors/{doctorId}");
+            var request = CreateRequest(HttpMethod.Delete, $"Doctors/{doctorId}");
+            var response = await _httpClient.SendAsync(request);
             return response.IsSuccessStatusCode;
         }
 
         // Check if a user is already a doctor
         public async Task<bool> IsUserAlreadyDoctorAsync(int userId)
         {
-            var response = await _httpClient.GetAsync($"Doctors/is-user-already-doctor/{userId}");
+            var request = CreateRequest(HttpMethod.Get, $"Doctors/is-user-already-doctor/{userId}");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
         }
@@ -84,7 +97,8 @@ namespace Hospital.ApiClients
         // Check if a user exists in the system
         public async Task<bool> DoesUserExistAsync(int userId)
         {
-            var response = await _httpClient.GetAsync($"Doctors/does-user-exist/{userId}");
+            var request = CreateRequest(HttpMethod.Get, $"Doctors/does-user-exist/{userId}");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
         }
@@ -92,7 +106,8 @@ namespace Hospital.ApiClients
         // Check if a user is a doctor
         public async Task<bool> IsUserDoctorAsync(int userId)
         {
-            var response = await _httpClient.GetAsync($"Doctors/check-doctor/{userId}");
+            var request = CreateRequest(HttpMethod.Get, $"Doctors/check-doctor/{userId}");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
         }
@@ -100,7 +115,8 @@ namespace Hospital.ApiClients
         // Check if a department exists
         public async Task<bool> DoesDepartmentExistAsync(int departmentId)
         {
-            var response = await _httpClient.GetAsync($"Doctors/does-department-exist/{departmentId}");
+            var request = CreateRequest(HttpMethod.Get, $"Doctors/does-department-exist/{departmentId}");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             var res = await response.Content.ReadFromJsonAsync<bool>();
             Debug.WriteLine($"Department ID: {departmentId}, Exists: {res}");
@@ -110,7 +126,8 @@ namespace Hospital.ApiClients
         // Check if a user exists in the doctors table
         public async Task<bool> UserExistsInDoctorsAsync(int userId, int doctorId)
         {
-            var response = await _httpClient.GetAsync($"Doctors/user-exists-in-doctors/{userId}/{doctorId}");
+            var request = CreateRequest(HttpMethod.Get, $"Doctors/user-exists-in-doctors/{userId}/{doctorId}");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
         }
@@ -118,7 +135,8 @@ namespace Hospital.ApiClients
         // Check if a doctor exists
         public async Task<bool> DoesDoctorExistAsync(int doctorId)
         {
-            var response = await _httpClient.GetAsync($"Doctors/doctor-exists/{doctorId}");
+            var request = CreateRequest(HttpMethod.Get, $"Doctors/doctor-exists/{doctorId}");
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
         }
