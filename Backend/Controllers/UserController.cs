@@ -40,17 +40,23 @@ namespace Backend.API.Controllers
         [HttpGet("login")]
         public async Task<ActionResult<string>> Login([FromQuery] string username, [FromQuery] string password)
         {
-            int userId = await _userService.GetUserId(username, password);
-
-            string token = "";
-
-            if (userId != 0)
+            try
             {
-                token = tokenProvider.Create(userId);
-                return Ok(token);
-            }
+                int userId = await _userService.GetUserId(username, password);
 
-            return BadRequest("user doesn't exist");
+                if (userId != 0)
+                {
+                    var token = tokenProvider.Create(userId);
+                    return Ok(token);
+                }
+
+                return BadRequest("User doesn't exist");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Login failed: {ex.Message}");
+            }
         }
+
     }
 }

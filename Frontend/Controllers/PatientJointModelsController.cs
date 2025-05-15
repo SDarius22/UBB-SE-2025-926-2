@@ -23,6 +23,7 @@ namespace Frontend.Controllers
         public async Task<IActionResult> Index()
         {
             var appDbContext = _context.PatientJoints.Include(p => p.User);
+
             return View(await appDbContext.ToListAsync());
         }
 

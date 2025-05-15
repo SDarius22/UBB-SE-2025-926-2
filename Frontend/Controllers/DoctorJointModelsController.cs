@@ -103,7 +103,9 @@ namespace Frontend.Controllers
             if (ModelState.IsValid)
             {
                 // Assuming IDoctorApiService has an UpdateDoctorAsync method
-                bool response = await _doctorService.UpdateDoctorAsync(id, doctorJoint); 
+
+                bool response = await _doctorService.UpdateDoctorAsync(id, doctorJoint);
+
                 if (response)
                 {
                     return RedirectToAction(nameof(Index));
@@ -130,18 +132,22 @@ namespace Frontend.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             // Assuming IDoctorApiService has a DeleteDoctorAsync method
-            bool success = await _doctorService.DeleteDoctorAsync(id); 
+
+            bool success = await _doctorService.DeleteDoctorAsync(id);
+
             if (!success)
             {
                 // If deletion fails, you might want to return to the delete view with an error
                 // or redirect to an error page. For now, redirecting to Index.
                 // Consider fetching the doctor again to show the delete confirmation page with an error.
                 TempData["ErrorMessage"] = "Failed to delete doctor. Please try again.";
-                return RedirectToAction(nameof(Delete), new { id = id }); 
+
+                return RedirectToAction(nameof(Delete), new { id = id });
             }
             return RedirectToAction(nameof(Index));
         }
-        
+
+
         // Helper method to check if a doctor exists, might be useful if not using API for everything
         // private async Task<bool> DoctorJointModelExists(int id)
         // {
@@ -149,4 +155,6 @@ namespace Frontend.Controllers
         //     return doctor != null;
         // }
     }
+
 }
+

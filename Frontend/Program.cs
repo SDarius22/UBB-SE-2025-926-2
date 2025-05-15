@@ -2,13 +2,20 @@ using Frontend.ApiClients.Interface;
 using Frontend.Configs;
 using Frontend.DbContext;
 using Hospital.ApiClients;
-
+using Microsoft.EntityFrameworkCore;
 //using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //builder.Services.AddDbContext<AppDbContext>(options =>
 //    options.UseSqlServer(ApplicationConfiguration.GetInstance().DatabaseConnection));
+
+
+var connectionString = "Data Source=DIANA\\SQLEXPRESS;Initial Catalog=HospitalManagement;Integrated Security=True;TrustServerCertificate=True";
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
 
 builder.Services.AddScoped<IAppointmentsApiService, AppointmentsApiService>();
 builder.Services.AddScoped<IDepartmentsApiService, DepartmentsApiService>();
@@ -24,8 +31,12 @@ builder.Services.AddScoped<IScheduleApiService, ScheduleApiService>();
 builder.Services.AddScoped<IShiftsApiService, ShiftsApiService>();
 builder.Services.AddScoped<IUserApiService, UserApiService>();
 
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSession();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
@@ -42,10 +53,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseSession();
 app.UseAuthorization();
+
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Account}/{action=Login}/{id?}");
 
 app.Run();
