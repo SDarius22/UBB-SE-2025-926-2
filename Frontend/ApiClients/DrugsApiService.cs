@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Frontend.ApiClients.Interface;
@@ -13,9 +14,15 @@ namespace Hospital.ApiClients
         private readonly HttpClient _httpClient;
         private const string BaseUrl = "https://localhost:5035/api/";
 
-        public DrugsApiService()
+        public DrugsApiService(IHttpContextAccessor accessor)
         {
             _httpClient = new HttpClient { BaseAddress = new Uri(BaseUrl) };
+
+            var token = accessor.HttpContext?.Session.GetString("JWToken");
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
         }
 
         // Get all drugs

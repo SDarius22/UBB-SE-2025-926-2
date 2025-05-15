@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace Frontend.Models
 
         public int PatientId { get; set; }
 
+        [NotMapped]
         public string PatientName { get; set; }
 
         // De adaugat enum cu BloodType si sa fie de acolo
@@ -22,7 +24,7 @@ namespace Frontend.Models
 
         public string Allergies { get; set; }
 
-        public float Weight { get; set; }
+        public double Weight { get; set; }
 
         // Height in cm
         public int Height { get; set; }
