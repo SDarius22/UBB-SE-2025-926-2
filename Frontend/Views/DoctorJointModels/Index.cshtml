@@ -39,20 +39,12 @@
                 <td>@item.User?.Role</td>
                 <td>@item.Department?.DepartmentID</td>
                 <td>
-                    @if (action == "Edit")
-                    {
-                        <a class="btn btn-primary btn-sm" asp-action="Edit" asp-route-id="@item.DoctorId">Edit</a>
-                    }
-                    else if (action == "Delete")
-                    {
-                        <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.DoctorId">Delete</a>
-                    }
-                    else
-                    {
-                        <a class="btn btn-secondary btn-sm" asp-action="Details" asp-route-id="@item.DoctorId">Details</a>
-                    }
+                    <a asp-action="Edit" asp-route-id="@item.DoctorId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.DoctorId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.DoctorId">Delete</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+

@@ -1,6 +1,121 @@
-﻿@using Microsoft.AspNetCore.Http
+﻿@* @using Microsoft.AspNetCore.Http *@
+
+@* @{ *@
+@*     var isLoggedIn = Context.Session.GetString("JWToken") != null; *@
+@* } *@
+
+@* <!DOCTYPE html> *@
+@* <html lang="en"> *@
+@* <head> *@
+@*     <meta charset="utf-8" /> *@
+@*     <meta name="viewport" content="width=device-width, initial-scale=1.0" /> *@
+@*     <title>@ViewData["Title"] - Frontend</title> *@
+@*     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> *@
+@*     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" /> *@
+@*     <link rel="stylesheet" href="~/Frontend.styles.css" asp-append-version="true" /> *@
+@* </head> *@
+@* <body> *@
+@*     <header> *@
+@*         <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom shadow-sm"> *@
+@*             <div class="container-fluid"> *@
+@*                 <a class="navbar-brand" asp-controller="Home" asp-action="Index">Hospital App</a> *@
+@*                 <div class="collapse navbar-collapse"> *@
+@*                     <ul class="navbar-nav me-auto"> *@
+@*                         @if (isLoggedIn) *@
+@*                         { *@
+@*                             <li class="nav-item"> *@
+@*                                 <a class="nav-link" asp-controller="DoctorJointModels" asp-action="Create">Add</a> *@
+@*                             </li> *@
+@*                             <li class="nav-item"> *@
+@*                                 <a class="nav-link" asp-controller="DoctorJointModels" asp-action="Index" asp-route-op="Edit">Modify</a> *@
+@*                             </li> *@
+@*                             <li class="nav-item"> *@
+@*                                 <a class="nav-link" asp-controller="DoctorJointModels" asp-action="Index" asp-route-op="Delete">Delete</a> *@
+@*                             </li> *@
+@*                         } *@
+
+@*                         <li class="nav-item"> *@
+@*                             <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a> *@
+
+@*                         </li> *@
+@*                     </ul> *@
+
+@*                     <ul class="navbar-nav"> *@
+@*                         @if (!isLoggedIn) *@
+@*                         { *@
+@*                             <li class="nav-item"> *@
+@*                                 <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a> *@
+@*                             </li> *@
+@*                         } *@
+@*                         else *@
+@*                         { *@
+@*                             <li class="nav-item"> *@
+@*                                 <a class="nav-link" asp-controller="Account" asp-action="Logout">Logout</a> *@
+@*                             </li> *@
+@*                         } *@
+@*                     </ul> *@
+@*                 </div> *@
+@*             </div> *@
+@*         </nav> *@
+@*     </header> *@
+
+@*     <div class="container-fluid"> *@
+@*         <div class="row"> *@
+@*             <aside class="col-md-2 bg-light pt-3 min-vh-100 border-end"> *@
+
+@*                 @if (isLoggedIn) *@
+@*                 { *@
+@*                     <ul class="nav flex-column"> *@
+@*                         <li class="nav-item"> *@
+@*                             <a class="nav-link" asp-controller="DoctorJointModels" asp-action="Index">Doctors</a> *@
+@*                         </li> *@
+@*                         <li class="nav-item"> *@
+@*                             <a class="nav-link" asp-controller="EquipmentModels" asp-action="Index">Equipment</a> *@
+@*                         </li> *@
+@*                         <li class="nav-item"> *@
+@*                             <a class="nav-link" asp-controller="DepartmentModels" asp-action="Index">Rooms and Departments</a> *@
+@*                         </li> *@
+@*                         <li class="nav-item"> *@
+@*                             <a class="nav-link" asp-controller="ScheduleModels" asp-action="Index">Schedule and Shifts</a> *@
+@*                         </li> *@
+@*                         <li class="nav-item"> *@
+@*                             <a class="nav-link" asp-controller="DrugModels" asp-action="Index">Drugs</a> *@
+@*                         </li> *@
+@*                         <li class="nav-item"> *@
+@*                             <a class="nav-link" asp-controller="PatientJointModels" asp-action="Index">Patient</a> *@
+@*                         </li> *@
+@*                         <li class="nav-item"> *@
+@*                             <a class="nav-link" asp-controller="MedicalRecordModels" asp-action="Index">Medical Records</a> *@
+@*                         </li> *@
+@*                     </ul> *@
+@*                 } *@
+
+@*             </aside> *@
+
+@*             <main class="col-md-10 pt-4"> *@
+@*                 @RenderBody() *@
+@*             </main> *@
+@*         </div> *@
+@*     </div> *@
+
+@*     <footer class="border-top footer text-muted mt-4"> *@
+@*         <div class="container"> *@
+@*             &copy; 2025 - Frontend - <a asp-controller="Home" asp-action="Privacy">Privacy</a> *@
+@*         </div> *@
+@*     </footer> *@
+
+@*     <script src="~/lib/jquery/dist/jquery.min.js"></script> *@
+@*     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
+@*     <script src="~/js/site.js" asp-append-version="true"></script> *@
+@*     @await RenderSectionAsync("Scripts", required: false) *@
+@* </body> *@
+@* </html> *@
+
+
+@using Microsoft.AspNetCore.Http
 
 @{
+    var currentOp = Context.Session.GetString("CurrentCrudOp") ?? "Index";
     var isLoggedIn = Context.Session.GetString("JWToken") != null;
 }
 
@@ -13,6 +128,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Frontend.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
 </head>
 <body>
     <header>
@@ -24,19 +141,18 @@
                         @if (isLoggedIn)
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="DoctorJointModels" asp-action="Create">Add</a>
+                                <a class="nav-link" asp-controller="DoctorJointModels" asp-action="Create" asp-route-op="Create">Add</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="DoctorJointModels" asp-action="Index" asp-route-op="Edit">Modify</a>
+                                <a class="nav-link" asp-controller="DoctorJointModels" asp-action="Index">Modify</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="DoctorJointModels" asp-action="Index" asp-route-op="Delete">Delete</a>
+                                <a class="nav-link" asp-controller="DoctorJointModels" asp-action="Index">Delete</a>
                             </li>
                         }
 
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
-
                         </li>
                     </ul>
 
@@ -62,34 +178,32 @@
     <div class="container-fluid">
         <div class="row">
             <aside class="col-md-2 bg-light pt-3 min-vh-100 border-end">
-
                 @if (isLoggedIn)
                 {
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="DoctorJointModels" asp-action="Index">Doctors</a>
+                            <a class="nav-link" asp-controller="DoctorJointModels" asp-action="@currentOp">Doctors</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="EquipmentModels" asp-action="Index">Equipment</a>
+                            <a class="nav-link" asp-controller="EquipmentModels" asp-action="@currentOp">Equipment</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="DepartmentModels" asp-action="Index">Rooms and Departments</a>
+                            <a class="nav-link" asp-controller="DepartmentModels" asp-action="@currentOp">Rooms and Departments</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="ScheduleModels" asp-action="Index">Schedule and Shifts</a>
+                            <a class="nav-link" asp-controller="ScheduleModels" asp-action="@currentOp">Schedule and Shifts</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="DrugModels" asp-action="Index">Drugs</a>
+                            <a class="nav-link" asp-controller="DrugModels" asp-action="@currentOp">Drugs</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="PatientJointModels" asp-action="Index">Patient</a>
+                            <a class="nav-link" asp-controller="PatientJointModels" asp-action="@currentOp">Patient</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="MedicalRecordModels" asp-action="Index">Medical Records</a>
+                            <a class="nav-link" asp-controller="MedicalRecordModels" asp-action="@currentOp">Medical Records</a>
                         </li>
                     </ul>
                 }
-
             </aside>
 
             <main class="col-md-10 pt-4">
@@ -107,6 +221,8 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
