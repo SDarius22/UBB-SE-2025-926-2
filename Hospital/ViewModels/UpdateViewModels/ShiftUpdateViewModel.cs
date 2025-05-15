@@ -92,12 +92,12 @@ namespace Hospital.ViewModels.UpdateViewModels
         private async void SaveChanges()
         {
             bool hasErrors = false;
-
             StringBuilder errorMessages = new StringBuilder();
 
             foreach (ShiftModel shift in this.Shifts)
             {
-                if (!this.ValidateShift(shift))
+                string validationError = ValidateShift(shift);
+                if (!string.IsNullOrEmpty(validationError))
                 {
                     hasErrors = true;
                     errorMessages.AppendLine("Shift " + shift.ShiftID + ": " + this.ErrorMessage);
@@ -113,36 +113,22 @@ namespace Hospital.ViewModels.UpdateViewModels
                 }
             }
 
-            if (hasErrors)
-            {
-                this.ErrorMessage = errorMessages.ToString();
-            }
-            else
-            {
-                this.ErrorMessage = "Changes saved successfully";
-            }
+            this.ErrorMessage = hasErrors ? errorMessages.ToString() : "Changes saved successfully";
         }
 
-        /// <summary>
-        /// Validates the shift before saving it to the database.
-        /// </summary>
-        /// <param name="shift">Shift to be validated.</param>
-        /// <returns>True if the shift is valid, false otherwise.</returns>
-        private bool ValidateShift(ShiftModel shift)
+        private string ValidateShift(ShiftModel shift)
         {
             if (shift.StartTime != new TimeSpan(8, 0, 0) && shift.StartTime != new TimeSpan(20, 0, 0))
             {
-                this.ErrorMessage = "Start time should be either 8:00 AM or 8:00 PM";
-                return false;
+                return "Start time should be either 8:00 AM or 8:00 PM";
             }
 
             if (shift.EndTime != new TimeSpan(8, 0, 0) && shift.EndTime != new TimeSpan(20, 0, 0))
             {
-                this.ErrorMessage = "End time should be either 8:00 AM or 8:00 PM";
-                return false;
+                return "End time should be either 8:00 AM or 8:00 PM";
             }
 
-            return true;
+            return string.Empty;
         }
 
         private void OnPropertyChanged(string propertyName)

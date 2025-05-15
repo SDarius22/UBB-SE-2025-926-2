@@ -1,6 +1,7 @@
 ﻿namespace Hospital.Utils
 {
     using System;
+    using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Data;
 
     /// <summary>
@@ -23,7 +24,7 @@
                 return timeSpan.ToString(@"hh\:mm");
             }
 
-            return "00:00";
+            return string.Empty;
         }
 
         /// <summary>
@@ -33,15 +34,17 @@
         /// <param name="targetType">The target type.</param>
         /// <param name="parameter">The parameter.</param>
         /// <param name="language">The language.</param>
-        /// <returns>The converted value as a TimeSpan.</returns>
+        /// <returns>The converted value as a TimeSpan, or UnsetValue on failure.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            if (value is string timeString && TimeSpan.TryParse(timeString, out TimeSpan parsedTime))
+            if (value is string timeString &&
+                TimeSpan.TryParseExact(timeString, @"hh\:mm", null, out TimeSpan parsedTime))
             {
                 return parsedTime;
             }
 
-            return TimeSpan.Zero;
+            // Prevents binding loop when invalid input is typed
+            return DependencyProperty.UnsetValue;
         }
     }
 }

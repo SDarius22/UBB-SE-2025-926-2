@@ -22,7 +22,7 @@ namespace Backend.Configs
         private static ApplicationConfiguration? _instance;
 
 
-        private string _databaseConnection = "Data Source=ATHOS;Initial Catalog=HospitalManagement;Integrated Security=True;TrustServerCertificate=True";
+        private string _databaseConnection = "Data Source=DESKTOP-VKGKF7I\\SQLEXPRESS;Initial Catalog=HospitalManagement;Integrated Security=True;TrustServerCertificate=True";
 
         public int patientId = 1;
         public int doctorId = 1;

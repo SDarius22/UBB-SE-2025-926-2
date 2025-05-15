@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Frontend.ApiClients.Interface;
@@ -12,11 +13,17 @@ namespace Hospital.ApiClients
     public class DoctorApiService : IDoctorApiService
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "https://localhost:5035/api/";
+        private const string BaseUrl = "http://localhost:5035/api/";
 
-        public DoctorApiService()
+        public DoctorApiService(IHttpContextAccessor accessor)
         {
-            _httpClient = new HttpClient { BaseAddress = new Uri(BaseUrl) };
+            _httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5035/api/") };
+
+            var token = accessor.HttpContext?.Session.GetString("JWToken");
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
         }
 
         // Get all doctors

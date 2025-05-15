@@ -1,53 +1,58 @@
 ﻿@model IEnumerable<Frontend.Models.DoctorJointModel>
 
 @{
-    ViewData["Title"] = "Index";
+    var action = Context.Request.Query["op"].ToString();
+    ViewData["Title"] = "Doctors";
 }
 
-<h1>Index</h1>
+<h2 class="mb-3">
+    @if (action == "Edit")
+    {
+        <text>Select a doctor to modify</text>
+    }
+    else if (action == "Delete")
+    {
+        <text>Select a doctor to delete</text>
+    }
+    else
+    {
+        <text>All Doctors</text>
+    }
+</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
+<table class="table table-bordered table-striped">
+    <thead class="table-light">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Rating)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LicenseNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Department)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.Rating)</th>
+            <th>@Html.DisplayNameFor(model => model.LicenseNumber)</th>
+            <th>@Html.DisplayNameFor(model => model.User.Role)</th>
+            <th>@Html.DisplayNameFor(model => model.Department.DepartmentID)</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rating)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LicenseNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Role)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Department.DepartmentID)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.DoctorId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.DoctorId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.DoctorId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Rating</td>
+                <td>@item.LicenseNumber</td>
+                <td>@item.User?.Role</td>
+                <td>@item.Department?.DepartmentID</td>
+                <td>
+                    @if (action == "Edit")
+                    {
+                        <a class="btn btn-primary btn-sm" asp-action="Edit" asp-route-id="@item.DoctorId">Edit</a>
+                    }
+                    else if (action == "Delete")
+                    {
+                        <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.DoctorId">Delete</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-secondary btn-sm" asp-action="Details" asp-route-id="@item.DoctorId">Details</a>
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

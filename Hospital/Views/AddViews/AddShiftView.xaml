@@ -13,7 +13,7 @@
     <Page.Resources>
         <local:MessageToColorConverter x:Key="MessageToColorConverter"/>
         <local:InputFieldToEmptyStringConverter x:Key="ZeroToEmptyStringConverter"/>
-        <local:DateOnlyToStringConverter x:Key="DateOnlyToStringConverter"/>
+        <local:DateTimeToStringConverter x:Key="DateTimeToStringConverter"/>
         <local:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter"/>
     </Page.Resources>
 
@@ -32,7 +32,7 @@
 
         <DatePicker Date="{Binding Date, Mode=TwoWay}" Margin="0,0,0,10" Grid.Row="1"></DatePicker>
 
-        <TextBox Text="{Binding Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DateOnlyToStringConverter}}"
+        <TextBox Text="{Binding Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DateTimeToStringConverter}}"
                  PlaceholderText="Enter date" Margin="0,0,0,10" Grid.Row="1"/>
 
             <TextBox Text="{Binding StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource TimeSpanToStringConverter}}"
