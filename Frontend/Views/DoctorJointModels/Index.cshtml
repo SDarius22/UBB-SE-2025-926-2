@@ -25,8 +25,8 @@
         <tr>
             <th>@Html.DisplayNameFor(model => model.Rating)</th>
             <th>@Html.DisplayNameFor(model => model.LicenseNumber)</th>
-            <th>@Html.DisplayNameFor(model => model.User.Role)</th>
-            <th>@Html.DisplayNameFor(model => model.Department.DepartmentID)</th>
+            @* <th>@Html.DisplayNameFor(model => model.User.Role)</th> *@
+            <th>@Html.DisplayNameFor(model => model.DepartmentId)</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -36,8 +36,8 @@
             <tr>
                 <td>@item.Rating</td>
                 <td>@item.LicenseNumber</td>
-                <td>@item.User?.Role</td>
-                <td>@item.Department?.DepartmentID</td>
+                @* <td>@item.User?.Role</td> *@
+                <td>@item.DepartmentId</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.DoctorId">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.DoctorId">Details</a> |
