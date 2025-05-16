@@ -7,11 +7,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     mc:Ignorable="d"
-    xmlns:utils="using:Hospital.Utils"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
-        <utils:DateOnlyToStringConverter x:Key="DateOnlyToStringConverter" />
+        <utils:DateTimeToStringConverter x:Key="DateOnlyToStringConverter" />
         <utils:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter" />
     </Page.Resources>
 
